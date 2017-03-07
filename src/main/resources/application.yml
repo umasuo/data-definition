@@ -1,0 +1,16 @@
+server:
+  port: 8088
+
+spring:
+  application:
+    name: data-point
+  datasource:
+    url: jdbc:postgresql://localhost:5432/data_point
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: com.umasuo.database.dialect.JSONBPostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
