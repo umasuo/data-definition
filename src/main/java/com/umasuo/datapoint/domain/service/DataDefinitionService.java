@@ -8,6 +8,7 @@ import io.jsonwebtoken.lang.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 /**
@@ -34,7 +35,8 @@ public class DataDefinitionService {
     Assert.notNull(sample.getDeveloperId());
     Assert.notNull(sample.getDeviceDefinitionId());
 
-    DataDefinition valueInDb = this.repository.findOne(sample);
+    Example<DataDefinition> example = Example.of(sample);
+    DataDefinition valueInDb = this.repository.findOne(example);
     if (valueInDb != null) {
       throw new AlreadyExistException("DataDefinition alrady exist.");
     }

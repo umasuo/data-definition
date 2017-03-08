@@ -9,8 +9,10 @@ import com.umasuo.datapoint.infrastructure.definition.ObjectType;
 import com.umasuo.datapoint.infrastructure.definition.PointType;
 import com.umasuo.datapoint.infrastructure.definition.StringType;
 import com.umasuo.datapoint.infrastructure.util.JsonUtils;
+import com.umasuo.exception.ParametersException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -31,18 +33,47 @@ public class DataVerificationService {
    */
   private ObjectMapper mapper = new ObjectMapper();
 
+  @Autowired
   private transient DataDefinitionService dataDefinitionService;
 
-  public boolean verify(String id, String data) throws IOException {
+  /**
+   * verify json string data.
+   *
+   * @param id
+   * @param data
+   * @return
+   */
+  public boolean verify(String id, String data) {
+    try {
+      JsonNode value = mapper.readTree(data);
+      return verify(id, value);
+    } catch (Exception e) {
+      throw new ParametersException("Data is not a validate json.");
+    }
+  }
+
+  /**
+   * verify JsonNode data.
+   *
+   * @param id
+   * @param data
+   * @return
+   */
+  public boolean verify(String id, JsonNode data) {
     DataDefinition dataDefinition = dataDefinitionService.getById(id);
     PointType dataType = JsonUtils.deserialize(dataDefinition.getDataType(), PointType.class);
 
-    JsonNode value = mapper.readTree(data);
-
-    return verify(dataType, value);
+    return verify(dataType, data);
   }
 
-  private boolean verify(PointType dataType, JsonNode value) {
+  /**
+   * verify PointType
+   *
+   * @param dataType
+   * @param value
+   * @return
+   */
+  public boolean verify(PointType dataType, JsonNode value) {
     if (dataType instanceof IntType) {
       return value.isInt();
     }

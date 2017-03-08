@@ -1,4 +1,4 @@
-package com.umasuo.device.definition;
+package com.umasuo.datapoint;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;

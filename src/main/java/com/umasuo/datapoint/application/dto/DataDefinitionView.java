@@ -6,6 +6,8 @@ import lombok.Data;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Created by umasuo on 17/3/8.
  */
@@ -32,30 +34,36 @@ public class DataDefinitionView implements Serializable {
   /**
    * which developer this data definition belong to.
    */
+  @NotNull
   private String developerId;
 
   /**
    * which device this data definition belong to
    */
+  @NotNull
   private String deviceDefinitionId;
 
   /**
    * data id defined by the developer.
    */
+  @NotNull
   private String dataId;
 
   /**
    * the data structure.
    */
+  @NotNull
   private PointType dataType;
 
   /**
    * name of this definition.
    */
+  @NotNull
   private String name;
 
   /**
    * describe the usage of this definition.
    */
+  @NotNull
   private String description;
 }
