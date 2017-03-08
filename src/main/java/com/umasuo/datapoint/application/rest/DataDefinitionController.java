@@ -1,8 +1,7 @@
 package com.umasuo.datapoint.application.rest;
 
 import com.umasuo.datapoint.application.dto.DataDefinitionView;
-import com.umasuo.datapoint.domain.model.DataDefinition;
-import com.umasuo.datapoint.domain.model.mapper.DataDefinitionMapper;
+import com.umasuo.datapoint.application.dto.mapper.DataDefinitionMapper;
 import com.umasuo.datapoint.domain.service.DataDefinitionService;
 import com.umasuo.datapoint.infrastructure.Router;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package com.umasuo.datapoint.domain.model.mapper;
+package com.umasuo.datapoint.application.dto.mapper;
 
 import com.umasuo.datapoint.application.dto.DataDefinitionView;
 import com.umasuo.datapoint.domain.model.DataDefinition;

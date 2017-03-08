@@ -77,8 +77,8 @@ dependencies {
     testCompile('org.spockframework:spock-spring:1.0-groovy-2.4')
 
     //    compile project(':base')//depend on base project. for local build.
-    compile project(':commons')//depend on base project. for local build.
-//    compile("com.umasuo:commons:0.0.1")
+//    compile project(':commons')//depend on base project. for local build.
+    compile("com.umasuo:commons:0.0.1")
 }
 
 apply from: 'test_coverage.gradle'
