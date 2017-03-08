@@ -17,6 +17,7 @@ import java.io.Serializable;
     @JsonSubTypes.Type(value = ObjectType.class, name = "type.object"),
 })
 public interface PointType extends Serializable {
+
   /**
    * filed name of the data.
    *

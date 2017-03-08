@@ -58,7 +58,22 @@ public class DataDefinition {
   private String deviceDefinitionId;
 
   /**
+   * data id defined by the developer.
+   */
+  private String dataId;
+
+  /**
    * the data structure.
    */
   private PointType dataType;
+
+  /**
+   * name of this definition.
+   */
+  private String name;
+
+  /**
+   * describe the usage of this definition.
+   */
+  private String description;
 }

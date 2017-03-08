@@ -1,6 +1,6 @@
 package com.umasuo.datapoint.infrastructure.repository;
 
-import com.umasuo.developer.domain.model.Developer;
+import com.umasuo.datapoint.domain.model.DataDefinition;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
  * Created by umasuo on 17/2/10.
  */
 @Repository
-public interface DeveloperRepository extends JpaRepository<Developer, String>,
-    CrudRepository<Developer, String> {
+public interface DataDefinitionRepository extends JpaRepository<DataDefinition, String>,
+    CrudRepository<DataDefinition, String> {
 
-  Developer findOneByEmail(String email);
+  DataDefinition findOne(DataDefinition sample);
 }
