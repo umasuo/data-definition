@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class DataDefinitionService {
+
   /**
    * logger.
    */
@@ -51,7 +52,7 @@ public class DataDefinitionService {
 
     DataDefinition valueInDb = this.repository.findOne(id);
     if (valueInDb == null) {
-      throw new NotExistException("DataDefinition not exist.")
+      throw new NotExistException("DataDefinition not exist.");
     }
     return valueInDb;
   }
