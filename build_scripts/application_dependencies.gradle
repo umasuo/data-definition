@@ -23,4 +23,6 @@ dependencies {
 
     //common tool
     compile('org.apache.commons:commons-lang3:3.4')
+
+    compile("com.umasuo:commons:0.0.1")
 }
