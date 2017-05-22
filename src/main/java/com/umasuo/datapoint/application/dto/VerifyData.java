@@ -13,8 +13,6 @@ public class VerifyData implements Serializable {
 
   private static final long serialVersionUID = -6696513490989307761L;
 
-  private String developerId;
-
   private String dataId;
 
   private JsonNode data;

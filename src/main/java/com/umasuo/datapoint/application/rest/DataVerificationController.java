@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
@@ -54,15 +55,15 @@ public class DataVerificationController {
   /**
    * 根据数据定义的ID和开发者ID来校验数据.
    *
-   * @param verifyData
-   * @return
+   * @param developerId 开发者ID，存放在header中
+   * @param verifyData  需要验证的数据，包含数据ID和具体数据，具体数据采用JsonNode接受.
+   * @return boolean
    */
   @PostMapping(value = Router.DATA_VERIFY_WITH_DATA_ID)
-  public boolean verify(@RequestBody VerifyData verifyData) {
+  public boolean verify(@RequestHeader String developerId, @RequestBody VerifyData verifyData) {
     logger.info("VerifyData: {}", verifyData);
 
-    return verificationService.verify(verifyData.getDeveloperId(), verifyData.getDataId()
-        , verifyData.getData());
+    return verificationService.verify(developerId, verifyData.getDataId(), verifyData.getData());
   }
 
 }
