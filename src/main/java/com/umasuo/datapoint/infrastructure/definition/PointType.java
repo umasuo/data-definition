@@ -11,10 +11,11 @@ import java.io.Serializable;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property =
     "type")
 @JsonSubTypes( {
-    @JsonSubTypes.Type(value = IntType.class, name = "type.int"),
-    @JsonSubTypes.Type(value = StringType.class, name = "type.string"),
-    @JsonSubTypes.Type(value = ArrayType.class, name = "type.array"),
-    @JsonSubTypes.Type(value = ObjectType.class, name = "type.object"),
+    @JsonSubTypes.Type(value = IntType.class, name = TypeUtil.INT_TYPE),
+    @JsonSubTypes.Type(value = NumberType.class, name = TypeUtil.NUMBER_TYPE),
+    @JsonSubTypes.Type(value = StringType.class, name = TypeUtil.STRING_TYPE),
+    @JsonSubTypes.Type(value = ArrayType.class, name = TypeUtil.ARRAY_TYPE),
+    @JsonSubTypes.Type(value = ObjectType.class, name = TypeUtil.OBJECT_TYPE),
 })
 public interface PointType extends Serializable {
 

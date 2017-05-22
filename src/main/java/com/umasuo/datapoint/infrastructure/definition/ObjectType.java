@@ -19,7 +19,7 @@ public class ObjectType implements PointType {
   /**
    * type name.
    */
-  private String type = "type.object";
+  private String type = TypeUtil.OBJECT_TYPE;
 
   /**
    * Sub Types Type，列表中的对象name需要唯一

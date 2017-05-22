@@ -17,7 +17,7 @@ public class ArrayType implements PointType {
   /**
    * type name.
    */
-  private String type = "type.array";
+  private String type = TypeUtil.ARRAY_TYPE;
 
   /**
    * Sub Types Type.

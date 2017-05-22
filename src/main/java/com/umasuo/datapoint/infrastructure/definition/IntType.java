@@ -14,6 +14,6 @@ public class IntType implements PointType {
    */
   private String key;
 
-  private String type = "type.int";
+  private String type = TypeUtil.INT_TYPE;
 
 }
