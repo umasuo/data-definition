@@ -8,10 +8,11 @@ import lombok.Data;
 @Data
 public class IntType implements PointType {
 
+  private static final long serialVersionUID = 51287892165385780L;
   /**
    * filed name.
    */
-  private String name;
+  private String key;
 
   private String type = "type.int";
 

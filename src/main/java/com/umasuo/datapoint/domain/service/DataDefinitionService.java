@@ -33,12 +33,12 @@ public class DataDefinitionService {
   public DataDefinition create(DataDefinition sample) {
     Assert.notNull(sample);
     Assert.notNull(sample.getDeveloperId());
-    Assert.notNull(sample.getDeviceDefinitionId());
+    Assert.notNull(sample.getDataId());
 
     Example<DataDefinition> example = Example.of(sample);
     DataDefinition valueInDb = this.repository.findOne(example);
     if (valueInDb != null) {
-      throw new AlreadyExistException("DataDefinition alrady exist.");
+      throw new AlreadyExistException("Data Definition already exist.");
     }
     return this.repository.save(sample);
   }
@@ -59,4 +59,15 @@ public class DataDefinitionService {
     return valueInDb;
   }
 
+  public DataDefinition getByDataId(String developerId, String dataId) {
+    DataDefinition sample = new DataDefinition();
+    sample.setDeveloperId(developerId);
+    sample.setDataId(dataId);
+    Example<DataDefinition> example = Example.of(sample);
+    DataDefinition valueInDb = this.repository.findOne(example);
+    if (valueInDb == null) {
+      throw new NotExistException("DataDefinition not exist.");
+    }
+    return valueInDb;
+  }
 }

@@ -18,6 +18,11 @@ public class Router {
   /**
    * verify url.
    */
-  public static final String DATA_DEFINITION_DATA_VERIFY = DATA_DEFINITION_WITH_ID + "/verify";
+  public static final String DATA_VERIFY = DATA_DEFINITION_WITH_ID + "/verify";
+
+  /**
+   * verify url.
+   */
+  public static final String DATA_VERIFY_WITH_DATA_ID = DATA_DEFINITION_ROOT + "/verify";
 
 }

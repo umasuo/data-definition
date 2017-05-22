@@ -23,5 +23,5 @@ public interface PointType extends Serializable {
    *
    * @return
    */
-  String getName();
+  String getKey();
 }

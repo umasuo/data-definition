@@ -10,10 +10,11 @@ import java.util.List;
 @Data
 public class ObjectType implements PointType {
 
+  private static final long serialVersionUID = -5215141627699079726L;
   /**
    * filed name.
    */
-  private String name;
+  private String key;
 
   /**
    * type name.
@@ -21,7 +22,7 @@ public class ObjectType implements PointType {
   private String type = "type.object";
 
   /**
-   * Sub Types Type.
+   * Sub Types Type，列表中的对象name需要唯一
    */
   private List<PointType> subTypes;
 

@@ -8,10 +8,11 @@ import lombok.Data;
 @Data
 public class ArrayType implements PointType {
 
+  private static final long serialVersionUID = -5818301375489100645L;
   /**
-   * filed name.
+   * filed key, json数据里面的key.
    */
-  private String name;
+  private String key;
 
   /**
    * type name.

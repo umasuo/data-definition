@@ -53,12 +53,7 @@ public class DataDefinition {
   private String developerId;
 
   /**
-   * which device this data definition belong to
-   */
-  private String deviceDefinitionId;
-
-  /**
-   * data id defined by the developer.
+   * data id defined by the developer. 开发者ID＋ dataId全局唯一.
    */
   private String dataId;
 

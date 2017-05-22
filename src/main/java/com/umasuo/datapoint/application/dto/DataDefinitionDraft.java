@@ -15,6 +15,8 @@ import javax.validation.constraints.NotNull;
 @Data
 public class DataDefinitionDraft implements Serializable {
 
+  private static final long serialVersionUID = 5759775280956048065L;
+
   /**
    * 每个数据格点的定义都属于一个具体的开发者，需要确保开发者确实存在且已经登陆。
    */
@@ -28,13 +30,7 @@ public class DataDefinitionDraft implements Serializable {
   private String dataId;
 
   /**
-   * 数据具体的结构.
-   */
-  @NotNull
-  private PointType dataType;
-
-  /**
-   * 数据定义的名称，例如"手环步数数据"
+   * 数据定义的名称，例如"手环步数"
    */
   @NotNull
   private String name;
@@ -42,6 +38,12 @@ public class DataDefinitionDraft implements Serializable {
   /**
    * 数据定义介绍，主要用于介绍此数据格点的用途，目的等。
    */
-  @NotNull
   private String description;
+
+  /**
+   * 数据具体的结构.
+   */
+  @NotNull
+  private PointType dataType;
+
 }

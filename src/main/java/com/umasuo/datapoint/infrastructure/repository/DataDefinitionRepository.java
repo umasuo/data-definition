@@ -12,5 +12,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DataDefinitionRepository extends JpaRepository<DataDefinition, String>,
     CrudRepository<DataDefinition, String>, QueryByExampleExecutor<DataDefinition> {
-
 }

@@ -15,8 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-
 /**
  * Created by umasuo on 17/3/8.
  */
@@ -33,6 +31,9 @@ public class DataVerificationService {
    */
   private ObjectMapper mapper = new ObjectMapper();
 
+  /**
+   * Data definition service, used to fetch data definition.
+   */
   @Autowired
   private transient DataDefinitionService dataDefinitionService;
 
@@ -61,6 +62,20 @@ public class DataVerificationService {
    */
   public boolean verify(String id, JsonNode data) {
     DataDefinition dataDefinition = dataDefinitionService.getById(id);
+    PointType dataType = JsonUtils.deserialize(dataDefinition.getDataType(), PointType.class);
+
+    return verify(dataType, data);
+  }
+
+  /**
+   * verify JsonNode data with developer id and data id.
+   *
+   * @param dataId
+   * @param data
+   * @return
+   */
+  public boolean verify(String developerId, String dataId, JsonNode data) {
+    DataDefinition dataDefinition = dataDefinitionService.getByDataId(developerId, dataId);
     PointType dataType = JsonUtils.deserialize(dataDefinition.getDataType(), PointType.class);
 
     return verify(dataType, data);
@@ -116,7 +131,7 @@ public class DataVerificationService {
    */
   private boolean verifyObject(ObjectType dataType, JsonNode value) {
     for (PointType subType : dataType.getSubTypes()) {
-      String name = subType.getName();
+      String name = subType.getKey();
       boolean result = verify(subType, value.get(name));
       //快速失败，不要再往下检查
       if (!result) {
