@@ -1,13 +1,11 @@
 package com.umasuo.datapoint.application.rest;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umasuo.datapoint.domain.service.DataVerificationService;
 import com.umasuo.datapoint.infrastructure.Router;
-import com.umasuo.datapoint.infrastructure.definition.PointType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +19,7 @@ import javax.validation.constraints.NotNull;
  * Created by umasuo on 17/3/8.
  */
 @RestController
+@CrossOrigin
 public class DataVerificationController {
 
   /**
@@ -28,13 +27,14 @@ public class DataVerificationController {
    */
   private final static Logger logger = LoggerFactory.getLogger(DataVerificationController.class);
 
+  /**
+   * Data verify service.
+   */
   @Autowired
   private transient DataVerificationService verificationService;
 
-  private ObjectMapper mapper = new ObjectMapper();
-
   /**
-   * verify String data.
+   * 验证一个json string的数据是否符合某条数据格点的格式.
    *
    * @param id
    * @param data

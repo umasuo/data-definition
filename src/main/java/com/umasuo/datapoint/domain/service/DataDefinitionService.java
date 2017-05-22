@@ -30,7 +30,7 @@ public class DataDefinitionService {
    *
    * @param sample
    */
-  public void create(DataDefinition sample) {
+  public DataDefinition create(DataDefinition sample) {
     Assert.notNull(sample);
     Assert.notNull(sample.getDeveloperId());
     Assert.notNull(sample.getDeviceDefinitionId());
@@ -40,7 +40,7 @@ public class DataDefinitionService {
     if (valueInDb != null) {
       throw new AlreadyExistException("DataDefinition alrady exist.");
     }
-    this.repository.save(sample);
+    return this.repository.save(sample);
   }
 
   /**

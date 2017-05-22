@@ -1,5 +1,6 @@
 package com.umasuo.datapoint.application.dto.mapper;
 
+import com.umasuo.datapoint.application.dto.DataDefinitionDraft;
 import com.umasuo.datapoint.application.dto.DataDefinitionView;
 import com.umasuo.datapoint.domain.model.DataDefinition;
 import com.umasuo.datapoint.infrastructure.definition.PointType;
@@ -19,7 +20,6 @@ public class DataDefinitionMapper {
       view.setLastModifiedAt(model.getLastModifiedAt());
       view.setVersion(model.getVersion());
       view.setDeveloperId(model.getDeveloperId());
-      view.setDeviceDefinitionId(model.getDeviceDefinitionId());
       view.setDataId(model.getDataId());
       view.setName(model.getName());
       view.setDescription(model.getDescription());
@@ -38,12 +38,29 @@ public class DataDefinitionMapper {
       model.setLastModifiedAt(view.getLastModifiedAt());
       model.setVersion(view.getVersion());
       model.setDeveloperId(view.getDeveloperId());
-      model.setDeviceDefinitionId(view.getDeviceDefinitionId());
       model.setDataId(view.getDataId());
       model.setName(view.getName());
       model.setDescription(view.getDescription());
 
       model.setDataType(JsonUtils.serialize(view.getDataType()));
+    }
+    return model;
+  }
+
+  /**
+   * 根据draft 创建数据定义model.
+   * @param draft
+   * @return
+   */
+  public static DataDefinition viewToModel(DataDefinitionDraft draft) {
+    DataDefinition model = null;
+    if (draft != null) {
+      model = new DataDefinition();
+      model.setDeveloperId(draft.getDeveloperId());
+      model.setDataId(draft.getDataId());
+      model.setName(draft.getName());
+      model.setDescription(draft.getDescription());
+      model.setDataType(JsonUtils.serialize(draft.getDataType()));
     }
     return model;
   }
