@@ -1,6 +1,5 @@
 package com.umasuo.datapoint.application.service;
 
-import com.umasuo.datapoint.domain.service.DataDefinitionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +15,7 @@ public class RestClient {
   /**
    * logger.
    */
-  private final static Logger logger = LoggerFactory.getLogger(DataDefinitionService.class);
+  private final static Logger logger = LoggerFactory.getLogger(RestClient.class);
 
   /**
    * cart service uri
