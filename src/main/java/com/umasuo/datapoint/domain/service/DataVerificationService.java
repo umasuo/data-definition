@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umasuo.datapoint.domain.model.DataDefinition;
 import com.umasuo.datapoint.infrastructure.definition.ArrayType;
 import com.umasuo.datapoint.infrastructure.definition.IntType;
+import com.umasuo.datapoint.infrastructure.definition.NumberType;
 import com.umasuo.datapoint.infrastructure.definition.ObjectType;
 import com.umasuo.datapoint.infrastructure.definition.PointType;
 import com.umasuo.datapoint.infrastructure.definition.StringType;
@@ -91,6 +92,9 @@ public class DataVerificationService {
   public boolean verify(PointType dataType, JsonNode value) {
     if (dataType instanceof IntType) {
       return value.isInt();
+    }
+    if (dataType instanceof NumberType) {
+      return value.isNumber();
     }
 
     if (dataType instanceof StringType) {

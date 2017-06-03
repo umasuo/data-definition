@@ -1,18 +1,20 @@
 package com.umasuo.datapoint.domain.model;
 
-import com.umasuo.datapoint.infrastructure.definition.PointType;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.ZonedDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 /**
  * Created by umasuo on 17/3/8.
@@ -20,6 +22,7 @@ import javax.persistence.Table;
 @Data
 @Entity
 @Table(name = "data_definition")
+@EntityListeners(AuditingEntityListener.class)
 public class DataDefinition {
 
   @Id
@@ -45,6 +48,7 @@ public class DataDefinition {
   /**
    * version used for update date check.
    */
+  @Version
   private Integer version;
 
   /**
@@ -60,6 +64,7 @@ public class DataDefinition {
   /**
    * the data structure.
    */
+  @Column(length = 65536)
   private String dataType;
 
   /**
