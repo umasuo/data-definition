@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import sun.rmi.runtime.Log;
+
 /**
  * Created by umasuo on 17/5/22.
  */
@@ -34,6 +36,14 @@ public class RestClient {
    * @return boolean
    */
   public boolean isDeveloperExist(String developerId){
-    return true;
+    logger.debug("Enter. developerId: {}.", developerId);
+
+    String url = developerUrl + developerId;
+    logger.debug("check url: {}.", url);
+
+    Boolean result = restTemplate.getForObject(url, Boolean.class);
+
+    logger.debug("Exit. developer: {} exist? {}.", developerId, result);
+    return result;
   }
 }

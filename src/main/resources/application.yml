@@ -14,3 +14,7 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+
+developer:
+  service:
+    uri: http://localhost:8804/developers/

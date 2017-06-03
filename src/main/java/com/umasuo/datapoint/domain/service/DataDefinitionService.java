@@ -1,9 +1,12 @@
 package com.umasuo.datapoint.domain.service;
 
+import com.umasuo.datapoint.application.service.RestClient;
 import com.umasuo.datapoint.domain.model.DataDefinition;
 import com.umasuo.datapoint.infrastructure.repository.DataDefinitionRepository;
 import com.umasuo.exception.AlreadyExistException;
 import com.umasuo.exception.NotExistException;
+import com.umasuo.exception.ParametersException;
+
 import io.jsonwebtoken.lang.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,14 +29,28 @@ public class DataDefinitionService {
   private DataDefinitionRepository repository;
 
   /**
+   * The Rest client.
+   */
+  @Autowired
+  private transient RestClient restClient;
+
+  /**
    * create data definition with sample
    *
-   * @param sample
+   * @param sample the sample
+   * @return the data definition
    */
   public DataDefinition create(DataDefinition sample) {
     Assert.notNull(sample);
     Assert.notNull(sample.getDeveloperId());
     Assert.notNull(sample.getDataId());
+
+    boolean isDeveloperExist = restClient.isDeveloperExist(sample.getDeveloperId());
+
+    if (!isDeveloperExist) {
+      logger.debug("Developer: {} not exist.", sample.getDeveloperId());
+      throw new ParametersException("Developer not exist");
+    }
 
     Example<DataDefinition> example = Example.of(sample);
     DataDefinition valueInDb = this.repository.findOne(example);
@@ -46,8 +63,8 @@ public class DataDefinitionService {
   /**
    * get one from db.
    *
-   * @param id
-   * @return
+   * @param id the id
+   * @return by id
    */
   public DataDefinition getById(String id) {
     logger.debug("GetDataDefinitionById: id: {}", id);
@@ -59,6 +76,13 @@ public class DataDefinitionService {
     return valueInDb;
   }
 
+  /**
+   * Gets by data id.
+   *
+   * @param developerId the developer id
+   * @param dataId the data id
+   * @return the by data id
+   */
   public DataDefinition getByDataId(String developerId, String dataId) {
     DataDefinition sample = new DataDefinition();
     sample.setDeveloperId(developerId);
