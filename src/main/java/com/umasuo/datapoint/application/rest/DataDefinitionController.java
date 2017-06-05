@@ -1,5 +1,6 @@
 package com.umasuo.datapoint.application.rest;
 
+import com.google.common.collect.Maps;
 import com.umasuo.datapoint.application.dto.DataDefinitionDraft;
 import com.umasuo.datapoint.application.dto.DataDefinitionView;
 import com.umasuo.datapoint.application.dto.mapper.DataDefinitionMapper;
@@ -14,7 +15,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -61,5 +66,22 @@ public class DataDefinitionController {
     logger.info("GetDataDefinition: id: {}", id);
 
     return DataDefinitionMapper.modelToView(definitionService.getById(id));
+  }
+
+  /**
+   * Check DataDefinition exist and belong to the developer.
+   *
+   * @param dataIds the DataDefinition id
+   * @param developerId the developer id
+   * @return a map of result.
+   */
+  @GetMapping(value = Router.DATA_DEFINITION_ROOT)
+  public Map isExistDefinition(@RequestParam("dataIds") List<String> dataIds,
+      @RequestParam("developerId") String developerId) {
+    logger.info("Enter. dataDefinitionId: {}, developerId: {}.", dataIds, developerId);
+    Map<String, Boolean> result = definitionService.isExistDefinition(developerId, dataIds);
+
+    logger.info("Exit.");
+    return result;
   }
 }
