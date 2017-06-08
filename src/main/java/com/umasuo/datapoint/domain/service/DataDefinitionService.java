@@ -1,7 +1,8 @@
 package com.umasuo.datapoint.domain.service;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.umasuo.datapoint.application.dto.DataDefinitionView;
+import com.umasuo.datapoint.application.dto.mapper.DataDefinitionMapper;
 import com.umasuo.datapoint.application.service.RestClient;
 import com.umasuo.datapoint.domain.model.DataDefinition;
 import com.umasuo.datapoint.infrastructure.repository.DataDefinitionRepository;
@@ -100,6 +101,29 @@ public class DataDefinitionService {
       throw new NotExistException("DataDefinition not exist.");
     }
     return valueInDb;
+  }
+  
+  /**
+   * Gets all open data.
+   *
+   * @param developerId the developer id
+   * @return the all open data
+   */
+  public List<DataDefinitionView> getAllOpenData(String developerId) {
+    logger.info("Enter. developerId: {}.", developerId);
+
+    DataDefinition sample = new DataDefinition();
+    sample.setOpenable(true);
+    sample.setDeveloperId(developerId);
+
+    Example<DataDefinition> example = Example.of(sample);
+    List<DataDefinition> openDataDefinitions = repository.findAll(example);
+
+    List<DataDefinitionView> result = DataDefinitionMapper.toModel(openDataDefinitions);
+
+    logger.info("Exit. dataDefinition size: {}.", result.size());
+
+    return result;
   }
 
   /**

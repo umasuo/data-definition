@@ -1,6 +1,5 @@
 package com.umasuo.datapoint.application.rest;
 
-import com.google.common.collect.Maps;
 import com.umasuo.datapoint.application.dto.DataDefinitionDraft;
 import com.umasuo.datapoint.application.dto.DataDefinitionView;
 import com.umasuo.datapoint.application.dto.mapper.DataDefinitionMapper;
@@ -42,30 +41,31 @@ public class DataDefinitionController {
   /**
    * 新建数据格点.
    *
-   * @param definitionDraft
+   * @param definitionDraft the definition draft
+   * @return the data definition view
    */
   @PostMapping(value = Router.DATA_DEFINITION_ROOT)
   public DataDefinitionView create(@RequestBody @Valid DataDefinitionDraft definitionDraft) {
     logger.info("Enter. definitionDraft: {}", definitionDraft);
 
-    DataDefinition dataDefinition = definitionService.create(DataDefinitionMapper.viewToModel
+    DataDefinition dataDefinition = definitionService.create(DataDefinitionMapper.toEntity
         (definitionDraft));
 
     logger.info("Exit. dataDefinition: {}", dataDefinition);
-    return DataDefinitionMapper.modelToView(dataDefinition);
+    return DataDefinitionMapper.toModel(dataDefinition);
   }
 
   /**
    * get a definition by id.
    *
-   * @param id
-   * @return
+   * @param id the id
+   * @return data definition view
    */
   @GetMapping(value = Router.DATA_DEFINITION_WITH_ID)
   public DataDefinitionView get(@PathVariable String id) {
     logger.info("GetDataDefinition: id: {}", id);
 
-    return DataDefinitionMapper.modelToView(definitionService.getById(id));
+    return DataDefinitionMapper.toModel(definitionService.getById(id));
   }
 
   /**
@@ -82,6 +82,23 @@ public class DataDefinitionController {
     Map<String, Boolean> result = definitionService.isExistDefinition(developerId, dataIds);
 
     logger.info("Exit.");
+    return result;
+  }
+
+  /**
+   * Gets all open data definition.
+   *
+   * @param developerId the developer id
+   * @return the all open data
+   */
+  @GetMapping(value = Router.OPEN_DATA_DEFINITION)
+  public List<DataDefinitionView> getAllOpenData(@RequestParam String developerId) {
+    logger.info("Enter. developerId: {}.", developerId);
+
+    List<DataDefinitionView> result = null;
+
+    logger.info("Exit. dataDefinition size: {}.", result.size());
+
     return result;
   }
 }

@@ -76,4 +76,10 @@ public class DataDefinition {
    * describe the usage of this definition.
    */
   private String description;
+
+  /**
+   * The Openable.
+   * True means other developers can find this data, false means not.
+   */
+  private Boolean openable = Boolean.FALSE;
 }
