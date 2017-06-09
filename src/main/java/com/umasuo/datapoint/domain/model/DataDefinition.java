@@ -1,5 +1,6 @@
 package com.umasuo.datapoint.domain.model;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
@@ -65,7 +66,7 @@ public class DataDefinition {
    * the data structure.
    */
   @Column(length = 65536)
-  private String dataType;
+  private String dataSchema;
 
   /**
    * name of this definition.

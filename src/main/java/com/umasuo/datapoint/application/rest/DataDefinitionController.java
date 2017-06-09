@@ -53,11 +53,11 @@ public class DataDefinitionController {
                                    @RequestHeader String developerId) {
     logger.info("Enter. definitionDraft: {}, developerId: {}.", definitionDraft, developerId);
 
-    DataDefinition dataDefinition = definitionService.create(DataDefinitionMapper.viewToModel
+    DataDefinition dataDefinition = definitionService.create(DataDefinitionMapper.toEntity
         (definitionDraft, developerId));
 
     logger.info("Exit. dataDefinition: {}", dataDefinition);
-    return DataDefinitionMapper.toModel(dataDefinition);
+    return DataDefinitionMapper.toView(dataDefinition);
   }
 
   /**
@@ -68,9 +68,26 @@ public class DataDefinitionController {
    */
   @GetMapping(value = Router.DATA_DEFINITION_WITH_ID)
   public DataDefinitionView get(@PathVariable String id) {
-    logger.info("GetDataDefinition: id: {}", id);
+    logger.info("Enter. id: {}", id);
 
-    return DataDefinitionMapper.toModel(definitionService.getById(id));
+    return DataDefinitionMapper.toView(definitionService.getById(id));
+  }
+
+  /**
+   * 通过数据定义Id和开发者ID获取唯一的数据定义.
+   *
+   * @param dataId      自定义的数据定义ID
+   * @param developerId 开发者ID
+   * @return
+   */
+  public DataDefinitionView get(@RequestParam String dataId, @RequestHeader String developerId) {
+    logger.info("Enter. dataId: {}, developerId: {}.", dataId, developerId);
+
+    DataDefinition definition = definitionService.getByDataId(dataId, developerId);
+    DataDefinitionView view = DataDefinitionMapper.toView(definition);
+
+    logger.info("Exit. view: {}.", view);
+    return view;
   }
 
   /**

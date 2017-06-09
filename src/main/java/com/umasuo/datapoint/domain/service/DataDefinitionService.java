@@ -1,5 +1,7 @@
 package com.umasuo.datapoint.domain.service;
 
+import com.github.fge.jsonschema.core.exceptions.ProcessingException;
+import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.google.common.collect.Maps;
 import com.umasuo.datapoint.application.dto.DataDefinitionView;
 import com.umasuo.datapoint.application.dto.mapper.DataDefinitionMapper;
@@ -9,9 +11,6 @@ import com.umasuo.datapoint.infrastructure.repository.DataDefinitionRepository;
 import com.umasuo.exception.AlreadyExistException;
 import com.umasuo.exception.NotExistException;
 import com.umasuo.exception.ParametersException;
-
-import io.jsonwebtoken.lang.Assert;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,23 +48,26 @@ public class DataDefinitionService {
    * @return the data definition
    */
   public DataDefinition create(DataDefinition sample) {
-    Assert.notNull(sample);
-    Assert.notNull(sample.getDeveloperId());
-    Assert.notNull(sample.getDataId());
+    logger.debug("Enter. sample: {}.", sample);
 
-    // TODO: 17/6/7 感觉这个没啥用了，因为验证权限的时候已经验证了
-    boolean isDeveloperExist = restClient.isDeveloperExist(sample.getDeveloperId());
-
-    if (!isDeveloperExist) {
-      logger.debug("Developer: {} not exist.", sample.getDeveloperId());
-      throw new ParametersException("Developer not exist");
-    }
-
-    Example<DataDefinition> example = Example.of(sample);
+    // 同一个开发者下，起dataId需要唯一
+    DataDefinition ex = new DataDefinition();
+    ex.setDataId(sample.getDataId());
+    ex.setDeveloperId(sample.getDeveloperId());
+    Example<DataDefinition> example = Example.of(ex);
     DataDefinition valueInDb = this.repository.findOne(example);
     if (valueInDb != null) {
-      throw new AlreadyExistException("Data Definition already exist.");
+      throw new AlreadyExistException("Data Definition already exist for dataId: "
+          + ex.getDataId());
     }
+
+    // 检查data  schema是否正确
+    try {
+      JsonSchemaFactory.byDefault().getJsonSchema(sample.getDataSchema());
+    } catch (ProcessingException e) {
+      throw new ParametersException("Data Definition not correct.");
+    }
+
     return this.repository.save(sample);
   }
 
@@ -89,21 +91,25 @@ public class DataDefinitionService {
    * Gets by data id.
    *
    * @param developerId the developer id
-   * @param dataId the data id
+   * @param dataId      the data id
    * @return the by data id
    */
-  public DataDefinition getByDataId(String developerId, String dataId) {
+  public DataDefinition getByDataId(String dataId, String developerId) {
+    logger.debug("Enter. dataId: {}, developerId: {}.", dataId, developerId);
+
     DataDefinition sample = new DataDefinition();
     sample.setDeveloperId(developerId);
     sample.setDataId(dataId);
     Example<DataDefinition> example = Example.of(sample);
     DataDefinition valueInDb = this.repository.findOne(example);
     if (valueInDb == null) {
-      throw new NotExistException("DataDefinition not exist.");
+      throw new NotExistException("DataDefinition not exist for dataId: " + dataId);
     }
+
+    logger.debug("Exit. dataDefinition: {}.", valueInDb);
     return valueInDb;
   }
-  
+
   /**
    * Gets all open data.
    *
@@ -120,7 +126,7 @@ public class DataDefinitionService {
     Example<DataDefinition> example = Example.of(sample);
     List<DataDefinition> openDataDefinitions = repository.findAll(example);
 
-    List<DataDefinitionView> result = DataDefinitionMapper.toModel(openDataDefinitions);
+    List<DataDefinitionView> result = DataDefinitionMapper.toView(openDataDefinitions);
 
     logger.info("Exit. dataDefinition size: {}.", result.size());
 
@@ -131,7 +137,7 @@ public class DataDefinitionService {
    * Check if DataDefinition exist and belong to developer.
    *
    * @param developerId the developer id
-   * @param dataIds the DataDefinition id list
+   * @param dataIds     the DataDefinition id list
    * @return a map of result, key is the DataDefinition's id, and value is the exist result, if a
    * DataDefinition not exist or not belong to the developer, value is false.
    */
@@ -155,7 +161,7 @@ public class DataDefinitionService {
    * Check if DataDefinition exist and belong to developer.
    *
    * @param definitions DataDefinition list
-   * @param dataIds the DataDefinition id list
+   * @param dataIds     the DataDefinition id list
    * @return a map of result, key is the DataDefinition's id, and value is the exist result, if a
    * DataDefinition not exist or not belong to the developer, value is false.
    */

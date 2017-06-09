@@ -2,13 +2,10 @@ package com.umasuo.datapoint.domain.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonschema.core.exceptions.ProcessingException;
+import com.github.fge.jsonschema.main.JsonSchema;
+import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.umasuo.datapoint.domain.model.DataDefinition;
-import com.umasuo.datapoint.infrastructure.definition.ArrayType;
-import com.umasuo.datapoint.infrastructure.definition.IntType;
-import com.umasuo.datapoint.infrastructure.definition.NumberType;
-import com.umasuo.datapoint.infrastructure.definition.ObjectType;
-import com.umasuo.datapoint.infrastructure.definition.PointType;
-import com.umasuo.datapoint.infrastructure.definition.StringType;
 import com.umasuo.datapoint.infrastructure.util.JsonUtils;
 import com.umasuo.exception.ParametersException;
 import org.slf4j.Logger;
@@ -63,7 +60,7 @@ public class DataVerificationService {
    */
   public boolean verify(String id, JsonNode data) {
     DataDefinition dataDefinition = dataDefinitionService.getById(id);
-    PointType dataType = JsonUtils.deserialize(dataDefinition.getDataType(), PointType.class);
+    JsonNode dataType = JsonUtils.deserialize(dataDefinition.getDataSchema(), JsonNode.class);
 
     return verify(dataType, data);
   }
@@ -77,7 +74,7 @@ public class DataVerificationService {
    */
   public boolean verify(String developerId, String dataId, JsonNode data) {
     DataDefinition dataDefinition = dataDefinitionService.getByDataId(developerId, dataId);
-    PointType dataType = JsonUtils.deserialize(dataDefinition.getDataType(), PointType.class);
+    JsonNode dataType = JsonUtils.deserialize(dataDefinition.getDataSchema(), JsonNode.class);
 
     return verify(dataType, data);
   }
@@ -85,63 +82,17 @@ public class DataVerificationService {
   /**
    * verify PointType
    *
-   * @param dataType
+   * @param dataSchema
    * @param value
    * @return
    */
-  public boolean verify(PointType dataType, JsonNode value) {
-    if (dataType instanceof IntType) {
-      return value.isInt();
+  public boolean verify(JsonNode dataSchema, JsonNode value) {
+    try {
+      JsonSchema schema = JsonSchemaFactory.byDefault().getJsonSchema(dataSchema);
+      return schema.validate(value).isSuccess();
+    } catch (ProcessingException ex) {
+      return false;
     }
-    if (dataType instanceof NumberType) {
-      return value.isNumber();
-    }
-
-    if (dataType instanceof StringType) {
-      return value.isTextual();
-    }
-
-    if (dataType instanceof ArrayType) {
-      return verifyArray((ArrayType) dataType, value);
-    }
-
-    if (dataType instanceof ObjectType) {
-      return verifyObject((ObjectType) dataType, value);
-    }
-    return false;
   }
 
-  /**
-   * verify array.
-   *
-   * @param dataType
-   * @param value
-   * @return
-   */
-  private boolean verifyArray(ArrayType dataType, JsonNode value) {
-    PointType subType = dataType.getSubType();
-    if (value.isArray() && value.size() > 0) {
-      return verify(subType, value.get(0));
-    }
-    return false;
-  }
-
-  /**
-   * verify object type.
-   *
-   * @param dataType
-   * @param value
-   * @return
-   */
-  private boolean verifyObject(ObjectType dataType, JsonNode value) {
-    for (PointType subType : dataType.getSubTypes()) {
-      String name = subType.getKey();
-      boolean result = verify(subType, value.get(name));
-      //快速失败，不要再往下检查
-      if (!result) {
-        return false;
-      }
-    }
-    return true;
-  }
 }

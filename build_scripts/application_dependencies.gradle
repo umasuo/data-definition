@@ -22,6 +22,8 @@ dependencies {
     // Lombok
     compile('org.projectlombok:lombok:1.16.12')
 
+    compile(group: "com.github.java-json-tools", name: "json-schema-validator", version: "2.2.8");
+    
     //common tool
     compile('org.apache.commons:commons-lang3:3.4')
 

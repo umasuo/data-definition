@@ -1,10 +1,9 @@
 package com.umasuo.datapoint.application.dto;
 
-import com.umasuo.datapoint.infrastructure.definition.PointType;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.time.ZonedDateTime;
 
 import javax.validation.constraints.NotNull;
 
@@ -38,7 +37,7 @@ public class DataDefinitionDraft implements Serializable {
    * 数据具体的结构.
    */
   @NotNull
-  private PointType dataType;
+  private JsonNode dataSchema;
 
   /**
    * The Openable.

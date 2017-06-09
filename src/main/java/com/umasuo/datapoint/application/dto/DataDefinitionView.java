@@ -1,6 +1,6 @@
 package com.umasuo.datapoint.application.dto;
 
-import com.umasuo.datapoint.infrastructure.definition.PointType;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -55,7 +55,7 @@ public class DataDefinitionView implements Serializable {
    * the data structure.
    */
   @NotNull
-  private PointType dataType;
+  private JsonNode dataSchema;
 
   /**
    * name of this definition.
