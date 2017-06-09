@@ -49,14 +49,15 @@ public class DataDefinitionMapper {
 
   /**
    * 根据draft 创建数据定义model.
+   *
    * @param draft
    * @return
    */
-  public static DataDefinition viewToModel(DataDefinitionDraft draft) {
+  public static DataDefinition viewToModel(DataDefinitionDraft draft, String developerId) {
     DataDefinition model = null;
     if (draft != null) {
       model = new DataDefinition();
-      model.setDeveloperId(draft.getDeveloperId());
+      model.setDeveloperId(developerId);
       model.setDataId(draft.getDataId());
       model.setName(draft.getName());
       model.setDescription(draft.getDescription());

@@ -39,8 +39,8 @@ public class DataVerificationController {
   /**
    * 验证一个json string的数据是否符合某条数据格点的格式.
    *
-   * @param id
-   * @param data
+   * @param id 数据定义中自动生成的UUID
+   * @param data 数据
    * @return
    * @throws IOException
    */

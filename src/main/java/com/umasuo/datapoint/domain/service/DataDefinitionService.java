@@ -52,6 +52,7 @@ public class DataDefinitionService {
     Assert.notNull(sample.getDeveloperId());
     Assert.notNull(sample.getDataId());
 
+    // TODO: 17/6/7 感觉这个没啥用了，因为验证权限的时候已经验证了
     boolean isDeveloperExist = restClient.isDeveloperExist(sample.getDeveloperId());
 
     if (!isDeveloperExist) {

@@ -14,6 +14,14 @@ import javax.validation.constraints.NotNull;
 @Data
 public class DataDefinitionView implements Serializable {
 
+  /**
+   * auto generated serial id.
+   */
+  private static final long serialVersionUID = 7500245666736988395L;
+
+  /**
+   * auto generated uuid.
+   */
   private String id;
 
   /**

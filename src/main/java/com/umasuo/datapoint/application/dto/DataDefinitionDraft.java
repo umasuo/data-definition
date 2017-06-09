@@ -18,12 +18,6 @@ public class DataDefinitionDraft implements Serializable {
   private static final long serialVersionUID = 5759775280956048065L;
 
   /**
-   * 每个数据格点的定义都属于一个具体的开发者，需要确保开发者确实存在且已经登陆。
-   */
-  @NotNull
-  private String developerId;
-
-  /**
    * 数据格点ID，需要对开发者唯一，例如: s001。
    */
   @NotNull

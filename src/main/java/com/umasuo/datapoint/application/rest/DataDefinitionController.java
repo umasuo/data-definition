@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,16 +41,19 @@ public class DataDefinitionController {
   DataDefinitionService definitionService;
 
   /**
-   * 新建数据格点.
+   * 新建数据定义
    *
-   * @param definitionDraft
+   * @param definitionDraft 数据定义draft
+   * @param developerId     开发者ID
+   * @return
    */
   @PostMapping(value = Router.DATA_DEFINITION_ROOT)
-  public DataDefinitionView create(@RequestBody @Valid DataDefinitionDraft definitionDraft) {
-    logger.info("Enter. definitionDraft: {}", definitionDraft);
+  public DataDefinitionView create(@RequestBody @Valid DataDefinitionDraft definitionDraft,
+                                   @RequestHeader String developerId) {
+    logger.info("Enter. definitionDraft: {}, developerId: {}.", definitionDraft, developerId);
 
     DataDefinition dataDefinition = definitionService.create(DataDefinitionMapper.viewToModel
-        (definitionDraft));
+        (definitionDraft, developerId));
 
     logger.info("Exit. dataDefinition: {}", dataDefinition);
     return DataDefinitionMapper.modelToView(dataDefinition);
@@ -70,18 +74,19 @@ public class DataDefinitionController {
 
   /**
    * Check DataDefinition exist and belong to the developer.
-   *
-   * @param dataIds the DataDefinition id
+   * 此接口只开放给内部使用，而不通过API－Gateway暴露到外部.
+   * 调用此接口的主要是在定义设备的数据格式时调用.
+   * @param dataIds     the DataDefinition id
    * @param developerId the developer id
    * @return a map of result.
    */
   @GetMapping(value = Router.DATA_DEFINITION_ROOT)
   public Map isExistDefinition(@RequestParam("dataIds") List<String> dataIds,
-      @RequestParam("developerId") String developerId) {
+                               @RequestParam("developerId") String developerId) {
     logger.info("Enter. dataDefinitionId: {}, developerId: {}.", dataIds, developerId);
     Map<String, Boolean> result = definitionService.isExistDefinition(developerId, dataIds);
 
-    logger.info("Exit.");
+    logger.info("Exit. result: {}.", result);
     return result;
   }
 }
