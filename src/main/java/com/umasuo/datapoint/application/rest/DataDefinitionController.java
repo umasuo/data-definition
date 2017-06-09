@@ -1,6 +1,5 @@
 package com.umasuo.datapoint.application.rest;
 
-import com.google.common.collect.Maps;
 import com.umasuo.datapoint.application.dto.DataDefinitionDraft;
 import com.umasuo.datapoint.application.dto.DataDefinitionView;
 import com.umasuo.datapoint.application.dto.mapper.DataDefinitionMapper;
@@ -42,10 +41,12 @@ public class DataDefinitionController {
 
   /**
    * 新建数据定义
+   * <p>
    *
    * @param definitionDraft 数据定义draft
    * @param developerId     开发者ID
-   * @return
+   * @param definitionDraft the definition draft
+   * @return the data definition view
    */
   @PostMapping(value = Router.DATA_DEFINITION_ROOT)
   public DataDefinitionView create(@RequestBody @Valid DataDefinitionDraft definitionDraft,
@@ -56,26 +57,27 @@ public class DataDefinitionController {
         (definitionDraft, developerId));
 
     logger.info("Exit. dataDefinition: {}", dataDefinition);
-    return DataDefinitionMapper.modelToView(dataDefinition);
+    return DataDefinitionMapper.toModel(dataDefinition);
   }
 
   /**
    * get a definition by id.
    *
-   * @param id
-   * @return
+   * @param id the id
+   * @return data definition view
    */
   @GetMapping(value = Router.DATA_DEFINITION_WITH_ID)
   public DataDefinitionView get(@PathVariable String id) {
     logger.info("GetDataDefinition: id: {}", id);
 
-    return DataDefinitionMapper.modelToView(definitionService.getById(id));
+    return DataDefinitionMapper.toModel(definitionService.getById(id));
   }
 
   /**
    * Check DataDefinition exist and belong to the developer.
    * 此接口只开放给内部使用，而不通过API－Gateway暴露到外部.
    * 调用此接口的主要是在定义设备的数据格式时调用.
+   *
    * @param dataIds     the DataDefinition id
    * @param developerId the developer id
    * @return a map of result.
@@ -87,6 +89,23 @@ public class DataDefinitionController {
     Map<String, Boolean> result = definitionService.isExistDefinition(developerId, dataIds);
 
     logger.info("Exit. result: {}.", result);
+    return result;
+  }
+
+  /**
+   * Gets all open data definition.
+   *
+   * @param developerId the developer id
+   * @return the all open data
+   */
+  @GetMapping(value = Router.OPEN_DATA_DEFINITION)
+  public List<DataDefinitionView> getAllOpenData(@RequestParam String developerId) {
+    logger.info("Enter. developerId: {}.", developerId);
+
+    List<DataDefinitionView> result = null;
+
+    logger.info("Exit. dataDefinition size: {}.", result.size());
+
     return result;
   }
 }

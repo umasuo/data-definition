@@ -40,4 +40,10 @@ public class DataDefinitionDraft implements Serializable {
   @NotNull
   private PointType dataType;
 
+  /**
+   * The Openable.
+   * True means other developers can find this data, false means not.
+   */
+  @NotNull
+  private Boolean openable;
 }

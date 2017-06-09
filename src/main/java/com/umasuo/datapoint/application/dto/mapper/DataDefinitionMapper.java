@@ -1,17 +1,43 @@
 package com.umasuo.datapoint.application.dto.mapper;
 
+import com.google.common.collect.Lists;
 import com.umasuo.datapoint.application.dto.DataDefinitionDraft;
 import com.umasuo.datapoint.application.dto.DataDefinitionView;
 import com.umasuo.datapoint.domain.model.DataDefinition;
 import com.umasuo.datapoint.infrastructure.definition.PointType;
 import com.umasuo.datapoint.infrastructure.util.JsonUtils;
 
+import java.util.List;
+import java.util.function.Consumer;
+
 /**
  * Created by umasuo on 17/3/8.
  */
 public class DataDefinitionMapper {
 
-  public static DataDefinitionView modelToView(DataDefinition model) {
+  /**
+   * To model list.
+   *
+   * @param entities the entities
+   * @return the list
+   */
+  public static List<DataDefinitionView> toModel(List<DataDefinition> entities) {
+    List<DataDefinitionView> models = Lists.newArrayList();
+
+    Consumer<DataDefinition> consumer = dataDefinition -> models.add(toModel(dataDefinition));
+
+    entities.stream().forEach(consumer);
+
+    return models;
+  }
+
+  /**
+   * To model data definition view.
+   *
+   * @param model the model
+   * @return the data definition view
+   */
+  public static DataDefinitionView toModel(DataDefinition model) {
     DataDefinitionView view = null;
     if (model != null) {
       view = new DataDefinitionView();
@@ -23,28 +49,11 @@ public class DataDefinitionMapper {
       view.setDataId(model.getDataId());
       view.setName(model.getName());
       view.setDescription(model.getDescription());
+      view.setOpenable(model.getOpenable());
 
       view.setDataType(JsonUtils.deserialize(model.getDataType(), PointType.class));
     }
     return view;
-  }
-
-  public static DataDefinition viewToModel(DataDefinitionView view) {
-    DataDefinition model = null;
-    if (view != null) {
-      model = new DataDefinition();
-      model.setId(view.getId());
-      model.setCreatedAt(view.getCreatedAt());
-      model.setLastModifiedAt(view.getLastModifiedAt());
-      model.setVersion(view.getVersion());
-      model.setDeveloperId(view.getDeveloperId());
-      model.setDataId(view.getDataId());
-      model.setName(view.getName());
-      model.setDescription(view.getDescription());
-
-      model.setDataType(JsonUtils.serialize(view.getDataType()));
-    }
-    return model;
   }
 
   /**
@@ -54,6 +63,7 @@ public class DataDefinitionMapper {
    * @return
    */
   public static DataDefinition viewToModel(DataDefinitionDraft draft, String developerId) {
+
     DataDefinition model = null;
     if (draft != null) {
       model = new DataDefinition();
@@ -62,6 +72,7 @@ public class DataDefinitionMapper {
       model.setName(draft.getName());
       model.setDescription(draft.getDescription());
       model.setDataType(JsonUtils.serialize(draft.getDataType()));
+      model.setOpenable(draft.getOpenable());
     }
     return model;
   }
