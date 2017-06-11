@@ -3,6 +3,7 @@ package com.umasuo.datapoint.application.rest;
 import com.umasuo.datapoint.application.dto.DataDefinitionDraft;
 import com.umasuo.datapoint.application.dto.DataDefinitionView;
 import com.umasuo.datapoint.application.dto.mapper.DataDefinitionMapper;
+import com.umasuo.datapoint.application.service.DataDefinitionApplication;
 import com.umasuo.datapoint.domain.model.DataDefinition;
 import com.umasuo.datapoint.domain.service.DataDefinitionService;
 import com.umasuo.datapoint.infrastructure.Router;
@@ -37,7 +38,10 @@ public class DataDefinitionController {
   private final static Logger logger = LoggerFactory.getLogger(DataDefinitionController.class);
 
   @Autowired
-  DataDefinitionService definitionService;
+  private transient DataDefinitionService definitionService;
+
+  @Autowired
+  private transient DataDefinitionApplication definitionApplication;
 
   /**
    * 新建数据定义
@@ -67,10 +71,13 @@ public class DataDefinitionController {
    * @return data definition view
    */
   @GetMapping(value = Router.DATA_DEFINITION_WITH_ID)
-  public DataDefinitionView get(@PathVariable String id) {
+  public DataDefinitionView getById(@PathVariable String id, @RequestHeader String developerId) {
     logger.info("Enter. id: {}", id);
 
-    return DataDefinitionMapper.toView(definitionService.getById(id));
+    DataDefinitionView view = definitionApplication.getById(id, developerId);
+
+    logger.info("Exit. dataDefinitionView: {}.", view);
+    return view;
   }
 
   /**

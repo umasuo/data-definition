@@ -42,7 +42,7 @@ public class DataDefinitionDraft implements Serializable {
   /**
    * The Openable.
    * True means other developers can find this data, false means not.
+   * Default is false;
    */
-  @NotNull
   private Boolean openable;
 }
