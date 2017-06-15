@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.time.ZonedDateTime;
 
 import javax.validation.constraints.NotNull;
 
@@ -27,12 +26,12 @@ public class DataDefinitionView implements Serializable {
   /**
    * The Created at.
    */
-  protected ZonedDateTime createdAt;
+  protected Long createdAt;
 
   /**
    * The Last modified at.
    */
-  protected ZonedDateTime lastModifiedAt;
+  protected Long lastModifiedAt;
 
   /**
    * version used for update date check.

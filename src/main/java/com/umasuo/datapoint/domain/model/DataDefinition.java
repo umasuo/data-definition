@@ -1,13 +1,10 @@
 package com.umasuo.datapoint.domain.model;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.ZonedDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,14 +34,14 @@ public class DataDefinition {
    */
   @CreatedDate
   @Column(name = "created_at")
-  protected ZonedDateTime createdAt;
+  protected Long createdAt;
 
   /**
    * The Last modified at.
    */
   @LastModifiedDate
   @Column(name = "last_modified_at")
-  protected ZonedDateTime lastModifiedAt;
+  protected Long lastModifiedAt;
 
   /**
    * version used for update date check.
