@@ -1,5 +1,6 @@
 package com.umasuo.datapoint.domain.service;
 
+import com.fasterxml.jackson.databind.node.JsonNodeCreator;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.google.common.collect.Maps;
@@ -59,13 +60,6 @@ public class DataDefinitionService {
     if (valueInDb != null) {
       throw new AlreadyExistException("Data Definition already exist for dataId: "
           + ex.getDataId());
-    }
-
-    // 检查data  schema是否正确
-    try {
-      JsonSchemaFactory.byDefault().getJsonSchema(sample.getDataSchema());
-    } catch (ProcessingException e) {
-      throw new ParametersException("Data Definition not correct.");
     }
 
     return this.repository.save(sample);

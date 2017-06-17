@@ -57,11 +57,10 @@ public class DataDefinitionController {
                                    @RequestHeader String developerId) {
     logger.info("Enter. definitionDraft: {}, developerId: {}.", definitionDraft, developerId);
 
-    DataDefinition dataDefinition = definitionService.create(DataDefinitionMapper.toEntity
-        (definitionDraft, developerId));
+    DataDefinitionView view = definitionApplication.create(definitionDraft, developerId);
 
-    logger.info("Exit. dataDefinition: {}", dataDefinition);
-    return DataDefinitionMapper.toView(dataDefinition);
+    logger.info("Exit. dataDefinition: {}", view);
+    return view;
   }
 
   /**

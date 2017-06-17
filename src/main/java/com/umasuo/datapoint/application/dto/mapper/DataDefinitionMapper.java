@@ -71,7 +71,7 @@ public class DataDefinitionMapper {
       model.setDataId(draft.getDataId());
       model.setName(draft.getName());
       model.setDescription(draft.getDescription());
-      model.setDataSchema(JsonUtils.serialize(draft.getDataSchema()));
+      model.setDataSchema(draft.getDataSchema().toString());
       model.setOpenable(draft.getOpenable());
     }
     return model;
