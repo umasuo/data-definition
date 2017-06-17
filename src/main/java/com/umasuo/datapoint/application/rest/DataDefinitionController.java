@@ -86,7 +86,8 @@ public class DataDefinitionController {
    * @param developerId 开发者ID
    * @return
    */
-  public DataDefinitionView get(@RequestParam String dataId, @RequestHeader String developerId) {
+  @GetMapping(value = Router.DATA_DEFINITION_ROOT, params = {"dataId"})
+  public DataDefinitionView get(@RequestParam("dataId") String dataId, @RequestHeader String developerId) {
     logger.info("Enter. dataId: {}, developerId: {}.", dataId, developerId);
 
     DataDefinition definition = definitionService.getByDataId(dataId, developerId);
@@ -101,15 +102,15 @@ public class DataDefinitionController {
    * 此接口只开放给内部使用，而不通过API－Gateway暴露到外部.
    * 调用此接口的主要是在定义设备的数据格式时调用.
    *
-   * @param dataIds     the DataDefinition id
+   * @param definitionIds     the DataDefinition id
    * @param developerId the developer id
    * @return a map of result.
    */
-  @GetMapping(value = Router.DATA_DEFINITION_ROOT)
-  public Map isExistDefinition(@RequestParam("dataIds") List<String> dataIds,
+  @GetMapping(value = Router.DATA_DEFINITION_ROOT, params = {"definitionIds", "developerId"})
+  public Map isExistDefinition(@RequestParam("definitionIds") List<String> definitionIds,
                                @RequestParam("developerId") String developerId) {
-    logger.info("Enter. dataDefinitionId: {}, developerId: {}.", dataIds, developerId);
-    Map<String, Boolean> result = definitionService.isExistDefinition(developerId, dataIds);
+    logger.info("Enter. dataDefinitionIds: {}, developerId: {}.", definitionIds, developerId);
+    Map<String, Boolean> result = definitionService.isExistDefinition(developerId, definitionIds);
 
     logger.info("Exit. result: {}.", result);
     return result;

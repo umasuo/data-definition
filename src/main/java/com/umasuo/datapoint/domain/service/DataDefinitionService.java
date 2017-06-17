@@ -131,12 +131,12 @@ public class DataDefinitionService {
    * Check if DataDefinition exist and belong to developer.
    *
    * @param developerId the developer id
-   * @param dataIds     the DataDefinition id list
+   * @param definitionIds     the DataDefinition id list
    * @return a map of result, key is the DataDefinition's id, and value is the exist result, if a
    * DataDefinition not exist or not belong to the developer, value is false.
    */
-  public Map<String, Boolean> isExistDefinition(String developerId, List<String> dataIds) {
-    logger.debug("Enter. developerId: {}, dataIds: {}.", developerId, dataIds);
+  public Map<String, Boolean> isExistDefinition(String developerId, List<String> definitionIds) {
+    logger.debug("Enter. developerId: {}, dataIds: {}.", developerId, definitionIds);
 
     DataDefinition sample = new DataDefinition();
     sample.setDeveloperId(developerId);
@@ -144,7 +144,7 @@ public class DataDefinitionService {
 
     List<DataDefinition> valueInDb = repository.findAll(example);
 
-    Map result = checkExistDefinition(valueInDb, dataIds);
+    Map result = checkExistDefinition(valueInDb, definitionIds);
 
     logger.debug("Exit. result: {}.", result);
 
