@@ -44,5 +44,5 @@ public class DataDefinitionDraft implements Serializable {
    * True means other developers can find this data, false means not.
    * Default is false;
    */
-  private Boolean openable;
+  private Boolean openable = Boolean.FALSE;
 }
