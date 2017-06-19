@@ -126,7 +126,7 @@ public class DataDefinitionController {
   public List<DataDefinitionView> getAllOpenData(@RequestParam String developerId) {
     logger.info("Enter. developerId: {}.", developerId);
 
-    List<DataDefinitionView> result = null;
+    List<DataDefinitionView> result = definitionService.getAllOpenData(developerId);
 
     logger.info("Exit. dataDefinition size: {}.", result.size());
 
