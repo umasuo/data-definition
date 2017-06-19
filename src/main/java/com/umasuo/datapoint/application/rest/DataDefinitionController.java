@@ -7,6 +7,8 @@ import com.umasuo.datapoint.application.service.DataDefinitionApplication;
 import com.umasuo.datapoint.domain.model.DataDefinition;
 import com.umasuo.datapoint.domain.service.DataDefinitionService;
 import com.umasuo.datapoint.infrastructure.Router;
+import com.umasuo.datapoint.infrastructure.update.UpdateRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -61,6 +64,31 @@ public class DataDefinitionController {
 
     logger.info("Exit. dataDefinition: {}", view);
     return view;
+  }
+
+  /**
+   * Update DataDefinition.
+   *
+   * @param id the DataDefinition id
+   * @param developerId the Developer id
+   * @param updateRequest the UpdateRequest
+   * @return updated DataDefinition
+   */
+  @PutMapping(value = Router.DATA_DEFINITION_WITH_ID)
+  public DataDefinitionView update(@PathVariable String id,
+      @RequestHeader String developerId,
+      @RequestBody @Valid UpdateRequest updateRequest) {
+    logger.info("Enter. dataDefinitionId: {}, updateRequest: {}, developerId: {}.",
+        id, updateRequest, developerId);
+
+    DataDefinitionView result =
+        definitionApplication.update(id, developerId, updateRequest.getVersion(), updateRequest
+            .getActions());
+
+    logger.trace("Updated definition: {}.", result);
+    logger.info("Exit.");
+
+    return result;
   }
 
   /**

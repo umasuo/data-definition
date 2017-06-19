@@ -66,6 +66,22 @@ public class DataDefinitionService {
   }
 
   /**
+   * Save DataDefinition.
+   *
+   * @param dataDefinition the data definition
+   * @return the data definition
+   */
+  public DataDefinition save(DataDefinition dataDefinition) {
+    logger.debug("Enter. dataDefinition: {}.", dataDefinition);
+
+    DataDefinition result = repository.save(dataDefinition);
+
+    logger.debug("Exit. saved DataDefinition: {}.", result);
+
+    return result;
+  }
+
+  /**
    * get one from db.
    *
    * @param id the id
@@ -84,8 +100,8 @@ public class DataDefinitionService {
   /**
    * Gets by data id.
    *
+   * @param dataId the data id
    * @param developerId the developer id
-   * @param dataId      the data id
    * @return the by data id
    */
   public DataDefinition getByDataId(String dataId, String developerId) {
@@ -131,7 +147,7 @@ public class DataDefinitionService {
    * Check if DataDefinition exist and belong to developer.
    *
    * @param developerId the developer id
-   * @param definitionIds     the DataDefinition id list
+   * @param definitionIds the DataDefinition id list
    * @return a map of result, key is the DataDefinition's id, and value is the exist result, if a
    * DataDefinition not exist or not belong to the developer, value is false.
    */
