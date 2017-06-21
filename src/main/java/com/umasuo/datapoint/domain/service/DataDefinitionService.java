@@ -191,4 +191,27 @@ public class DataDefinitionService {
 
     return result;
   }
+
+
+  /**
+   * Is exist name in developer.
+   *
+   * @param name the name
+   * @param developerId the developer id
+   * @return the boolean
+   */
+  public boolean isExistName(String name, String developerId) {
+    logger.debug("Enter. developerId: {}, name: {}.", developerId, name);
+    DataDefinition sample = new DataDefinition();
+    sample.setDeveloperId(developerId);
+    sample.setName(name);
+
+    Example<DataDefinition> example = Example.of(sample);
+
+    boolean result = repository.exists(example);
+
+    logger.debug("Exit. exist: {}.", result);
+
+    return result;
+  }
 }

@@ -9,6 +9,7 @@ import com.umasuo.datapoint.domain.model.DataDefinition;
 import com.umasuo.datapoint.domain.service.DataDefinitionService;
 import com.umasuo.datapoint.infrastructure.update.UpdateAction;
 import com.umasuo.datapoint.infrastructure.update.UpdaterService;
+import com.umasuo.exception.AlreadyExistException;
 import com.umasuo.exception.ConflictException;
 import com.umasuo.exception.ParametersException;
 
@@ -54,6 +55,11 @@ public class DataDefinitionApplication {
     try {
       //检查schema是否正确
       JsonSchemaFactory.byDefault().getJsonSchema(draft.getDataSchema());
+
+      if (definitionService.isExistName(draft.getName(), developerId)) {
+        logger.debug("Name: {} has existed in developer: {}.", draft.getName(), developerId);
+        throw new AlreadyExistException("Name has existed");
+      }
 
       DataDefinition definition = definitionService.create(DataDefinitionMapper.toEntity(draft,
           developerId));
