@@ -180,4 +180,14 @@ public class DataDefinitionService {
 
     return result;
   }
+
+  public List<DataDefinition> getByIds(List<String> dataDefinitionIds) {
+    logger.debug("Enter. dataDefinitionIds: {}.", dataDefinitionIds);
+
+    List<DataDefinition> result = repository.findAll(dataDefinitionIds);
+
+    logger.debug("Exit. dataDefinition size: {}.", result.size());
+
+    return result;
+  }
 }

@@ -140,4 +140,16 @@ public class DataDefinitionApplication {
       throw new ConflictException("DataDefinition version is not correct.");
     }
   }
+
+  public List<DataDefinitionView> getByIds(List<String> dataDefinitionIds) {
+    logger.debug("Enter. dataDefinitionIds: {}.", dataDefinitionIds);
+
+    List<DataDefinition> dataDefinitions = definitionService.getByIds(dataDefinitionIds);
+
+    List<DataDefinitionView> result = DataDefinitionMapper.toView(dataDefinitions);
+
+    logger.debug("Exit. dataDefinitions size: {}.", result.size());
+
+    return result;
+  }
 }

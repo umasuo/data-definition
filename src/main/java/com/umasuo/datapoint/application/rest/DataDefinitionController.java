@@ -153,6 +153,10 @@ public class DataDefinitionController {
 
     logger.info("Enter. dataDefinitionIds: {}.", dataDefinitionIds);
 
-    return null;
+    List<DataDefinitionView> result = definitionApplication.getByIds(dataDefinitionIds);
+
+    logger.info("Exit. dataDefinitions size: {}.", result.size());
+
+    return result;
   }
 }
