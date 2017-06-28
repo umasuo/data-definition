@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -51,13 +50,13 @@ public class DataDefinitionController {
    * <p>
    *
    * @param definitionDraft 数据定义draft
-   * @param developerId     开发者ID
+   * @param developerId 开发者ID
    * @param definitionDraft the definition draft
    * @return the data definition view
    */
   @PostMapping(value = Router.DATA_DEFINITION_ROOT)
   public DataDefinitionView create(@RequestBody @Valid DataDefinitionDraft definitionDraft,
-                                   @RequestHeader String developerId) {
+      @RequestHeader String developerId) {
     logger.info("Enter. definitionDraft: {}, developerId: {}.", definitionDraft, developerId);
 
     DataDefinitionView view = definitionApplication.create(definitionDraft, developerId);
@@ -110,12 +109,12 @@ public class DataDefinitionController {
   /**
    * 通过数据定义Id和开发者ID获取唯一的数据定义.
    *
-   * @param dataId      自定义的数据定义ID
+   * @param dataId 自定义的数据定义ID
    * @param developerId 开发者ID
-   * @return
    */
   @GetMapping(value = Router.DATA_DEFINITION_ROOT, params = {"dataId"})
-  public DataDefinitionView get(@RequestParam("dataId") String dataId, @RequestHeader String developerId) {
+  public DataDefinitionView get(@RequestParam("dataId") String dataId,
+      @RequestHeader String developerId) {
     logger.info("Enter. dataId: {}, developerId: {}.", dataId, developerId);
 
     DataDefinition definition = definitionService.getByDataId(dataId, developerId);
@@ -123,25 +122,6 @@ public class DataDefinitionController {
 
     logger.info("Exit. view: {}.", view);
     return view;
-  }
-
-  /**
-   * Check DataDefinition exist and belong to the developer.
-   * 此接口只开放给内部使用，而不通过API－Gateway暴露到外部.
-   * 调用此接口的主要是在定义设备的数据格式时调用.
-   *
-   * @param definitionIds     the DataDefinition id
-   * @param developerId the developer id
-   * @return a map of result.
-   */
-  @GetMapping(value = Router.DATA_DEFINITION_ROOT, params = {"definitionIds", "developerId"})
-  public Map isExistDefinition(@RequestParam("definitionIds") List<String> definitionIds,
-                               @RequestParam("developerId") String developerId) {
-    logger.info("Enter. dataDefinitionIds: {}, developerId: {}.", definitionIds, developerId);
-    Map<String, Boolean> result = definitionService.isExistDefinition(developerId, definitionIds);
-
-    logger.info("Exit. result: {}.", result);
-    return result;
   }
 
   /**

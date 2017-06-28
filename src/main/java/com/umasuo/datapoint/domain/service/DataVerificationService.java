@@ -5,13 +5,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
+import com.google.common.collect.Maps;
 import com.umasuo.datapoint.domain.model.DataDefinition;
 import com.umasuo.datapoint.infrastructure.util.JsonUtils;
 import com.umasuo.exception.ParametersException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Created by umasuo on 17/3/8.
@@ -37,10 +43,6 @@ public class DataVerificationService {
 
   /**
    * verify json string data.
-   *
-   * @param id
-   * @param data
-   * @return
    */
   public boolean verify(String id, String data) {
     try {
@@ -53,10 +55,6 @@ public class DataVerificationService {
 
   /**
    * verify JsonNode data.
-   *
-   * @param id
-   * @param data
-   * @return
    */
   public boolean verify(String id, JsonNode data) {
     DataDefinition dataDefinition = dataDefinitionService.getById(id);
@@ -67,10 +65,6 @@ public class DataVerificationService {
 
   /**
    * verify JsonNode data with developer id and data id.
-   *
-   * @param dataId
-   * @param data
-   * @return
    */
   public boolean verify(String developerId, String dataId, JsonNode data) {
     DataDefinition dataDefinition = dataDefinitionService.getByDataId(developerId, dataId);
@@ -81,10 +75,6 @@ public class DataVerificationService {
 
   /**
    * verify PointType
-   *
-   * @param dataSchema
-   * @param value
-   * @return
    */
   public boolean verify(JsonNode dataSchema, JsonNode value) {
     try {
@@ -95,4 +85,49 @@ public class DataVerificationService {
     }
   }
 
+  /**
+   * Check if DataDefinition exist and belong to developer.
+   *
+   * @param developerId the developer id
+   * @param definitionIds the DataDefinition id list
+   * @return a map of result, key is the DataDefinition's id, and value is the exist result, if a
+   * DataDefinition not exist or not belong to the developer, value is false.
+   */
+  public Map<String, Boolean> isExistDefinition(String developerId, List<String> definitionIds) {
+    logger.debug("Enter. developerId: {}, dataIds: {}.", developerId, definitionIds);
+
+    List<DataDefinition> valueInDb = dataDefinitionService.getDeveloperDefinition(developerId);
+
+    Map result = checkExistDefinition(valueInDb, definitionIds);
+
+    logger.debug("Exit. result: {}.", result);
+
+    return result;
+  }
+
+
+  /**
+   * Check if DataDefinition exist and belong to developer.
+   *
+   * @param definitions DataDefinition list
+   * @param dataIds the DataDefinition id list
+   * @return a map of result, key is the DataDefinition's id, and value is the exist result, if a
+   * DataDefinition not exist or not belong to the developer, value is false.
+   */
+  private Map checkExistDefinition(List<DataDefinition> definitions, List<String> dataIds) {
+
+    Map<String, Boolean> result = Maps.newHashMap();
+
+    dataIds.stream().forEach(s -> result.put(s, false));
+
+    Consumer<DataDefinition> consumer = dataDefinition -> {
+      if (dataIds.contains(dataDefinition.getId())) {
+        result.replace(dataDefinition.getId(), true);
+      }
+    };
+
+    definitions.stream().forEach(consumer);
+
+    return result;
+  }
 }

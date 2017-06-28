@@ -1,9 +1,5 @@
 package com.umasuo.datapoint.domain.service;
 
-import com.fasterxml.jackson.databind.node.JsonNodeCreator;
-import com.github.fge.jsonschema.core.exceptions.ProcessingException;
-import com.github.fge.jsonschema.main.JsonSchemaFactory;
-import com.google.common.collect.Maps;
 import com.umasuo.datapoint.application.dto.DataDefinitionView;
 import com.umasuo.datapoint.application.dto.mapper.DataDefinitionMapper;
 import com.umasuo.datapoint.application.service.RestClient;
@@ -11,7 +7,7 @@ import com.umasuo.datapoint.domain.model.DataDefinition;
 import com.umasuo.datapoint.infrastructure.repository.DataDefinitionRepository;
 import com.umasuo.exception.AlreadyExistException;
 import com.umasuo.exception.NotExistException;
-import com.umasuo.exception.ParametersException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +15,6 @@ import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
 
 /**
  * Created by umasuo on 17/3/8.
@@ -144,50 +138,22 @@ public class DataDefinitionService {
   }
 
   /**
-   * Check if DataDefinition exist and belong to developer.
+   * Get all data definitions by developer id.
    *
    * @param developerId the developer id
-   * @param definitionIds the DataDefinition id list
    * @return a map of result, key is the DataDefinition's id, and value is the exist result, if a
    * DataDefinition not exist or not belong to the developer, value is false.
    */
-  public Map<String, Boolean> isExistDefinition(String developerId, List<String> definitionIds) {
-    logger.debug("Enter. developerId: {}, dataIds: {}.", developerId, definitionIds);
+  public List<DataDefinition> getDeveloperDefinition(String developerId) {
+    logger.debug("Enter. developerId: {}.", developerId);
 
     DataDefinition sample = new DataDefinition();
     sample.setDeveloperId(developerId);
     Example<DataDefinition> example = Example.of(sample);
 
-    List<DataDefinition> valueInDb = repository.findAll(example);
+    List<DataDefinition> result = repository.findAll(example);
 
-    Map result = checkExistDefinition(valueInDb, definitionIds);
-
-    logger.debug("Exit. result: {}.", result);
-
-    return result;
-  }
-
-  /**
-   * Check if DataDefinition exist and belong to developer.
-   *
-   * @param definitions DataDefinition list
-   * @param dataIds     the DataDefinition id list
-   * @return a map of result, key is the DataDefinition's id, and value is the exist result, if a
-   * DataDefinition not exist or not belong to the developer, value is false.
-   */
-  private Map checkExistDefinition(List<DataDefinition> definitions, List<String> dataIds) {
-
-    Map<String, Boolean> result = Maps.newHashMap();
-
-    dataIds.stream().forEach(s -> result.put(s, false));
-
-    Consumer<DataDefinition> consumer = dataDefinition -> {
-      if (dataIds.contains(dataDefinition.getId())) {
-        result.replace(dataDefinition.getId(), true);
-      }
-    };
-
-    definitions.stream().forEach(consumer);
+    logger.debug("Exit. result size: {}.", result.size());
 
     return result;
   }
