@@ -140,4 +140,19 @@ public class DataDefinitionController {
 
     return result;
   }
+
+  /**
+   * 根据id直接获取数据定义，内部接口，由device-definition在ProductType中使用。
+   *
+   * @param dataDefinitionIds
+   * @return
+   */
+  @GetMapping(value = Router.DATA_DEFINITION_ROOT, params = {"dataDefinitionIds"})
+  public List<DataDefinitionView> getByIds(@RequestParam List<String> dataDefinitionIds){
+    // TODO: 17/6/28
+
+    logger.info("Enter. dataDefinitionIds: {}.", dataDefinitionIds);
+
+    return null;
+  }
 }
