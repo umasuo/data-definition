@@ -1,6 +1,7 @@
 package com.umasuo.datapoint.domain.model;
 
 import lombok.Data;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -19,9 +20,9 @@ import javax.persistence.Version;
  */
 @Data
 @Entity
-@Table(name = "device_data_definition")
+@Table(name = "platform_data_definition")
 @EntityListeners(AuditingEntityListener.class)
-public class DataDefinition {
+public class PlatformDataDefinition {
 
   @Id
   @GeneratedValue(generator = "uuid")
@@ -50,19 +51,14 @@ public class DataDefinition {
   private Integer version;
 
   /**
-   * which developer this data definition belong to.
-   */
-  private String developerId;
-
-  /**
-   * DeviceDefinition Id.
-   */
-  private String deviceDefinitionId;
-
-  /**
    * data id defined by the developer. 开发者ID＋ dataId全局唯一.
    */
   private String dataId;
+
+  /**
+   * ProductType id.
+   */
+  private String productTypeId;
 
   /**
    * the data structure.
@@ -79,10 +75,4 @@ public class DataDefinition {
    * describe the usage of this definition.
    */
   private String description;
-
-  /**
-   * The Openable.
-   * True means other developers can find this data, false means not.
-   */
-  private Boolean openable;
 }

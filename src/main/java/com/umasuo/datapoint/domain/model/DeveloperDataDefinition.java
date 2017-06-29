@@ -1,6 +1,7 @@
 package com.umasuo.datapoint.domain.model;
 
 import lombok.Data;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -19,9 +20,9 @@ import javax.persistence.Version;
  */
 @Data
 @Entity
-@Table(name = "device_data_definition")
+@Table(name = "developer_data_definition")
 @EntityListeners(AuditingEntityListener.class)
-public class DataDefinition {
+public class DeveloperDataDefinition {
 
   @Id
   @GeneratedValue(generator = "uuid")
@@ -53,11 +54,6 @@ public class DataDefinition {
    * which developer this data definition belong to.
    */
   private String developerId;
-
-  /**
-   * DeviceDefinition Id.
-   */
-  private String deviceDefinitionId;
 
   /**
    * data id defined by the developer. 开发者ID＋ dataId全局唯一.

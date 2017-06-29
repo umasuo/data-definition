@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
  * Created by umasuo on 17/2/10.
  */
 @Repository
-public interface DataDefinitionRepository extends JpaRepository<DataDefinition, String>,
-    QueryByExampleExecutor<DataDefinition> {
+public interface DataDefinitionRepository extends JpaRepository<DataDefinition, String> {
 
 }

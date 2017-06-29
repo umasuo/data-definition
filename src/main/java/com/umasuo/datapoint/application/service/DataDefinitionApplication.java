@@ -2,7 +2,6 @@ package com.umasuo.datapoint.application.service;
 
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
-import com.google.common.collect.Lists;
 import com.umasuo.datapoint.application.dto.DataDefinitionDraft;
 import com.umasuo.datapoint.application.dto.DataDefinitionView;
 import com.umasuo.datapoint.application.dto.mapper.DataDefinitionMapper;
