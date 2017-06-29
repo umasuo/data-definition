@@ -2,11 +2,15 @@ package com.umasuo.datapoint.application.service;
 
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
+import com.google.common.collect.Lists;
+import com.umasuo.datapoint.application.dto.CopyRequest;
 import com.umasuo.datapoint.application.dto.DataDefinitionDraft;
 import com.umasuo.datapoint.application.dto.DataDefinitionView;
 import com.umasuo.datapoint.application.dto.mapper.DataDefinitionMapper;
-import com.umasuo.datapoint.domain.model.DataDefinition;
+import com.umasuo.datapoint.domain.model.DeviceDataDefinition;
+import com.umasuo.datapoint.domain.model.PlatformDataDefinition;
 import com.umasuo.datapoint.domain.service.DataDefinitionService;
+import com.umasuo.datapoint.domain.service.PlatformDataService;
 import com.umasuo.datapoint.infrastructure.update.UpdateAction;
 import com.umasuo.datapoint.infrastructure.update.UpdaterService;
 import com.umasuo.exception.AlreadyExistException;
@@ -39,6 +43,9 @@ public class DataDefinitionApplication {
   @Autowired
   private transient DataDefinitionService definitionService;
 
+  @Autowired
+  private transient PlatformDataService platformDataService;
+
   /**
    * The UpdateService.
    */
@@ -46,7 +53,7 @@ public class DataDefinitionApplication {
   private transient UpdaterService updaterService;
 
   /**
-   * Create DataDefinition.
+   * Create DeviceDataDefinition.
    *
    * @param draft the draft
    * @param developerId the developer id
@@ -63,15 +70,16 @@ public class DataDefinitionApplication {
         throw new AlreadyExistException("Name has existed");
       }
 
-      DataDefinition definition = definitionService.create(DataDefinitionMapper.toEntity(draft,
-          developerId));
+      DeviceDataDefinition definition = definitionService
+          .create(DataDefinitionMapper.toEntity(draft,
+              developerId));
       DataDefinitionView view = DataDefinitionMapper.toView(definition);
 
       logger.debug("Exit. view: {}.", view);
       return view;
     } catch (ProcessingException e) {
-      logger.trace("DataDefinition is not a validator JsonSchema.", e);
-      throw new ParametersException("DataDefinition is not a validator JsonSchema.");
+      logger.trace("DeviceDataDefinition is not a validator JsonSchema.", e);
+      throw new ParametersException("DeviceDataDefinition is not a validator JsonSchema.");
     }
   }
 
@@ -85,7 +93,7 @@ public class DataDefinitionApplication {
   public DataDefinitionView getById(String id, String developerId) {
     logger.debug("Enter. id: {}, developerId: {}.", id, developerId);
 
-    DataDefinition definition = definitionService.getById(id);
+    DeviceDataDefinition definition = definitionService.getById(id);
     if (!definition.getDeveloperId().equals(developerId)) {
       throw new ParametersException("");
     }
@@ -95,7 +103,7 @@ public class DataDefinitionApplication {
   }
 
   /**
-   * Update DataDefinition.
+   * Update DeviceDataDefinition.
    *
    * @param id the id
    * @param developerId the developer id
@@ -108,7 +116,7 @@ public class DataDefinitionApplication {
     logger.debug("Enter: id: {}, version: {}, developerId actions: {}",
         id, version, developerId, actions);
 
-    DataDefinition definition = definitionService.getById(id);
+    DeviceDataDefinition definition = definitionService.getById(id);
     if (!definition.getDeveloperId().equals(developerId)) {
       logger.debug("Can not update dataDefinition: {} not belong to developer: {}.",
           id, developerId);
@@ -120,11 +128,11 @@ public class DataDefinitionApplication {
 
     actions.stream().forEach(action -> updaterService.handle(definition, action));
 
-    DataDefinition updatedDefinition = definitionService.save(definition);
+    DeviceDataDefinition updatedDefinition = definitionService.save(definition);
 
     DataDefinitionView result = DataDefinitionMapper.toView(updatedDefinition);
 
-    logger.trace("Updated DataDefinition: {}.", result);
+    logger.trace("Updated DeviceDataDefinition: {}.", result);
     logger.debug("Exit.");
 
     return result;
@@ -138,42 +146,67 @@ public class DataDefinitionApplication {
    */
   private void checkVersion(Integer inputVersion, Integer existVersion) {
     if (!inputVersion.equals(existVersion)) {
-      logger.debug("DataDefinition version is not correct.");
-      throw new ConflictException("DataDefinition version is not correct.");
+      logger.debug("DeviceDataDefinition version is not correct.");
+      throw new ConflictException("DeviceDataDefinition version is not correct.");
     }
   }
 
-  public List<DataDefinitionView> getByIds(List<String> dataDefinitionIds) {
-    logger.debug("Enter. dataDefinitionIds: {}.", dataDefinitionIds);
+  public List<String> handleCopyRequest(String developerId, CopyRequest request) {
+    logger.info("Enter. developerId: {}, copyRequest: {}.", developerId, request);
+    List<String> newDataDefinitionIds = Lists.newArrayList();
 
-    List<DataDefinition> dataDefinitions = definitionService.getByIds(dataDefinitionIds);
-
-    List<DataDefinitionView> result = DataDefinitionMapper.toView(dataDefinitions);
-
-    logger.debug("Exit. dataDefinitions size: {}.", result.size());
-
-    return result;
-  }
-
-  public List<String> copy(String developerId, List<String> dataDefinitionIds) {
-    logger.info("Enter. developerId: {}, dataDefinitionIds: {}.", developerId, dataDefinitionIds);
-
-    List<DataDefinition> dataDefinitions = definitionService.getByIds(dataDefinitionIds);
-
-    if (dataDefinitionIds.size() != dataDefinitions.size()) {
-      logger.debug("Can not find all dataDefinition: {}.", dataDefinitionIds);
-      throw new NotExistException("DataDefinition not exist");
+    boolean isCopyFromPlatform = request.getPlatformDataDefinitionIds() != null &&
+        !request.getPlatformDataDefinitionIds().isEmpty();
+    if (isCopyFromPlatform) {
+      List<String> copyPlatformDataIds = copyFromPlatformData(
+          developerId, request.getDeviceDefinitionId(), request.getPlatformDataDefinitionIds());
+      newDataDefinitionIds.addAll(copyPlatformDataIds);
     }
 
-    List<DataDefinition> newDataDefinitions = DataDefinitionMapper
-        .copy(developerId, dataDefinitions);
+    boolean isCopyFromDeveloper = request.getDeveloperDataDefinitionIds() != null &&
+        !request.getDeveloperDataDefinitionIds().isEmpty();
+    if (!isCopyFromDeveloper) {
+      List<String> copyDeveloperDataIds = copyFromDeveloperData(
+          developerId, request.getDeviceDefinitionId(), request.getDeveloperDataDefinitionIds());
+      newDataDefinitionIds.addAll(copyDeveloperDataIds);
+    }
 
-    List<DataDefinition> savedDataDefinitions = definitionService.saveAll(newDataDefinitions);
-
-    List<String> newDataDefinitionIds = savedDataDefinitions.stream().map(DataDefinition::getId).collect(
-        Collectors.toList());
+    if (!isCopyFromPlatform && !isCopyFromDeveloper) {
+      logger.debug("Can not copy from null request data definition id");
+      throw new ParametersException("Can not copy from null request data definition id");
+    }
 
     logger.info("Exit. newDataDefinitionIds: {}.", newDataDefinitionIds);
     return newDataDefinitionIds;
   }
+
+  private List<String> copyFromDeveloperData(String developerId, String deviceDefinitionId,
+      List<String> developerDataDefinitionIds) {
+    // TODO: 17/6/29  
+    return Lists.newArrayList();
+  }
+
+  private List<String> copyFromPlatformData(String developerId, String deviceDefinitionId,
+      List<String> requestIds) {
+
+    List<PlatformDataDefinition> dataDefinitions =
+        platformDataService.getByIds(requestIds);
+
+    if (requestIds.size() != dataDefinitions.size()) {
+      logger.debug("Can not find all dataDefinition: {}.", requestIds);
+      throw new NotExistException("DeviceDataDefinition not exist");
+    }
+
+    List<DeviceDataDefinition> newDataDefinitions = DataDefinitionMapper
+        .copyFromPlatformData(developerId, dataDefinitions);
+
+    List<DeviceDataDefinition> savedDataDefinitions = definitionService.saveAll(newDataDefinitions);
+
+    List<String> newDataDefinitionIds = savedDataDefinitions.stream()
+        .map(DeviceDataDefinition::getId).collect(
+            Collectors.toList());
+
+    return newDataDefinitionIds;
+  }
+
 }

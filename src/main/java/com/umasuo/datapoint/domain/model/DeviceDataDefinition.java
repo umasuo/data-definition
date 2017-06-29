@@ -21,7 +21,7 @@ import javax.persistence.Version;
 @Entity
 @Table(name = "device_data_definition")
 @EntityListeners(AuditingEntityListener.class)
-public class DataDefinition {
+public class DeviceDataDefinition {
 
   @Id
   @GeneratedValue(generator = "uuid")
@@ -84,5 +84,5 @@ public class DataDefinition {
    * The Openable.
    * True means other developers can find this data, false means not.
    */
-  private Boolean openable;
+  private Boolean openable = false;
 }

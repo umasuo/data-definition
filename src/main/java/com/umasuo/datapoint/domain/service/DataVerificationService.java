@@ -6,7 +6,7 @@ import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.google.common.collect.Maps;
-import com.umasuo.datapoint.domain.model.DataDefinition;
+import com.umasuo.datapoint.domain.model.DeviceDataDefinition;
 import com.umasuo.datapoint.infrastructure.util.JsonUtils;
 import com.umasuo.exception.ParametersException;
 
@@ -57,7 +57,7 @@ public class DataVerificationService {
    * verify JsonNode data.
    */
   public boolean verify(String id, JsonNode data) {
-    DataDefinition dataDefinition = dataDefinitionService.getById(id);
+    DeviceDataDefinition dataDefinition = dataDefinitionService.getById(id);
     JsonNode dataType = JsonUtils.deserialize(dataDefinition.getDataSchema(), JsonNode.class);
 
     return verify(dataType, data);
@@ -67,7 +67,7 @@ public class DataVerificationService {
    * verify JsonNode data with developer id and data id.
    */
   public boolean verify(String developerId, String dataId, JsonNode data) {
-    DataDefinition dataDefinition = dataDefinitionService.getByDataId(developerId, dataId);
+    DeviceDataDefinition dataDefinition = dataDefinitionService.getByDataId(developerId, dataId);
     JsonNode dataType = JsonUtils.deserialize(dataDefinition.getDataSchema(), JsonNode.class);
 
     return verify(dataType, data);
@@ -86,17 +86,17 @@ public class DataVerificationService {
   }
 
   /**
-   * Check if DataDefinition exist and belong to developer.
+   * Check if DeviceDataDefinition exist and belong to developer.
    *
    * @param developerId the developer id
-   * @param definitionIds the DataDefinition id list
-   * @return a map of result, key is the DataDefinition's id, and value is the exist result, if a
-   * DataDefinition not exist or not belong to the developer, value is false.
+   * @param definitionIds the DeviceDataDefinition id list
+   * @return a map of result, key is the DeviceDataDefinition's id, and value is the exist result, if a
+   * DeviceDataDefinition not exist or not belong to the developer, value is false.
    */
   public Map<String, Boolean> isExistDefinition(String developerId, List<String> definitionIds) {
     logger.debug("Enter. developerId: {}, dataIds: {}.", developerId, definitionIds);
 
-    List<DataDefinition> valueInDb = dataDefinitionService.getDeveloperDefinition(developerId);
+    List<DeviceDataDefinition> valueInDb = dataDefinitionService.getDeveloperDefinition(developerId);
 
     Map result = checkExistDefinition(valueInDb, definitionIds);
 
@@ -107,20 +107,20 @@ public class DataVerificationService {
 
 
   /**
-   * Check if DataDefinition exist and belong to developer.
+   * Check if DeviceDataDefinition exist and belong to developer.
    *
-   * @param definitions DataDefinition list
-   * @param dataIds the DataDefinition id list
-   * @return a map of result, key is the DataDefinition's id, and value is the exist result, if a
-   * DataDefinition not exist or not belong to the developer, value is false.
+   * @param definitions DeviceDataDefinition list
+   * @param dataIds the DeviceDataDefinition id list
+   * @return a map of result, key is the DeviceDataDefinition's id, and value is the exist result, if a
+   * DeviceDataDefinition not exist or not belong to the developer, value is false.
    */
-  private Map checkExistDefinition(List<DataDefinition> definitions, List<String> dataIds) {
+  private Map checkExistDefinition(List<DeviceDataDefinition> definitions, List<String> dataIds) {
 
     Map<String, Boolean> result = Maps.newHashMap();
 
     dataIds.stream().forEach(s -> result.put(s, false));
 
-    Consumer<DataDefinition> consumer = dataDefinition -> {
+    Consumer<DeviceDataDefinition> consumer = dataDefinition -> {
       if (dataIds.contains(dataDefinition.getId())) {
         result.replace(dataDefinition.getId(), true);
       }

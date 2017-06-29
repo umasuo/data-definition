@@ -2,13 +2,13 @@ package com.umasuo.datapoint.application.rest;
 
 import com.umasuo.datapoint.application.dto.DataDefinitionDraft;
 import com.umasuo.datapoint.application.dto.DataDefinitionView;
+import com.umasuo.datapoint.application.dto.CopyRequest;
 import com.umasuo.datapoint.application.dto.mapper.DataDefinitionMapper;
 import com.umasuo.datapoint.application.service.DataDefinitionApplication;
-import com.umasuo.datapoint.domain.model.DataDefinition;
+import com.umasuo.datapoint.domain.model.DeviceDataDefinition;
 import com.umasuo.datapoint.domain.service.DataDefinitionService;
 import com.umasuo.datapoint.infrastructure.Router;
 import com.umasuo.datapoint.infrastructure.update.UpdateRequest;
-import com.umasuo.exception.ParametersException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,20 +26,18 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Size;
 
 /**
  * Created by umasuo on 17/3/8.
  */
 @RestController
 @CrossOrigin
-public class DataDefinitionController {
-
+public class DeviceDataController {
 
   /**
    * logger.
    */
-  private final static Logger logger = LoggerFactory.getLogger(DataDefinitionController.class);
+  private final static Logger logger = LoggerFactory.getLogger(DeviceDataController.class);
 
   @Autowired
   private transient DataDefinitionService definitionService;
@@ -69,28 +67,22 @@ public class DataDefinitionController {
 
   @PostMapping("/data-definitions/copy")
   public List<String> copy(@RequestHeader("developerId") String developerId,
-      @RequestBody @Valid @Size(min = 1, message = "DataDefinitions can not be empty")
-          List<String> dataDefinitionIds) {
-    logger.info("Enter. developerId: {}, dataDefinitionIds: {}.", developerId, dataDefinitionIds);
+      @RequestBody @Valid CopyRequest request) {
+    logger.info("Enter. developerId: {}, copyRequest: {}.", developerId, request);
 
-    if (dataDefinitionIds == null || dataDefinitionIds.isEmpty()) {
-      logger.info("Can not copy null data definition.");
-      throw new ParametersException("DataDefinitionIds can not be null or empty");
-    }
+    List<String> dateDefinitionIds = definitionApplication.handleCopyRequest(developerId, request);
 
-    List<String> newDataDefinitionIds = definitionApplication.copy(developerId, dataDefinitionIds);
-
-    logger.info("Exit. newDataDefinitionIds: {}.", newDataDefinitionIds);
-    return newDataDefinitionIds;
+    logger.info("Exit. newDataDefinitionIds: {}.", dateDefinitionIds);
+    return dateDefinitionIds;
   }
 
   /**
-   * Update DataDefinition.
+   * Update DeviceDataDefinition.
    *
-   * @param id the DataDefinition id
+   * @param id the DeviceDataDefinition id
    * @param developerId the Developer id
    * @param updateRequest the UpdateRequest
-   * @return updated DataDefinition
+   * @return updated DeviceDataDefinition
    */
   @PutMapping(value = Router.DATA_DEFINITION_WITH_ID)
   public DataDefinitionView update(@PathVariable String id,
@@ -136,7 +128,7 @@ public class DataDefinitionController {
       @RequestHeader String developerId) {
     logger.info("Enter. dataId: {}, developerId: {}.", dataId, developerId);
 
-    DataDefinition definition = definitionService.getByDataId(dataId, developerId);
+    DeviceDataDefinition definition = definitionService.getByDataId(dataId, developerId);
     DataDefinitionView view = DataDefinitionMapper.toView(definition);
 
     logger.info("Exit. view: {}.", view);
@@ -156,25 +148,6 @@ public class DataDefinitionController {
     List<DataDefinitionView> result = definitionService.getAllOpenData(developerId);
 
     logger.info("Exit. dataDefinition size: {}.", result.size());
-
-    return result;
-  }
-
-  /**
-   * 根据id直接获取数据定义，内部接口，由device-definition在ProductType中使用。
-   *
-   * @param dataDefinitionIds
-   * @return
-   */
-  @GetMapping(value = Router.DATA_DEFINITION_ROOT, params = {"dataDefinitionIds"})
-  public List<DataDefinitionView> getByIds(@RequestParam List<String> dataDefinitionIds){
-    // TODO: 17/6/28
-
-    logger.info("Enter. dataDefinitionIds: {}.", dataDefinitionIds);
-
-    List<DataDefinitionView> result = definitionApplication.getByIds(dataDefinitionIds);
-
-    logger.info("Exit. dataDefinitions size: {}.", result.size());
 
     return result;
   }

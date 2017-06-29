@@ -3,7 +3,7 @@ package com.umasuo.datapoint.domain.service;
 import com.umasuo.datapoint.application.dto.DataDefinitionView;
 import com.umasuo.datapoint.application.dto.mapper.DataDefinitionMapper;
 import com.umasuo.datapoint.application.service.RestClient;
-import com.umasuo.datapoint.domain.model.DataDefinition;
+import com.umasuo.datapoint.domain.model.DeviceDataDefinition;
 import com.umasuo.datapoint.infrastructure.repository.DataDefinitionRepository;
 import com.umasuo.exception.AlreadyExistException;
 import com.umasuo.exception.NotExistException;
@@ -42,15 +42,15 @@ public class DataDefinitionService {
    * @param sample the sample
    * @return the data definition
    */
-  public DataDefinition create(DataDefinition sample) {
+  public DeviceDataDefinition create(DeviceDataDefinition sample) {
     logger.debug("Enter. sample: {}.", sample);
 
     // 同一个开发者下，起dataId需要唯一
-    DataDefinition ex = new DataDefinition();
+    DeviceDataDefinition ex = new DeviceDataDefinition();
     ex.setDataId(sample.getDataId());
     ex.setDeveloperId(sample.getDeveloperId());
-    Example<DataDefinition> example = Example.of(ex);
-    DataDefinition valueInDb = this.repository.findOne(example);
+    Example<DeviceDataDefinition> example = Example.of(ex);
+    DeviceDataDefinition valueInDb = this.repository.findOne(example);
     if (valueInDb != null) {
       throw new AlreadyExistException("Data Definition already exist for dataId: "
           + ex.getDataId());
@@ -60,17 +60,17 @@ public class DataDefinitionService {
   }
 
   /**
-   * Save DataDefinition.
+   * Save DeviceDataDefinition.
    *
    * @param dataDefinition the data definition
    * @return the data definition
    */
-  public DataDefinition save(DataDefinition dataDefinition) {
+  public DeviceDataDefinition save(DeviceDataDefinition dataDefinition) {
     logger.debug("Enter. dataDefinition: {}.", dataDefinition);
 
-    DataDefinition result = repository.save(dataDefinition);
+    DeviceDataDefinition result = repository.save(dataDefinition);
 
-    logger.debug("Exit. saved DataDefinition: {}.", result);
+    logger.debug("Exit. saved DeviceDataDefinition: {}.", result);
 
     return result;
   }
@@ -81,12 +81,12 @@ public class DataDefinitionService {
    * @param id the id
    * @return by id
    */
-  public DataDefinition getById(String id) {
+  public DeviceDataDefinition getById(String id) {
     logger.debug("GetDataDefinitionById: id: {}", id);
 
-    DataDefinition valueInDb = this.repository.findOne(id);
+    DeviceDataDefinition valueInDb = this.repository.findOne(id);
     if (valueInDb == null) {
-      throw new NotExistException("DataDefinition not exist.");
+      throw new NotExistException("DeviceDataDefinition not exist.");
     }
     return valueInDb;
   }
@@ -98,16 +98,16 @@ public class DataDefinitionService {
    * @param developerId the developer id
    * @return the by data id
    */
-  public DataDefinition getByDataId(String dataId, String developerId) {
+  public DeviceDataDefinition getByDataId(String dataId, String developerId) {
     logger.debug("Enter. dataId: {}, developerId: {}.", dataId, developerId);
 
-    DataDefinition sample = new DataDefinition();
+    DeviceDataDefinition sample = new DeviceDataDefinition();
     sample.setDeveloperId(developerId);
     sample.setDataId(dataId);
-    Example<DataDefinition> example = Example.of(sample);
-    DataDefinition valueInDb = this.repository.findOne(example);
+    Example<DeviceDataDefinition> example = Example.of(sample);
+    DeviceDataDefinition valueInDb = this.repository.findOne(example);
     if (valueInDb == null) {
-      throw new NotExistException("DataDefinition not exist for dataId: " + dataId);
+      throw new NotExistException("DeviceDataDefinition not exist for dataId: " + dataId);
     }
 
     logger.debug("Exit. dataDefinition: {}.", valueInDb);
@@ -123,12 +123,12 @@ public class DataDefinitionService {
   public List<DataDefinitionView> getAllOpenData(String developerId) {
     logger.info("Enter. developerId: {}.", developerId);
 
-    DataDefinition sample = new DataDefinition();
+    DeviceDataDefinition sample = new DeviceDataDefinition();
     sample.setOpenable(true);
     sample.setDeveloperId(developerId);
 
-    Example<DataDefinition> example = Example.of(sample);
-    List<DataDefinition> openDataDefinitions = repository.findAll(example);
+    Example<DeviceDataDefinition> example = Example.of(sample);
+    List<DeviceDataDefinition> openDataDefinitions = repository.findAll(example);
 
     List<DataDefinitionView> result = DataDefinitionMapper.toView(openDataDefinitions);
 
@@ -141,17 +141,17 @@ public class DataDefinitionService {
    * Get all data definitions by developer id.
    *
    * @param developerId the developer id
-   * @return a map of result, key is the DataDefinition's id, and value is the exist result, if a
-   * DataDefinition not exist or not belong to the developer, value is false.
+   * @return a map of result, key is the DeviceDataDefinition's id, and value is the exist result, if a
+   * DeviceDataDefinition not exist or not belong to the developer, value is false.
    */
-  public List<DataDefinition> getDeveloperDefinition(String developerId) {
+  public List<DeviceDataDefinition> getDeveloperDefinition(String developerId) {
     logger.debug("Enter. developerId: {}.", developerId);
 
-    DataDefinition sample = new DataDefinition();
+    DeviceDataDefinition sample = new DeviceDataDefinition();
     sample.setDeveloperId(developerId);
-    Example<DataDefinition> example = Example.of(sample);
+    Example<DeviceDataDefinition> example = Example.of(sample);
 
-    List<DataDefinition> result = repository.findAll(example);
+    List<DeviceDataDefinition> result = repository.findAll(example);
 
     logger.debug("Exit. result size: {}.", result.size());
 
@@ -168,11 +168,11 @@ public class DataDefinitionService {
    */
   public boolean isExistName(String name, String developerId) {
     logger.debug("Enter. developerId: {}, name: {}.", developerId, name);
-    DataDefinition sample = new DataDefinition();
+    DeviceDataDefinition sample = new DeviceDataDefinition();
     sample.setDeveloperId(developerId);
     sample.setName(name);
 
-    Example<DataDefinition> example = Example.of(sample);
+    Example<DeviceDataDefinition> example = Example.of(sample);
 
     boolean result = repository.exists(example);
 
@@ -181,19 +181,19 @@ public class DataDefinitionService {
     return result;
   }
 
-  public List<DataDefinition> getByIds(List<String> dataDefinitionIds) {
+  public List<DeviceDataDefinition> getByIds(List<String> dataDefinitionIds) {
     logger.debug("Enter. dataDefinitionIds: {}.", dataDefinitionIds);
 
-    List<DataDefinition> result = repository.findAll(dataDefinitionIds);
+    List<DeviceDataDefinition> result = repository.findAll(dataDefinitionIds);
 
     logger.debug("Exit. dataDefinition size: {}.", result.size());
 
     return result;
   }
 
-  public List<DataDefinition> saveAll(List<DataDefinition> dataDefinitions) {
+  public List<DeviceDataDefinition> saveAll(List<DeviceDataDefinition> dataDefinitions) {
     logger.debug("Enter. dataDefinitions size: {}.", dataDefinitions.size());
-    List<DataDefinition> savedDataDefinitions = repository.save(dataDefinitions);
+    List<DeviceDataDefinition> savedDataDefinitions = repository.save(dataDefinitions);
 
     logger.debug("Exit.");
 

@@ -29,4 +29,8 @@ public class Router {
    * The constant OPEN_DATA_DEFINITION.
    */
   public static final String OPEN_DATA_DEFINITION = DATA_DEFINITION_ROOT + "/open";
+
+  public static final String PLATFORM_DATA_ROOT = DATA_DEFINITION_ROOT + "/platform";
+
+  public static final String DEVELOPER_DATA_ROOT = DATA_DEFINITION_ROOT + "/developer";
 }

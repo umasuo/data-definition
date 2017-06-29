@@ -72,11 +72,11 @@ public class DataVerificationController {
   }
 
   /**
-   * Check DataDefinition exist and belong to the developer.
+   * Check DeviceDataDefinition exist and belong to the developer.
    * 此接口只开放给内部使用，而不通过API－Gateway暴露到外部.
    * 此接口的主要是在定义设备的数据格式时调用.
    *
-   * @param definitionIds the DataDefinition id
+   * @param definitionIds the DeviceDataDefinition id
    * @param developerId the developer id
    * @return a map of result.
    */
