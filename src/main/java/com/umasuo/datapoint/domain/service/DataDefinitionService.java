@@ -190,4 +190,13 @@ public class DataDefinitionService {
 
     return result;
   }
+
+  public List<DataDefinition> saveAll(List<DataDefinition> dataDefinitions) {
+    logger.debug("Enter. dataDefinitions size: {}.", dataDefinitions.size());
+    List<DataDefinition> savedDataDefinitions = repository.save(dataDefinitions);
+
+    logger.debug("Exit.");
+
+    return savedDataDefinitions;
+  }
 }

@@ -8,6 +8,7 @@ import com.umasuo.datapoint.domain.model.DataDefinition;
 import com.umasuo.datapoint.domain.service.DataDefinitionService;
 import com.umasuo.datapoint.infrastructure.Router;
 import com.umasuo.datapoint.infrastructure.update.UpdateRequest;
+import com.umasuo.exception.ParametersException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Size;
 
 /**
  * Created by umasuo on 17/3/8.
@@ -63,6 +65,23 @@ public class DataDefinitionController {
 
     logger.info("Exit. dataDefinition: {}", view);
     return view;
+  }
+
+  @PostMapping("/data-definitions/copy")
+  public List<String> copy(@RequestHeader("developerId") String developerId,
+      @RequestBody @Valid @Size(min = 1, message = "DataDefinitions can not be empty")
+          List<String> dataDefinitionIds) {
+    logger.info("Enter. developerId: {}, dataDefinitionIds: {}.", developerId, dataDefinitionIds);
+
+    if (dataDefinitionIds == null || dataDefinitionIds.isEmpty()) {
+      logger.info("Can not copy null data definition.");
+      throw new ParametersException("DataDefinitionIds can not be null or empty");
+    }
+
+    List<String> newDataDefinitionIds = definitionApplication.copy(developerId, dataDefinitionIds);
+
+    logger.info("Exit. newDataDefinitionIds: {}.", newDataDefinitionIds);
+    return newDataDefinitionIds;
   }
 
   /**

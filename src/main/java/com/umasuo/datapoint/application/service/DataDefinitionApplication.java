@@ -2,6 +2,7 @@ package com.umasuo.datapoint.application.service;
 
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
+import com.google.common.collect.Lists;
 import com.umasuo.datapoint.application.dto.DataDefinitionDraft;
 import com.umasuo.datapoint.application.dto.DataDefinitionView;
 import com.umasuo.datapoint.application.dto.mapper.DataDefinitionMapper;
@@ -11,6 +12,7 @@ import com.umasuo.datapoint.infrastructure.update.UpdateAction;
 import com.umasuo.datapoint.infrastructure.update.UpdaterService;
 import com.umasuo.exception.AlreadyExistException;
 import com.umasuo.exception.ConflictException;
+import com.umasuo.exception.NotExistException;
 import com.umasuo.exception.ParametersException;
 
 import org.slf4j.Logger;
@@ -19,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by umasuo on 17/6/11.
@@ -151,5 +154,27 @@ public class DataDefinitionApplication {
     logger.debug("Exit. dataDefinitions size: {}.", result.size());
 
     return result;
+  }
+
+  public List<String> copy(String developerId, List<String> dataDefinitionIds) {
+    logger.info("Enter. developerId: {}, dataDefinitionIds: {}.", developerId, dataDefinitionIds);
+
+    List<DataDefinition> dataDefinitions = definitionService.getByIds(dataDefinitionIds);
+
+    if (dataDefinitionIds.size() != dataDefinitions.size()) {
+      logger.debug("Can not find all dataDefinition: {}.", dataDefinitionIds);
+      throw new NotExistException("DataDefinition not exist");
+    }
+
+    List<DataDefinition> newDataDefinitions = DataDefinitionMapper
+        .copy(developerId, dataDefinitions);
+
+    List<DataDefinition> savedDataDefinitions = definitionService.saveAll(newDataDefinitions);
+
+    List<String> newDataDefinitionIds = savedDataDefinitions.stream().map(DataDefinition::getId).collect(
+        Collectors.toList());
+
+    logger.info("Exit. newDataDefinitionIds: {}.", newDataDefinitionIds);
+    return newDataDefinitionIds;
   }
 }

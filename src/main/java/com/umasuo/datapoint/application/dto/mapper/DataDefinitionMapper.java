@@ -76,4 +76,27 @@ public class DataDefinitionMapper {
     }
     return model;
   }
+
+  public static List<DataDefinition> copy(String developerId, List<DataDefinition> dataDefinitions) {
+    List<DataDefinition> newDataDefinitions = Lists.newArrayList();
+
+    dataDefinitions.stream().forEach(
+        dataDefinition -> newDataDefinitions.add(copy(developerId, dataDefinition))
+    );
+
+    return newDataDefinitions;
+  }
+
+  public static DataDefinition copy(String developerId, DataDefinition dataDefinition) {
+    DataDefinition newDataDefinition = new DataDefinition();
+
+    newDataDefinition.setName(dataDefinition.getName());
+    newDataDefinition.setDeveloperId(developerId);
+    newDataDefinition.setDescription(dataDefinition.getDescription());
+    newDataDefinition.setOpenable(dataDefinition.getOpenable());
+    newDataDefinition.setDataId(dataDefinition.getDataId());
+    newDataDefinition.setDataSchema(dataDefinition.getDataSchema());
+
+    return newDataDefinition;
+  }
 }
