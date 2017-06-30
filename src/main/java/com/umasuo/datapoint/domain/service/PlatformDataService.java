@@ -47,6 +47,12 @@ public class PlatformDataService {
     return result;
   }
 
+  /**
+   * 根据id列表查询对应的PlatformDataDefinition。
+   *
+   * @param dataDefinitionIds id列表
+   * @return PlatformDataDefinition列表
+   */
   public List<PlatformDataDefinition> getByIds(List<String> dataDefinitionIds) {
     logger.debug("Enter. dataDefinitionIds: {}.", dataDefinitionIds);
 

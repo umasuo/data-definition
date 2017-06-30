@@ -139,22 +139,18 @@ public class DataDefinitionApplication {
   }
 
   /**
-   * check the version.
+   * 处理拷贝数据定义的请求。
+   * 请求分为开发者的数据定义和平台的数据定义。
    *
-   * @param inputVersion Integer
-   * @param existVersion Integer
+   * @param developerId
+   * @param request
+   * @return
    */
-  private void checkVersion(Integer inputVersion, Integer existVersion) {
-    if (!inputVersion.equals(existVersion)) {
-      logger.debug("DeviceDataDefinition version is not correct.");
-      throw new ConflictException("DeviceDataDefinition version is not correct.");
-    }
-  }
-
   public List<String> handleCopyRequest(String developerId, CopyRequest request) {
     logger.info("Enter. developerId: {}, copyRequest: {}.", developerId, request);
     List<String> newDataDefinitionIds = Lists.newArrayList();
 
+    // 拷贝平台的数据定义
     boolean isCopyFromPlatform = request.getPlatformDataDefinitionIds() != null &&
         !request.getPlatformDataDefinitionIds().isEmpty();
     if (isCopyFromPlatform) {
@@ -163,6 +159,7 @@ public class DataDefinitionApplication {
       newDataDefinitionIds.addAll(copyPlatformDataIds);
     }
 
+    // 拷贝开发者的数据定义
     boolean isCopyFromDeveloper = request.getDeveloperDataDefinitionIds() != null &&
         !request.getDeveloperDataDefinitionIds().isEmpty();
     if (!isCopyFromDeveloper) {
@@ -171,6 +168,7 @@ public class DataDefinitionApplication {
       newDataDefinitionIds.addAll(copyDeveloperDataIds);
     }
 
+    // 平台和开发者的数据定义不能同时为空
     if (!isCopyFromPlatform && !isCopyFromDeveloper) {
       logger.debug("Can not copy from null request data definition id");
       throw new ParametersException("Can not copy from null request data definition id");
@@ -180,12 +178,29 @@ public class DataDefinitionApplication {
     return newDataDefinitionIds;
   }
 
+  /**
+   * 拷贝开发者的数据定义
+   *
+   * @param developerId
+   * @param deviceDefinitionId
+   * @param developerDataDefinitionIds
+   * @return
+   */
   private List<String> copyFromDeveloperData(String developerId, String deviceDefinitionId,
       List<String> developerDataDefinitionIds) {
-    // TODO: 17/6/29
+    // TODO: 17/6/29 暂未实现开发者定义的数据定义
     return Lists.newArrayList();
   }
 
+
+  /**
+   * 拷贝平台的数据定义.
+   *
+   * @param developerId
+   * @param deviceDefinitionId
+   * @param requestIds
+   * @return
+   */
   private List<String> copyFromPlatformData(String developerId, String deviceDefinitionId,
       List<String> requestIds) {
 
@@ -207,5 +222,18 @@ public class DataDefinitionApplication {
             Collectors.toList());
 
     return newDataDefinitionIds;
+  }
+
+  /**
+   * check the version.
+   *
+   * @param inputVersion Integer
+   * @param existVersion Integer
+   */
+  private void checkVersion(Integer inputVersion, Integer existVersion) {
+    if (!inputVersion.equals(existVersion)) {
+      logger.debug("DeviceDataDefinition version is not correct.");
+      throw new ConflictException("DeviceDataDefinition version is not correct.");
+    }
   }
 }

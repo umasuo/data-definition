@@ -28,6 +28,9 @@ public class PlatformDataController {
    */
   private final static Logger logger = LoggerFactory.getLogger(PlatformDataController.class);
 
+  /**
+   *
+   */
   @Autowired
   private transient PlatformDataService definitionService;
 
@@ -51,12 +54,17 @@ public class PlatformDataController {
     return result;
   }
 
+  /**
+   * 根据ID列表查询对应的PlatformDataDefinitionView列表。
+   *
+   * @param dataDefinitionIds id列表
+   * @return PlatformDataDefinitionView列表
+   */
   @GetMapping(value = Router.PLATFORM_DATA_ROOT, params = {"dataDefinitionIds"})
   public List<PlatformDataDefinitionView> getByIds(@RequestParam List<String> dataDefinitionIds) {
     logger.info("Enter. dataDefinitionIds: {}.", dataDefinitionIds);
 
-    List<PlatformDataDefinition> dataDefinitions =
-        definitionService.getByIds(dataDefinitionIds);
+    List<PlatformDataDefinition> dataDefinitions = definitionService.getByIds(dataDefinitionIds);
 
     List<PlatformDataDefinitionView> result = PlatformDataMapper.toModel(dataDefinitions);
 

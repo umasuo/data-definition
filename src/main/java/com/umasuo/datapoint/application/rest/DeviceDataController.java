@@ -1,8 +1,8 @@
 package com.umasuo.datapoint.application.rest;
 
+import com.umasuo.datapoint.application.dto.CopyRequest;
 import com.umasuo.datapoint.application.dto.DataDefinitionDraft;
 import com.umasuo.datapoint.application.dto.DataDefinitionView;
-import com.umasuo.datapoint.application.dto.CopyRequest;
 import com.umasuo.datapoint.application.dto.mapper.DataDefinitionMapper;
 import com.umasuo.datapoint.application.service.DataDefinitionApplication;
 import com.umasuo.datapoint.domain.model.DeviceDataDefinition;
@@ -65,7 +65,14 @@ public class DeviceDataController {
     return view;
   }
 
-  @PostMapping("/data-definitions/copy")
+  /**
+   * 拷贝数据定义的接口。
+   *
+   * @param developerId developer id
+   * @param request 拷贝请求
+   * @return 拷贝后生成的数据定义id
+   */
+  @PostMapping(Router.DATA_COPY)
   public List<String> copy(@RequestHeader("developerId") String developerId,
       @RequestBody @Valid CopyRequest request) {
     logger.info("Enter. developerId: {}, copyRequest: {}.", developerId, request);

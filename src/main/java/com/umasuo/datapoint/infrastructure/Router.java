@@ -26,6 +26,11 @@ public class Router {
   public static final String DATA_VERIFY_WITH_DATA_ID = DATA_DEFINITION_ROOT + "/verify";
 
   /**
+   * Copy root.
+   */
+  public static final String DATA_COPY = DATA_DEFINITION_ROOT + "/copy";
+
+  /**
    * The constant OPEN_DATA_DEFINITION.
    */
   public static final String OPEN_DATA_DEFINITION = DATA_DEFINITION_ROOT + "/open";
