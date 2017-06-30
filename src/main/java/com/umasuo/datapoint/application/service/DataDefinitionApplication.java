@@ -7,9 +7,11 @@ import com.umasuo.datapoint.application.dto.CopyRequest;
 import com.umasuo.datapoint.application.dto.DataDefinitionDraft;
 import com.umasuo.datapoint.application.dto.DataDefinitionView;
 import com.umasuo.datapoint.application.dto.mapper.DataDefinitionMapper;
+import com.umasuo.datapoint.domain.model.DeveloperDataDefinition;
 import com.umasuo.datapoint.domain.model.DeviceDataDefinition;
 import com.umasuo.datapoint.domain.model.PlatformDataDefinition;
 import com.umasuo.datapoint.domain.service.DataDefinitionService;
+import com.umasuo.datapoint.domain.service.DeveloperDataService;
 import com.umasuo.datapoint.domain.service.PlatformDataService;
 import com.umasuo.datapoint.infrastructure.update.UpdateAction;
 import com.umasuo.datapoint.infrastructure.update.UpdaterService;
@@ -45,6 +47,9 @@ public class DataDefinitionApplication {
 
   @Autowired
   private transient PlatformDataService platformDataService;
+
+  @Autowired
+  private transient DeveloperDataService developerDataService;
 
   /**
    * The UpdateService.
@@ -141,10 +146,6 @@ public class DataDefinitionApplication {
   /**
    * 处理拷贝数据定义的请求。
    * 请求分为开发者的数据定义和平台的数据定义。
-   *
-   * @param developerId
-   * @param request
-   * @return
    */
   public List<String> handleCopyRequest(String developerId, CopyRequest request) {
     logger.info("Enter. developerId: {}, copyRequest: {}.", developerId, request);
@@ -180,26 +181,29 @@ public class DataDefinitionApplication {
 
   /**
    * 拷贝开发者的数据定义
-   *
-   * @param developerId
-   * @param deviceDefinitionId
-   * @param developerDataDefinitionIds
-   * @return
    */
   private List<String> copyFromDeveloperData(String developerId, String deviceDefinitionId,
-      List<String> developerDataDefinitionIds) {
-    // TODO: 17/6/29 暂未实现开发者定义的数据定义
-    return Lists.newArrayList();
-  }
+      List<String> requestIds) {
+    List<DeveloperDataDefinition> dataDefinitions = developerDataService.getByIds(requestIds);
 
+    if (requestIds.size() != dataDefinitions.size()) {
+      logger.debug("Can not find all dataDefinition: {}.", requestIds);
+      throw new NotExistException("DeviceDataDefinition not exist");
+    }
+
+    List<DeviceDataDefinition> newDataDefinitions = DataDefinitionMapper
+        .copyFromDeveloperData(developerId, dataDefinitions);
+
+    List<DeviceDataDefinition> savedDataDefinitions = definitionService.saveAll(newDataDefinitions);
+
+    List<String> newDataDefinitionIds = savedDataDefinitions.stream()
+        .map(DeviceDataDefinition::getId).collect(Collectors.toList());
+
+    return newDataDefinitionIds;
+  }
 
   /**
    * 拷贝平台的数据定义.
-   *
-   * @param developerId
-   * @param deviceDefinitionId
-   * @param requestIds
-   * @return
    */
   private List<String> copyFromPlatformData(String developerId, String deviceDefinitionId,
       List<String> requestIds) {
@@ -218,8 +222,7 @@ public class DataDefinitionApplication {
     List<DeviceDataDefinition> savedDataDefinitions = definitionService.saveAll(newDataDefinitions);
 
     List<String> newDataDefinitionIds = savedDataDefinitions.stream()
-        .map(DeviceDataDefinition::getId).collect(
-            Collectors.toList());
+        .map(DeviceDataDefinition::getId).collect(Collectors.toList());
 
     return newDataDefinitionIds;
   }

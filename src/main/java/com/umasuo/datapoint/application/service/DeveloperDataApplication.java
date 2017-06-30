@@ -77,8 +77,7 @@ public class DeveloperDataApplication {
 
     return result;
   }
-
-
+  
   public List<DeveloperDataDefinitionView> getDeveloperData(String developerId) {
     LOG.info("Enter. developerId: {}.", developerId);
 

@@ -143,4 +143,13 @@ public class DeveloperDataService {
 
     return result;
   }
+
+  public List<DeveloperDataDefinition> getByIds(List<String> developerDataDefinitionIds) {
+    logger.debug("Enter. developerDataDefinitionIds: {}.", developerDataDefinitionIds);
+
+    List<DeveloperDataDefinition> result = repository.findAll(developerDataDefinitionIds);
+
+    logger.debug("Exit.");
+    return result;
+  }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 import com.umasuo.datapoint.application.dto.DataDefinitionDraft;
 import com.umasuo.datapoint.application.dto.DataDefinitionView;
+import com.umasuo.datapoint.domain.model.DeveloperDataDefinition;
 import com.umasuo.datapoint.domain.model.DeviceDataDefinition;
 import com.umasuo.datapoint.domain.model.PlatformDataDefinition;
 import com.umasuo.datapoint.infrastructure.util.JsonUtils;
@@ -99,5 +100,29 @@ public class DataDefinitionMapper {
     );
 
     return newDataDefinitions;
+  }
+
+  public static List<DeviceDataDefinition> copyFromDeveloperData(String developerId,
+      List<DeveloperDataDefinition> dataDefinitions) {
+    List<DeviceDataDefinition> newDataDefinitions = Lists.newArrayList();
+
+    dataDefinitions.stream().forEach(
+        dataDefinition -> newDataDefinitions.add(copyFromDeveloperData(developerId, dataDefinition))
+    );
+
+    return newDataDefinitions;
+  }
+
+  public static DeviceDataDefinition copyFromDeveloperData(String developerId,
+      DeveloperDataDefinition dataDefinition) {
+    DeviceDataDefinition newDataDefinition = new DeviceDataDefinition();
+
+    newDataDefinition.setName(dataDefinition.getName());
+    newDataDefinition.setDeveloperId(developerId);
+    newDataDefinition.setDescription(dataDefinition.getDescription());
+    newDataDefinition.setDataId(dataDefinition.getDataId());
+    newDataDefinition.setDataSchema(dataDefinition.getDataSchema());
+
+    return newDataDefinition;
   }
 }
