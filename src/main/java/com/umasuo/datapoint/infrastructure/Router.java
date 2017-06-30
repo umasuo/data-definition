@@ -38,4 +38,6 @@ public class Router {
   public static final String PLATFORM_DATA_ROOT = DATA_DEFINITION_ROOT + "/platform";
 
   public static final String DEVELOPER_DATA_ROOT = DATA_DEFINITION_ROOT + "/developer";
+
+  public static final String DEVELOPER_DATA_WITH_ID = DEVELOPER_DATA_ROOT + "/{id}";
 }

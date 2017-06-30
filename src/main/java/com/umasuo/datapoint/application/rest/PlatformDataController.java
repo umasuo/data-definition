@@ -29,7 +29,7 @@ public class PlatformDataController {
   private final static Logger logger = LoggerFactory.getLogger(PlatformDataController.class);
 
   /**
-   *
+   * PlatformDataService.
    */
   @Autowired
   private transient PlatformDataService definitionService;
