@@ -182,7 +182,7 @@ public class DataDefinitionApplication {
 
   private List<String> copyFromDeveloperData(String developerId, String deviceDefinitionId,
       List<String> developerDataDefinitionIds) {
-    // TODO: 17/6/29  
+    // TODO: 17/6/29
     return Lists.newArrayList();
   }
 
@@ -208,5 +208,4 @@ public class DataDefinitionApplication {
 
     return newDataDefinitionIds;
   }
-
 }

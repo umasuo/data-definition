@@ -15,7 +15,9 @@ dependencies {
     // Postgresql driver
     compile('org.postgresql:postgresql:9.4.1212')
 
-    compile('com.google.api-client:google-api-client:1.22.0')
+    // Google guava lib
+    compile('com.google.guava:guava:22.0')
+
     // For json web token
     compile("io.jsonwebtoken:jjwt:0.7.0")
 
@@ -27,5 +29,6 @@ dependencies {
     //common tool
     compile('org.apache.commons:commons-lang3:3.4')
 
+    // Commons lib from github project
     compile("com.umasuo:commons:0.0.1")
 }
