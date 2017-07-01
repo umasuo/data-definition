@@ -7,7 +7,6 @@ import com.umasuo.datapoint.domain.model.DeviceDataDefinition;
 import com.umasuo.datapoint.infrastructure.repository.DataDefinitionRepository;
 import com.umasuo.exception.AlreadyExistException;
 import com.umasuo.exception.NotExistException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,10 +44,11 @@ public class DataDefinitionService {
   public DeviceDataDefinition create(DeviceDataDefinition sample) {
     logger.debug("Enter. sample: {}.", sample);
 
-    // 同一个开发者下，起dataId需要唯一
+    // 同一个开发者的同一个产品下，其dataId需要唯一
     DeviceDataDefinition ex = new DeviceDataDefinition();
     ex.setDataId(sample.getDataId());
     ex.setDeveloperId(sample.getDeveloperId());
+    ex.setProductId(sample.getProductId());
     Example<DeviceDataDefinition> example = Example.of(ex);
     DeviceDataDefinition valueInDb = this.repository.findOne(example);
     if (valueInDb != null) {
@@ -94,7 +94,7 @@ public class DataDefinitionService {
   /**
    * Gets by data id.
    *
-   * @param dataId the data id
+   * @param dataId      the data id
    * @param developerId the developer id
    * @return the by data id
    */
@@ -141,7 +141,8 @@ public class DataDefinitionService {
    * Get all data definitions by developer id.
    *
    * @param developerId the developer id
-   * @return a map of result, key is the DeviceDataDefinition's id, and value is the exist result, if a
+   * @return a map of result, key is the DeviceDataDefinition's id, and value is the exist
+   * result, if a
    * DeviceDataDefinition not exist or not belong to the developer, value is false.
    */
   public List<DeviceDataDefinition> getDeveloperDefinition(String developerId) {
@@ -162,7 +163,7 @@ public class DataDefinitionService {
   /**
    * Is exist name in developer.
    *
-   * @param name the name
+   * @param name        the name
    * @param developerId the developer id
    * @return the boolean
    */

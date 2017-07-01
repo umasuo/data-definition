@@ -60,7 +60,7 @@ public class DataDefinitionApplication {
   /**
    * Create DeviceDataDefinition.
    *
-   * @param draft the draft
+   * @param draft       the draft
    * @param developerId the developer id
    * @return the data definition view
    */
@@ -75,13 +75,14 @@ public class DataDefinitionApplication {
         throw new AlreadyExistException("Name has existed");
       }
 
+
       DeviceDataDefinition definition = definitionService
-          .create(DataDefinitionMapper.toEntity(draft,
-              developerId));
+          .create(DataDefinitionMapper.toEntity(draft, developerId));
       DataDefinitionView view = DataDefinitionMapper.toView(definition);
 
       logger.debug("Exit. view: {}.", view);
       return view;
+      //todo 增加一个validator
     } catch (ProcessingException e) {
       logger.trace("DeviceDataDefinition is not a validator JsonSchema.", e);
       throw new ParametersException("DeviceDataDefinition is not a validator JsonSchema.");
@@ -91,7 +92,7 @@ public class DataDefinitionApplication {
   /**
    * Gets by id.
    *
-   * @param id the id
+   * @param id          the id
    * @param developerId the developer id
    * @return the by id
    */
@@ -110,14 +111,14 @@ public class DataDefinitionApplication {
   /**
    * Update DeviceDataDefinition.
    *
-   * @param id the id
+   * @param id          the id
    * @param developerId the developer id
-   * @param version the version
-   * @param actions the actions
+   * @param version     the version
+   * @param actions     the actions
    * @return updated DataDefinitionView
    */
   public DataDefinitionView update(String id, String developerId, Integer version,
-      List<UpdateAction> actions) {
+                                   List<UpdateAction> actions) {
     logger.debug("Enter: id: {}, version: {}, developerId actions: {}",
         id, version, developerId, actions);
 
@@ -183,7 +184,7 @@ public class DataDefinitionApplication {
    * 拷贝开发者的数据定义
    */
   private List<String> copyFromDeveloperData(String developerId, String deviceDefinitionId,
-      List<String> requestIds) {
+                                             List<String> requestIds) {
     List<DeveloperDataDefinition> dataDefinitions = developerDataService.getByIds(requestIds);
 
     if (requestIds.size() != dataDefinitions.size()) {
@@ -206,7 +207,7 @@ public class DataDefinitionApplication {
    * 拷贝平台的数据定义.
    */
   private List<String> copyFromPlatformData(String developerId, String deviceDefinitionId,
-      List<String> requestIds) {
+                                            List<String> requestIds) {
 
     List<PlatformDataDefinition> dataDefinitions =
         platformDataService.getByIds(requestIds);

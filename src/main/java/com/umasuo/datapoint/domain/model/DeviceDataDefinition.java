@@ -55,9 +55,9 @@ public class DeviceDataDefinition {
   private String developerId;
 
   /**
-   * DeviceDefinition Id.
+   * product Id.
    */
-  private String deviceDefinitionId;
+  private String productId;
 
   /**
    * data id defined by the developer. 开发者ID＋ dataId全局唯一.

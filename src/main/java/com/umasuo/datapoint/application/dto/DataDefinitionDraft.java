@@ -29,6 +29,11 @@ public class DataDefinitionDraft implements Serializable {
   private String name;
 
   /**
+   * 产品ID.
+   */
+  @NotNull
+  private String productId;
+  /**
    * 数据定义介绍，主要用于介绍此数据格点的用途，目的等。
    */
   private String description;
@@ -44,5 +49,5 @@ public class DataDefinitionDraft implements Serializable {
    * True means other developers can find this data, false means not.
    * Default is false;
    */
-  private Boolean openable = Boolean.FALSE;
+  private Boolean openable;
 }

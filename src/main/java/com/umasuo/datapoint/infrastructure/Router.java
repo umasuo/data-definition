@@ -16,24 +16,9 @@ public class Router {
   public static final String DATA_DEFINITION_WITH_ID = DATA_DEFINITION_ROOT + "/{id}";
 
   /**
-   * verify url.
-   */
-  public static final String DATA_VERIFY = DATA_DEFINITION_WITH_ID + "/verify";
-
-  /**
-   * verify url.
-   */
-  public static final String DATA_VERIFY_WITH_DATA_ID = DATA_DEFINITION_ROOT + "/verify";
-
-  /**
    * Copy root.
    */
   public static final String DATA_COPY = DATA_DEFINITION_ROOT + "/copy";
-
-  /**
-   * The constant OPEN_DATA_DEFINITION.
-   */
-  public static final String OPEN_DATA_DEFINITION = DATA_DEFINITION_ROOT + "/open";
 
   public static final String PLATFORM_DATA_ROOT = DATA_DEFINITION_ROOT + "/platform";
 

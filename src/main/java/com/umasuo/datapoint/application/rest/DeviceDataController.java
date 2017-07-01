@@ -50,13 +50,13 @@ public class DeviceDataController {
    * <p>
    *
    * @param definitionDraft 数据定义draft
-   * @param developerId 开发者ID
+   * @param developerId     开发者ID
    * @param definitionDraft the definition draft
    * @return the data definition view
    */
   @PostMapping(value = Router.DATA_DEFINITION_ROOT)
   public DataDefinitionView create(@RequestBody @Valid DataDefinitionDraft definitionDraft,
-      @RequestHeader String developerId) {
+                                   @RequestHeader String developerId) {
     logger.info("Enter. definitionDraft: {}, developerId: {}.", definitionDraft, developerId);
 
     DataDefinitionView view = definitionApplication.create(definitionDraft, developerId);
@@ -67,14 +67,15 @@ public class DeviceDataController {
 
   /**
    * 拷贝数据定义的接口。
+   * 内部接口
    *
    * @param developerId developer id
-   * @param request 拷贝请求
+   * @param request     拷贝请求
    * @return 拷贝后生成的数据定义id
    */
   @PostMapping(Router.DATA_COPY)
   public List<String> copy(@RequestHeader("developerId") String developerId,
-      @RequestBody @Valid CopyRequest request) {
+                           @RequestBody @Valid CopyRequest request) {
     logger.info("Enter. developerId: {}, copyRequest: {}.", developerId, request);
 
     List<String> dateDefinitionIds = definitionApplication.handleCopyRequest(developerId, request);
@@ -86,15 +87,15 @@ public class DeviceDataController {
   /**
    * Update DeviceDataDefinition.
    *
-   * @param id the DeviceDataDefinition id
-   * @param developerId the Developer id
+   * @param id            the DeviceDataDefinition id
+   * @param developerId   the Developer id
    * @param updateRequest the UpdateRequest
    * @return updated DeviceDataDefinition
    */
   @PutMapping(value = Router.DATA_DEFINITION_WITH_ID)
   public DataDefinitionView update(@PathVariable String id,
-      @RequestHeader String developerId,
-      @RequestBody @Valid UpdateRequest updateRequest) {
+                                   @RequestHeader String developerId,
+                                   @RequestBody @Valid UpdateRequest updateRequest) {
     logger.info("Enter. dataDefinitionId: {}, updateRequest: {}, developerId: {}.",
         id, updateRequest, developerId);
 
@@ -126,13 +127,14 @@ public class DeviceDataController {
 
   /**
    * 通过数据定义Id和开发者ID获取唯一的数据定义.
+   * todo 暂时没用
    *
-   * @param dataId 自定义的数据定义ID
+   * @param dataId      自定义的数据定义ID
    * @param developerId 开发者ID
    */
   @GetMapping(value = Router.DATA_DEFINITION_ROOT, params = {"dataId"})
   public DataDefinitionView get(@RequestParam("dataId") String dataId,
-      @RequestHeader String developerId) {
+                                @RequestHeader String developerId) {
     logger.info("Enter. dataId: {}, developerId: {}.", dataId, developerId);
 
     DeviceDataDefinition definition = definitionService.getByDataId(dataId, developerId);
@@ -148,8 +150,9 @@ public class DeviceDataController {
    * @param developerId the developer id
    * @return the all open data
    */
-  @GetMapping(value = Router.OPEN_DATA_DEFINITION)
-  public List<DataDefinitionView> getAllOpenData(@RequestParam String developerId) {
+  @GetMapping(value = Router.DATA_DEFINITION_ROOT, params = {"isOpen", "developerId"})
+  public List<DataDefinitionView> getAllOpenData(@RequestParam String developerId,
+                                                 @RequestParam Boolean isOpen) {
     logger.info("Enter. developerId: {}.", developerId);
 
     List<DataDefinitionView> result = definitionService.getAllOpenData(developerId);

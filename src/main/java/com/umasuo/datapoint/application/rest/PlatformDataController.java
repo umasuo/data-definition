@@ -5,7 +5,6 @@ import com.umasuo.datapoint.application.dto.mapper.PlatformDataMapper;
 import com.umasuo.datapoint.domain.model.PlatformDataDefinition;
 import com.umasuo.datapoint.domain.service.PlatformDataService;
 import com.umasuo.datapoint.infrastructure.Router;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,7 @@ public class PlatformDataController {
   private transient PlatformDataService definitionService;
 
   /**
-   * Gets all open data definition.
+   * Get data definitions by product type.
    *
    * @param productTypeId the developer id
    * @return the all open data
@@ -50,7 +49,6 @@ public class PlatformDataController {
     List<PlatformDataDefinitionView> result = PlatformDataMapper.toModel(dataDefinitions);
 
     logger.info("Exit. dataDefinition size: {}.", result.size());
-
     return result;
   }
 
@@ -69,7 +67,6 @@ public class PlatformDataController {
     List<PlatformDataDefinitionView> result = PlatformDataMapper.toModel(dataDefinitions);
 
     logger.info("Exit. dataDefinition size: {}.", result.size());
-
     return result;
   }
 }

@@ -33,6 +33,7 @@ public class DeveloperDataApplication {
   public DeveloperDataDefinitionView create(String developerId,
       DeveloperDataDefinitionDraft draft) {
 
+    //todo 需要验证deta schema是否合法
     boolean isNameExist = developerDataService.isNameExist(developerId, draft.getName());
 
     if (isNameExist) {
@@ -59,15 +60,16 @@ public class DeveloperDataApplication {
   }
 
   public void delete(String developerId, String id) {
-    LOG.info("Enter. developerId: {}, dataDefinition id: {}.", developerId, id);
+    LOG.debug("Enter. developerId: {}, dataDefinition id: {}.", developerId, id);
 
+    //todo version
     getById(developerId, id);
 
     developerDataService.delete(id);
   }
 
   public DeveloperDataDefinitionView getOne(String developerId, String id) {
-    LOG.info("Enter. developerId: {}, dataDefinition id: {}.", developerId, id);
+    LOG.debug("Enter. developerId: {}, dataDefinition id: {}.", developerId, id);
 
     DeveloperDataDefinition dataDefinition = getById(developerId, id);
 
@@ -79,14 +81,14 @@ public class DeveloperDataApplication {
   }
   
   public List<DeveloperDataDefinitionView> getDeveloperData(String developerId) {
-    LOG.info("Enter. developerId: {}.", developerId);
+    LOG.debug("Enter. developerId: {}.", developerId);
 
     List<DeveloperDataDefinition> dataDefinitions =
         developerDataService.getDeveloperDefinition(developerId);
 
     List<DeveloperDataDefinitionView> result = DeveloperDataMapper.toModel(dataDefinitions);
 
-    LOG.info("Exit. developerDataDefinition size: {}.", result.size());
+    LOG.debug("Exit. developerDataDefinition size: {}.", result.size());
 
     return result;
   }

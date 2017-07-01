@@ -67,19 +67,19 @@ public class DataDefinitionMapper {
   public static DeviceDataDefinition toEntity(DataDefinitionDraft draft, String developerId) {
 
     DeviceDataDefinition model = null;
-    if (draft != null) {
-      model = new DeviceDataDefinition();
-      model.setDeveloperId(developerId);
-      model.setDataId(draft.getDataId());
-      model.setName(draft.getName());
-      model.setDescription(draft.getDescription());
-      model.setDataSchema(draft.getDataSchema().toString());
-      model.setOpenable(draft.getOpenable());
-    }
+    model = new DeviceDataDefinition();
+    model.setDeveloperId(developerId);
+    model.setProductId(draft.getProductId());
+    model.setDataId(draft.getDataId());
+    model.setName(draft.getName());
+    model.setDescription(draft.getDescription());
+    model.setDataSchema(draft.getDataSchema().toString());
+    model.setOpenable(draft.getOpenable());
     return model;
   }
 
-  public static DeviceDataDefinition copyFromPlatformData(String developerId, PlatformDataDefinition dataDefinition) {
+  public static DeviceDataDefinition copyFromPlatformData(String developerId,
+                                                          PlatformDataDefinition dataDefinition) {
     DeviceDataDefinition newDataDefinition = new DeviceDataDefinition();
 
     newDataDefinition.setName(dataDefinition.getName());
@@ -92,7 +92,8 @@ public class DataDefinitionMapper {
   }
 
   public static List<DeviceDataDefinition> copyFromPlatformData(String developerId,
-      List<PlatformDataDefinition> dataDefinitions) {
+                                                                List<PlatformDataDefinition>
+                                                                    dataDefinitions) {
     List<DeviceDataDefinition> newDataDefinitions = Lists.newArrayList();
 
     dataDefinitions.stream().forEach(
@@ -103,7 +104,8 @@ public class DataDefinitionMapper {
   }
 
   public static List<DeviceDataDefinition> copyFromDeveloperData(String developerId,
-      List<DeveloperDataDefinition> dataDefinitions) {
+                                                                 List<DeveloperDataDefinition>
+                                                                     dataDefinitions) {
     List<DeviceDataDefinition> newDataDefinitions = Lists.newArrayList();
 
     dataDefinitions.stream().forEach(
@@ -114,7 +116,7 @@ public class DataDefinitionMapper {
   }
 
   public static DeviceDataDefinition copyFromDeveloperData(String developerId,
-      DeveloperDataDefinition dataDefinition) {
+                                                           DeveloperDataDefinition dataDefinition) {
     DeviceDataDefinition newDataDefinition = new DeviceDataDefinition();
 
     newDataDefinition.setName(dataDefinition.getName());
