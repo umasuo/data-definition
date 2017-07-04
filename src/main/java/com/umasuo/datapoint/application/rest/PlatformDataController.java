@@ -50,10 +50,7 @@ public class PlatformDataController {
   public List<PlatformDataDefinitionView> getProductTypeData(@RequestParam String productTypeId) {
     logger.info("Enter. productTypeId: {}.", productTypeId);
 
-    List<PlatformDataDefinition> dataDefinitions =
-        definitionService.getByProductTypeId(productTypeId);
-
-    List<PlatformDataDefinitionView> result = PlatformDataMapper.toModel(dataDefinitions);
+    List<PlatformDataDefinitionView> result = dataApplication.getByProductType(productTypeId);
 
     logger.info("Exit. dataDefinition size: {}.", result.size());
     return result;

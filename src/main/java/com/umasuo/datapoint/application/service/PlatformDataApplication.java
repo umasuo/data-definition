@@ -33,22 +33,44 @@ public class PlatformDataApplication {
   public Map<String, List<PlatformDataDefinitionView>> getAll() {
     LOG.info("Enter.");
 
-    Map<String, List<PlatformDataDefinition>> cachePlatformDefinitions =
+    Map<String, List<PlatformDataDefinition>> cacheDefinitions =
         cacheApplication.getAllPlatformDefinition();
 
-    if (cachePlatformDefinitions == null || cachePlatformDefinitions.isEmpty()) {
+    if (cacheDefinitions == null || cacheDefinitions.isEmpty()) {
       LOG.debug("Cache fail, get from database.");
       List<PlatformDataDefinition> dataDefinitions = platformDataService.getAll();
 
-     cachePlatformDefinitions = PlatformDataMapper.toEntityMap(dataDefinitions);
+      cacheDefinitions = PlatformDataMapper.toEntityMap(dataDefinitions);
 
-      cacheApplication.batchCachePlatformDefinition(cachePlatformDefinitions);
+      cacheApplication.batchCachePlatformDefinition(cacheDefinitions);
     }
 
     Map<String, List<PlatformDataDefinitionView>> result =
-        PlatformDataMapper.toModelMap(cachePlatformDefinitions);
+        PlatformDataMapper.toModelMap(cacheDefinitions);
 
     LOG.info("Exit. dataDefinition size: {}.", result.size());
+    return result;
+  }
+
+  public List<PlatformDataDefinitionView> getByProductType(String productTypeId) {
+    LOG.debug("Enter. productTypeId: {}.", productTypeId);
+
+    List<PlatformDataDefinition> cacheDefinitions =
+        cacheApplication.getPlatformDefinitionByType(productTypeId);
+
+    if (cacheDefinitions == null || cacheDefinitions.isEmpty()) {
+      List<PlatformDataDefinition> dataDefinitions = platformDataService.getAll();
+
+      Map<String, List<PlatformDataDefinition>> entityMap =
+          PlatformDataMapper.toEntityMap(dataDefinitions);
+
+      cacheApplication.batchCachePlatformDefinition(entityMap);
+
+      cacheDefinitions = entityMap.get(productTypeId);
+    }
+
+    List<PlatformDataDefinitionView> result = PlatformDataMapper.toModel(cacheDefinitions);
+
     return result;
   }
 }

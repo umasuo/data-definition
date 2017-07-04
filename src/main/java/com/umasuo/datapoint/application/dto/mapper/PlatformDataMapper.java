@@ -27,7 +27,9 @@ public final class PlatformDataMapper {
   public static List<PlatformDataDefinitionView> toModel(List<PlatformDataDefinition> entities) {
     List<PlatformDataDefinitionView> models = Lists.newArrayList();
 
-    entities.stream().forEach(entity -> models.add(toModel(entity)));
+    if (entities != null) {
+      entities.stream().forEach(entity -> models.add(toModel(entity)));
+    }
 
     return models;
   }

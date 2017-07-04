@@ -49,4 +49,13 @@ public class CacheApplication {
 
     LOG.debug("Exit.");
   }
+
+  public List<PlatformDataDefinition> getPlatformDefinitionByType(String productTypeId) {
+    LOG.debug("Enter. productTypeId: {}.", productTypeId);
+    List<PlatformDataDefinition> result = (List<PlatformDataDefinition>) redisTemplate.opsForHash()
+            .get(RedisUtils.PLATFORM_DEFINITION_KEY, productTypeId);
+
+    LOG.debug("Exit. result: {}.", result);
+    return result;
+  }
 }
