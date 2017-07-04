@@ -10,7 +10,7 @@ import java.io.Serializable;
  * Created by umasuo on 17/3/8.
  */
 @Data
-public class PlatformDataDefinitionView implements Serializable {
+public final class PlatformDataDefinitionView implements Serializable {
 
   /**
    * auto generated serial id.

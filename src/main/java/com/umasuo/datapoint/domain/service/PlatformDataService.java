@@ -62,4 +62,14 @@ public class PlatformDataService {
 
     return dataDefinitions;
   }
+
+  public List<PlatformDataDefinition> getAll() {
+    logger.debug("Enter.");
+
+    List<PlatformDataDefinition> dataDefinitions = repository.findAll();
+
+    logger.debug("Exit. platformDataDefinition size: {}.", dataDefinitions.size());
+
+    return dataDefinitions;
+  }
 }
