@@ -164,7 +164,7 @@ public class DataDefinitionApplication {
     // 拷贝开发者的数据定义
     boolean isCopyFromDeveloper = request.getDeveloperDataDefinitionIds() != null &&
         !request.getDeveloperDataDefinitionIds().isEmpty();
-    if (!isCopyFromDeveloper) {
+    if (isCopyFromDeveloper) {
       List<String> copyDeveloperDataIds = copyFromDeveloperData(
           developerId, request.getDeviceDefinitionId(), request.getDeveloperDataDefinitionIds());
       newDataDefinitionIds.addAll(copyDeveloperDataIds);
