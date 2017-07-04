@@ -2,12 +2,16 @@ package com.umasuo.datapoint.application.dto.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.umasuo.datapoint.application.dto.DeveloperDataDefinitionDraft;
 import com.umasuo.datapoint.application.dto.DeveloperDataDefinitionView;
 import com.umasuo.datapoint.domain.model.DeveloperDataDefinition;
 import com.umasuo.datapoint.infrastructure.util.JsonUtils;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * Created by Davis on 17/6/30.
@@ -56,5 +60,13 @@ public final class DeveloperDataMapper {
     entity.setDataSchema(draft.getDataSchema().toString());
 
     return entity;
+  }
+
+  public static Map<String, DeveloperDataDefinition> toEntityMap(
+      List<DeveloperDataDefinition> definitions) {
+    Map<String, DeveloperDataDefinition> entityMap =
+        definitions.stream().collect(Collectors.toMap(x -> x.getId(), x -> x));
+
+    return entityMap;
   }
 }

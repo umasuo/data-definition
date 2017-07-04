@@ -1,7 +1,5 @@
 package com.umasuo.datapoint.application.service;
 
-import com.github.fge.jsonschema.core.exceptions.ProcessingException;
-import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.google.common.collect.Lists;
 import com.umasuo.datapoint.application.dto.CopyRequest;
 import com.umasuo.datapoint.application.dto.DataDefinitionDraft;
@@ -15,6 +13,7 @@ import com.umasuo.datapoint.domain.service.DeveloperDataService;
 import com.umasuo.datapoint.domain.service.PlatformDataService;
 import com.umasuo.datapoint.infrastructure.update.UpdateAction;
 import com.umasuo.datapoint.infrastructure.update.UpdaterService;
+import com.umasuo.datapoint.infrastructure.validator.SchemaValidator;
 import com.umasuo.exception.AlreadyExistException;
 import com.umasuo.exception.ConflictException;
 import com.umasuo.exception.NotExistException;
@@ -51,6 +50,10 @@ public class DataDefinitionApplication {
   @Autowired
   private transient DeveloperDataService developerDataService;
 
+
+  @Autowired
+  private transient CacheApplication cacheApplication;
+
   /**
    * The UpdateService.
    */
@@ -60,65 +63,42 @@ public class DataDefinitionApplication {
   /**
    * Create DeviceDataDefinition.
    *
-   * @param draft       the draft
+   * @param draft the draft
    * @param developerId the developer id
    * @return the data definition view
    */
   public DataDefinitionView create(DataDefinitionDraft draft, String developerId) {
     logger.debug("Enter. draft: {}, developerId: {}.", draft, developerId);
-    try {
-      //检查schema是否正确
-      JsonSchemaFactory.byDefault().getJsonSchema(draft.getDataSchema());
 
-      if (definitionService.isExistName(draft.getName(), developerId)) {
-        logger.debug("Name: {} has existed in developer: {}.", draft.getName(), developerId);
-        throw new AlreadyExistException("Name has existed");
-      }
+    SchemaValidator.validate(draft.getDataSchema());
 
-
-      DeviceDataDefinition definition = definitionService
-          .create(DataDefinitionMapper.toEntity(draft, developerId));
-      DataDefinitionView view = DataDefinitionMapper.toView(definition);
-
-      logger.debug("Exit. view: {}.", view);
-      return view;
-      //todo 增加一个validator
-    } catch (ProcessingException e) {
-      logger.trace("DeviceDataDefinition is not a validator JsonSchema.", e);
-      throw new ParametersException("DeviceDataDefinition is not a validator JsonSchema.");
+    if (definitionService.isExistName(draft.getName(), developerId)) {
+      logger.debug("Name: {} has existed in developer: {}.", draft.getName(), developerId);
+      throw new AlreadyExistException("Name has existed");
     }
-  }
 
-  /**
-   * Gets by id.
-   *
-   * @param id          the id
-   * @param developerId the developer id
-   * @return the by id
-   */
-  public DataDefinitionView getById(String id, String developerId) {
-    logger.debug("Enter. id: {}, developerId: {}.", id, developerId);
+    DeviceDataDefinition definition = definitionService
+        .create(DataDefinitionMapper.toEntity(draft, developerId));
 
-    DeviceDataDefinition definition = definitionService.getById(id);
-    if (!definition.getDeveloperId().equals(developerId)) {
-      throw new ParametersException("");
-    }
+    cacheApplication.deleteDeviceDefinition(developerId, draft.getProductId());
+
     DataDefinitionView view = DataDefinitionMapper.toView(definition);
-    logger.debug("Exit. dataDefinitionView: {}.", view);
+
+    logger.debug("Exit. view: {}.", view);
     return view;
   }
 
   /**
    * Update DeviceDataDefinition.
    *
-   * @param id          the id
+   * @param id the id
    * @param developerId the developer id
-   * @param version     the version
-   * @param actions     the actions
+   * @param version the version
+   * @param actions the actions
    * @return updated DataDefinitionView
    */
   public DataDefinitionView update(String id, String developerId, Integer version,
-                                   List<UpdateAction> actions) {
+      List<UpdateAction> actions) {
     logger.debug("Enter: id: {}, version: {}, developerId actions: {}",
         id, version, developerId, actions);
 
@@ -136,10 +116,32 @@ public class DataDefinitionApplication {
 
     DeviceDataDefinition updatedDefinition = definitionService.save(definition);
 
+    cacheApplication.deleteDeviceDefinition(developerId, definition.getProductId());
+
     DataDefinitionView result = DataDefinitionMapper.toView(updatedDefinition);
 
     logger.trace("Updated DeviceDataDefinition: {}.", result);
     logger.debug("Exit.");
+
+    return result;
+  }
+
+
+  public List<DataDefinitionView> getByProductId(String developerId, String productId) {
+    logger.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
+
+    List<DeviceDataDefinition> dataDefinitions =
+        cacheApplication.getDeviceDataDefinition(developerId, productId);
+
+    if (dataDefinitions.isEmpty()) {
+      dataDefinitions = definitionService.getByProductId(developerId, productId);
+
+      cacheApplication.cacheDeviceDefinition(developerId, productId, dataDefinitions);
+    }
+
+    List<DataDefinitionView> result = DataDefinitionMapper.toView(dataDefinitions);
+
+    logger.debug("Exit. dataDefinition size: {}.", result.size());
 
     return result;
   }
@@ -155,26 +157,30 @@ public class DataDefinitionApplication {
     // 拷贝平台的数据定义
     boolean isCopyFromPlatform = request.getPlatformDataDefinitionIds() != null &&
         !request.getPlatformDataDefinitionIds().isEmpty();
-    if (isCopyFromPlatform) {
-      List<String> copyPlatformDataIds = copyFromPlatformData(
-          developerId, request.getDeviceDefinitionId(), request.getPlatformDataDefinitionIds());
-      newDataDefinitionIds.addAll(copyPlatformDataIds);
-    }
 
     // 拷贝开发者的数据定义
     boolean isCopyFromDeveloper = request.getDeveloperDataDefinitionIds() != null &&
         !request.getDeveloperDataDefinitionIds().isEmpty();
-    if (!isCopyFromDeveloper) {
-      List<String> copyDeveloperDataIds = copyFromDeveloperData(
-          developerId, request.getDeviceDefinitionId(), request.getDeveloperDataDefinitionIds());
-      newDataDefinitionIds.addAll(copyDeveloperDataIds);
-    }
 
     // 平台和开发者的数据定义不能同时为空
     if (!isCopyFromPlatform && !isCopyFromDeveloper) {
       logger.debug("Can not copy from null request data definition id");
       throw new ParametersException("Can not copy from null request data definition id");
     }
+
+    if (isCopyFromPlatform) {
+      List<String> copyPlatformDataIds = copyFromPlatformData(
+          developerId, request.getDeviceDefinitionId(), request.getPlatformDataDefinitionIds());
+      newDataDefinitionIds.addAll(copyPlatformDataIds);
+    }
+
+    if (!isCopyFromDeveloper) {
+      List<String> copyDeveloperDataIds = copyFromDeveloperData(
+          developerId, request.getDeviceDefinitionId(), request.getDeveloperDataDefinitionIds());
+      newDataDefinitionIds.addAll(copyDeveloperDataIds);
+    }
+
+    cacheApplication.deleteDeviceDefinition(developerId, request.getDeviceDefinitionId());
 
     logger.info("Exit. newDataDefinitionIds: {}.", newDataDefinitionIds);
     return newDataDefinitionIds;
@@ -184,7 +190,7 @@ public class DataDefinitionApplication {
    * 拷贝开发者的数据定义
    */
   private List<String> copyFromDeveloperData(String developerId, String deviceDefinitionId,
-                                             List<String> requestIds) {
+      List<String> requestIds) {
     List<DeveloperDataDefinition> dataDefinitions = developerDataService.getByIds(requestIds);
 
     if (requestIds.size() != dataDefinitions.size()) {
@@ -207,7 +213,7 @@ public class DataDefinitionApplication {
    * 拷贝平台的数据定义.
    */
   private List<String> copyFromPlatformData(String developerId, String deviceDefinitionId,
-                                            List<String> requestIds) {
+      List<String> requestIds) {
 
     List<PlatformDataDefinition> dataDefinitions =
         platformDataService.getByIds(requestIds);

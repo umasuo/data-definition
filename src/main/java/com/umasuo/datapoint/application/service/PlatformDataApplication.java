@@ -42,7 +42,7 @@ public class PlatformDataApplication {
 
       cacheDefinitions = PlatformDataMapper.toEntityMap(dataDefinitions);
 
-      cacheApplication.batchCachePlatformDefinition(cacheDefinitions);
+      cacheApplication.cachePlatformDefinition(cacheDefinitions);
     }
 
     Map<String, List<PlatformDataDefinitionView>> result =
@@ -64,7 +64,7 @@ public class PlatformDataApplication {
       Map<String, List<PlatformDataDefinition>> entityMap =
           PlatformDataMapper.toEntityMap(dataDefinitions);
 
-      cacheApplication.batchCachePlatformDefinition(entityMap);
+      cacheApplication.cachePlatformDefinition(entityMap);
 
       cacheDefinitions = entityMap.get(productTypeId);
     }

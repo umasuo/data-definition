@@ -200,4 +200,20 @@ public class DataDefinitionService {
 
     return savedDataDefinitions;
   }
+
+  public List<DeviceDataDefinition> getByProductId(String developerId, String productId) {
+    logger.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
+
+    DeviceDataDefinition sample = new DeviceDataDefinition();
+    sample.setDeveloperId(developerId);
+    sample.setProductId(productId);
+
+    Example<DeviceDataDefinition> example = Example.of(sample);
+
+    List<DeviceDataDefinition> result = repository.findAll(example);
+
+    logger.debug("Exit. dataDefinition size: {}.", result.size());
+
+    return result;
+  }
 }
