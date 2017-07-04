@@ -5,6 +5,7 @@ apply plugin: 'org.springframework.boot'
 dependencies {
     // Spring
     compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-starter-data-redis")
     compile("org.springframework.cloud:spring-cloud-starter-config:1.3.0.M1")
 
     // For @CreatedDate and @LastModifiedDate

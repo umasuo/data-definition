@@ -3,6 +3,10 @@ package com.umasuo.datapoint.infrastructure.update;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.umasuo.datapoint.application.dto.action.ChangeOpenable;
+import com.umasuo.datapoint.application.dto.action.SetDataId;
+import com.umasuo.datapoint.application.dto.action.SetDescription;
+import com.umasuo.datapoint.application.dto.action.SetName;
+import com.umasuo.datapoint.application.dto.action.SetSchema;
 
 import java.io.Serializable;
 
@@ -12,11 +16,15 @@ import java.io.Serializable;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property =
     "action")
-@JsonSubTypes( {
-    @JsonSubTypes.Type(value = ChangeOpenable.class, name = UpdateActionUtils
-        .CHANGE_OPENABLE),
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = ChangeOpenable.class, name = UpdateActionUtils.CHANGE_OPENABLE),
+    @JsonSubTypes.Type(value = SetDataId.class, name = UpdateActionUtils.SET_DATA_ID),
+    @JsonSubTypes.Type(value = SetSchema.class, name = UpdateActionUtils.SET_SCHEMA),
+    @JsonSubTypes.Type(value = SetName.class, name = UpdateActionUtils.SET_NAME),
+    @JsonSubTypes.Type(value = SetDescription.class, name = UpdateActionUtils.SET_DESCRIPTION),
 })
 public interface UpdateAction extends Serializable {
+
   /**
    * get action name.
    *

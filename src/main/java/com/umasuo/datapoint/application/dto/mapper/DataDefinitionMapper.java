@@ -10,7 +10,9 @@ import com.umasuo.datapoint.domain.model.PlatformDataDefinition;
 import com.umasuo.datapoint.infrastructure.util.JsonUtils;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * Created by umasuo on 17/3/8.
@@ -126,5 +128,13 @@ public class DataDefinitionMapper {
     newDataDefinition.setDataSchema(dataDefinition.getDataSchema());
 
     return newDataDefinition;
+  }
+
+  public static Map<String, DeviceDataDefinition> toEntityMap(
+      List<DeviceDataDefinition> dataDefinitions) {
+    Map<String, DeviceDataDefinition> entityMap =
+        dataDefinitions.stream().collect(Collectors.toMap(x -> x.getId(), x -> x));
+
+    return entityMap;
   }
 }

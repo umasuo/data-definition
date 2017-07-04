@@ -3,9 +3,7 @@ package com.umasuo.datapoint.application.rest;
 import com.umasuo.datapoint.application.dto.CopyRequest;
 import com.umasuo.datapoint.application.dto.DataDefinitionDraft;
 import com.umasuo.datapoint.application.dto.DataDefinitionView;
-import com.umasuo.datapoint.application.dto.mapper.DataDefinitionMapper;
 import com.umasuo.datapoint.application.service.DataDefinitionApplication;
-import com.umasuo.datapoint.domain.model.DeviceDataDefinition;
 import com.umasuo.datapoint.domain.service.DataDefinitionService;
 import com.umasuo.datapoint.infrastructure.Router;
 import com.umasuo.datapoint.infrastructure.update.UpdateRequest;
@@ -109,39 +107,16 @@ public class DeviceDataController {
     return result;
   }
 
-  /**
-   * get a definition by id.
-   *
-   * @param id the id
-   * @return data definition view
-   */
-  @GetMapping(value = Router.DATA_DEFINITION_WITH_ID)
-  public DataDefinitionView getById(@PathVariable String id, @RequestHeader String developerId) {
-    logger.info("Enter. id: {}", id);
+  @GetMapping(value = Router.DATA_DEFINITION_ROOT, params = {"productId"})
+  public List<DataDefinitionView> getByProductId(@RequestHeader String developerId,
+      @RequestParam String productId) {
+    logger.info("Enter. developerId: {}, productId: {}.", developerId, productId);
 
-    DataDefinitionView view = definitionApplication.getById(id, developerId);
+    List<DataDefinitionView> result  = definitionApplication.getByProductId(developerId, productId);
 
-    logger.info("Exit. dataDefinitionView: {}.", view);
-    return view;
-  }
+    logger.info("Exit. dataDefinition size: {}.", result.size());
 
-  /**
-   * 通过数据定义Id和开发者ID获取唯一的数据定义.
-   * todo 暂时没用
-   *
-   * @param dataId      自定义的数据定义ID
-   * @param developerId 开发者ID
-   */
-  @GetMapping(value = Router.DATA_DEFINITION_ROOT, params = {"dataId"})
-  public DataDefinitionView get(@RequestParam("dataId") String dataId,
-                                @RequestHeader String developerId) {
-    logger.info("Enter. dataId: {}, developerId: {}.", dataId, developerId);
-
-    DeviceDataDefinition definition = definitionService.getByDataId(dataId, developerId);
-    DataDefinitionView view = DataDefinitionMapper.toView(definition);
-
-    logger.info("Exit. view: {}.", view);
-    return view;
+    return result;
   }
 
   /**

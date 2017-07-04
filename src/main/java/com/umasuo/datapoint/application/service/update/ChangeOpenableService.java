@@ -1,4 +1,4 @@
-package com.umasuo.datapoint.domain.service.update;
+package com.umasuo.datapoint.application.service.update;
 
 import com.umasuo.datapoint.application.dto.action.ChangeOpenable;
 import com.umasuo.datapoint.domain.model.DeviceDataDefinition;

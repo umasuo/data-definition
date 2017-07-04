@@ -5,6 +5,7 @@ import com.umasuo.datapoint.application.dto.DeveloperDataDefinitionView;
 import com.umasuo.datapoint.application.dto.mapper.DeveloperDataMapper;
 import com.umasuo.datapoint.domain.model.DeveloperDataDefinition;
 import com.umasuo.datapoint.domain.service.DeveloperDataService;
+import com.umasuo.datapoint.infrastructure.validator.SchemaValidator;
 import com.umasuo.exception.AlreadyExistException;
 import com.umasuo.exception.AuthFailedException;
 import com.umasuo.exception.NotExistException;
@@ -30,10 +31,15 @@ public class DeveloperDataApplication {
   @Autowired
   private transient DeveloperDataService developerDataService;
 
+  @Autowired
+  private transient CacheApplication cacheApplication;
+
   public DeveloperDataDefinitionView create(String developerId,
       DeveloperDataDefinitionDraft draft) {
 
-    //todo 需要验证deta schema是否合法
+    //检查schema是否正确
+    SchemaValidator.validate(draft.getDataSchema());
+
     boolean isNameExist = developerDataService.isNameExist(developerId, draft.getName());
 
     if (isNameExist) {
@@ -52,6 +58,8 @@ public class DeveloperDataApplication {
 
     developerDataService.save(dataDefinition);
 
+    cacheApplication.deleteDeveloperDefinition(developerId);
+
     DeveloperDataDefinitionView result = DeveloperDataMapper.toModel(dataDefinition);
 
     LOG.debug("Exit. newDataDefinition id: {}.", result.getId());
@@ -66,6 +74,8 @@ public class DeveloperDataApplication {
     getById(developerId, id);
 
     developerDataService.delete(id);
+
+    cacheApplication.deleteDeveloperDefinition(developerId);
   }
 
   public DeveloperDataDefinitionView getOne(String developerId, String id) {
@@ -79,12 +89,18 @@ public class DeveloperDataApplication {
 
     return result;
   }
-  
+
   public List<DeveloperDataDefinitionView> getDeveloperData(String developerId) {
     LOG.debug("Enter. developerId: {}.", developerId);
 
     List<DeveloperDataDefinition> dataDefinitions =
-        developerDataService.getDeveloperDefinition(developerId);
+        cacheApplication.getAllDeveloperDefinition(developerId);
+
+    if (dataDefinitions == null || dataDefinitions.isEmpty()) {
+      dataDefinitions = developerDataService.getDeveloperDefinition(developerId);
+
+      cacheApplication.cacheDeveloperDefinition(developerId, dataDefinitions);
+    }
 
     List<DeveloperDataDefinitionView> result = DeveloperDataMapper.toModel(dataDefinitions);
 
@@ -94,6 +110,7 @@ public class DeveloperDataApplication {
   }
 
   private DeveloperDataDefinition getById(String developerId, String id) {
+
     DeveloperDataDefinition dataDefinition = developerDataService.getById(id);
     if (dataDefinition == null) {
       LOG.debug("Can not find dataDefinition by id: {}.", id);
