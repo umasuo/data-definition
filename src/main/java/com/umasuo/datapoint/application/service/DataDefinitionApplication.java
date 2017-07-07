@@ -15,9 +15,11 @@ import com.umasuo.datapoint.infrastructure.update.UpdateAction;
 import com.umasuo.datapoint.infrastructure.update.UpdaterService;
 import com.umasuo.datapoint.infrastructure.validator.SchemaValidator;
 import com.umasuo.exception.AlreadyExistException;
+import com.umasuo.exception.AuthFailedException;
 import com.umasuo.exception.ConflictException;
 import com.umasuo.exception.NotExistException;
 import com.umasuo.exception.ParametersException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -198,7 +200,7 @@ public class DataDefinitionApplication {
     }
 
     List<DeviceDataDefinition> newDataDefinitions = DataDefinitionMapper
-        .copyFromDeveloperData(developerId, dataDefinitions);
+        .copyFromDeveloperData(developerId, deviceDefinitionId, dataDefinitions);
 
     List<DeviceDataDefinition> savedDataDefinitions = definitionService.saveAll(newDataDefinitions);
 
@@ -223,7 +225,7 @@ public class DataDefinitionApplication {
     }
 
     List<DeviceDataDefinition> newDataDefinitions = DataDefinitionMapper
-        .copyFromPlatformData(developerId, dataDefinitions);
+        .copyFromPlatformData(developerId, deviceDefinitionId, dataDefinitions);
 
     List<DeviceDataDefinition> savedDataDefinitions = definitionService.saveAll(newDataDefinitions);
 
@@ -244,5 +246,23 @@ public class DataDefinitionApplication {
       logger.debug("DeviceDataDefinition version is not correct.");
       throw new ConflictException("DeviceDataDefinition version is not correct.");
     }
+  }
+
+  public void delete(String id, String developerId, String productId) {
+    logger.debug("Enter. id: {}, developerId: {}, productId: {}.", id, developerId, productId);
+
+    DeviceDataDefinition dataDefinition = definitionService.getById(id);
+
+    if (!developerId.equals(dataDefinition.getDeveloperId())) {
+      logger.debug("DataDefinition: {} is not belong to developer: {}.", id, developerId);
+      throw new AuthFailedException("Developer has not auth to delete dataDefinition");
+    }
+
+    if (!productId.equals(dataDefinition.getProductId())) {
+      logger.debug("DataDefinition: {} is not belong to product: {}.", id, productId);
+      throw new NotExistException("Product do not have this dataDefinition.");
+    }
+
+    definitionService.delete(id);
   }
 }

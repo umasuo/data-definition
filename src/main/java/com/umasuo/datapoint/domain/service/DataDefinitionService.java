@@ -7,6 +7,7 @@ import com.umasuo.datapoint.domain.model.DeviceDataDefinition;
 import com.umasuo.datapoint.infrastructure.repository.DataDefinitionRepository;
 import com.umasuo.exception.AlreadyExistException;
 import com.umasuo.exception.NotExistException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,7 +95,7 @@ public class DataDefinitionService {
   /**
    * Gets by data id.
    *
-   * @param dataId      the data id
+   * @param dataId the data id
    * @param developerId the developer id
    * @return the by data id
    */
@@ -141,9 +142,8 @@ public class DataDefinitionService {
    * Get all data definitions by developer id.
    *
    * @param developerId the developer id
-   * @return a map of result, key is the DeviceDataDefinition's id, and value is the exist
-   * result, if a
-   * DeviceDataDefinition not exist or not belong to the developer, value is false.
+   * @return a map of result, key is the DeviceDataDefinition's id, and value is the exist result,
+   * if a DeviceDataDefinition not exist or not belong to the developer, value is false.
    */
   public List<DeviceDataDefinition> getDeveloperDefinition(String developerId) {
     logger.debug("Enter. developerId: {}.", developerId);
@@ -163,7 +163,7 @@ public class DataDefinitionService {
   /**
    * Is exist name in developer.
    *
-   * @param name        the name
+   * @param name the name
    * @param developerId the developer id
    * @return the boolean
    */
@@ -215,5 +215,13 @@ public class DataDefinitionService {
     logger.debug("Exit. dataDefinition size: {}.", result.size());
 
     return result;
+  }
+
+  public void delete(String id) {
+    logger.debug("Enter. id: {}.", id);
+
+    repository.delete(id);
+
+    logger.debug("Exit.");
   }
 }

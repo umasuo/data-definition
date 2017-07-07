@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -106,6 +107,17 @@ public class DeviceDataController {
 
     return result;
   }
+
+  @DeleteMapping(value = Router.DATA_DEFINITION_WITH_ID)
+  public void delete(@PathVariable String id,
+      @RequestHeader String developerId, @RequestParam String productId) {
+    logger.info("Enter. id: {}, developerId: {}, productId: {}.", id, developerId, productId);
+
+    definitionApplication.delete(id, developerId, productId);
+
+    logger.info("Exit.");
+  }
+
 
   @GetMapping(value = Router.DATA_DEFINITION_ROOT, params = {"productId"})
   public List<DataDefinitionView> getByProductId(@RequestHeader String developerId,

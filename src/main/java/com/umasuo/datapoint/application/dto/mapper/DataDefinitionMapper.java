@@ -62,9 +62,6 @@ public class DataDefinitionMapper {
 
   /**
    * 根据draft 创建数据定义model.
-   *
-   * @param draft
-   * @return
    */
   public static DeviceDataDefinition toEntity(DataDefinitionDraft draft, String developerId) {
 
@@ -81,7 +78,7 @@ public class DataDefinitionMapper {
   }
 
   public static DeviceDataDefinition copyFromPlatformData(String developerId,
-                                                          PlatformDataDefinition dataDefinition) {
+      String productId, PlatformDataDefinition dataDefinition) {
     DeviceDataDefinition newDataDefinition = new DeviceDataDefinition();
 
     newDataDefinition.setName(dataDefinition.getName());
@@ -89,36 +86,37 @@ public class DataDefinitionMapper {
     newDataDefinition.setDescription(dataDefinition.getDescription());
     newDataDefinition.setDataId(dataDefinition.getDataId());
     newDataDefinition.setDataSchema(dataDefinition.getDataSchema());
+    newDataDefinition.setProductId(productId);
 
     return newDataDefinition;
   }
 
   public static List<DeviceDataDefinition> copyFromPlatformData(String developerId,
-                                                                List<PlatformDataDefinition>
-                                                                    dataDefinitions) {
+      String productId, List<PlatformDataDefinition> dataDefinitions) {
     List<DeviceDataDefinition> newDataDefinitions = Lists.newArrayList();
 
     dataDefinitions.stream().forEach(
-        dataDefinition -> newDataDefinitions.add(copyFromPlatformData(developerId, dataDefinition))
+        dataDefinition -> newDataDefinitions
+            .add(copyFromPlatformData(developerId, productId, dataDefinition))
     );
 
     return newDataDefinitions;
   }
 
   public static List<DeviceDataDefinition> copyFromDeveloperData(String developerId,
-                                                                 List<DeveloperDataDefinition>
-                                                                     dataDefinitions) {
+      String productId, List<DeveloperDataDefinition> dataDefinitions) {
     List<DeviceDataDefinition> newDataDefinitions = Lists.newArrayList();
 
     dataDefinitions.stream().forEach(
-        dataDefinition -> newDataDefinitions.add(copyFromDeveloperData(developerId, dataDefinition))
+        dataDefinition -> newDataDefinitions.add(
+            copyFromDeveloperData(developerId, productId, dataDefinition))
     );
 
     return newDataDefinitions;
   }
 
   public static DeviceDataDefinition copyFromDeveloperData(String developerId,
-                                                           DeveloperDataDefinition dataDefinition) {
+      String productId, DeveloperDataDefinition dataDefinition) {
     DeviceDataDefinition newDataDefinition = new DeviceDataDefinition();
 
     newDataDefinition.setName(dataDefinition.getName());
@@ -126,6 +124,7 @@ public class DataDefinitionMapper {
     newDataDefinition.setDescription(dataDefinition.getDescription());
     newDataDefinition.setDataId(dataDefinition.getDataId());
     newDataDefinition.setDataSchema(dataDefinition.getDataSchema());
+    newDataDefinition.setProductId(productId);
 
     return newDataDefinition;
   }
