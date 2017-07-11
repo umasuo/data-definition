@@ -1,5 +1,7 @@
 package com.umasuo.datapoint.domain.model;
 
+import com.umasuo.datapoint.infrastructure.enums.Category;
+
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
@@ -85,4 +87,6 @@ public class DeviceDataDefinition {
    * True means other developers can find this data, false means not.
    */
   private Boolean openable = false;
+
+  private Category category;
 }

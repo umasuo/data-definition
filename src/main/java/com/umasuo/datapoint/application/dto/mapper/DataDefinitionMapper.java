@@ -7,6 +7,7 @@ import com.umasuo.datapoint.application.dto.DataDefinitionView;
 import com.umasuo.datapoint.domain.model.DeveloperDataDefinition;
 import com.umasuo.datapoint.domain.model.DeviceDataDefinition;
 import com.umasuo.datapoint.domain.model.PlatformDataDefinition;
+import com.umasuo.datapoint.infrastructure.enums.Category;
 import com.umasuo.datapoint.infrastructure.util.JsonUtils;
 
 import java.util.List;
@@ -54,6 +55,7 @@ public class DataDefinitionMapper {
       view.setName(model.getName());
       view.setDescription(model.getDescription());
       view.setOpenable(model.getOpenable());
+      view.setCategory(model.getCategory());
 
       view.setDataSchema(JsonUtils.deserialize(model.getDataSchema(), JsonNode.class));
     }
@@ -74,6 +76,8 @@ public class DataDefinitionMapper {
     model.setDescription(draft.getDescription());
     model.setDataSchema(draft.getDataSchema().toString());
     model.setOpenable(draft.getOpenable());
+    model.setCategory(Category.PRODUCT);
+
     return model;
   }
 
@@ -87,6 +91,7 @@ public class DataDefinitionMapper {
     newDataDefinition.setDataId(dataDefinition.getDataId());
     newDataDefinition.setDataSchema(dataDefinition.getDataSchema());
     newDataDefinition.setProductId(productId);
+    newDataDefinition.setCategory(Category.PLATFORM);
 
     return newDataDefinition;
   }
@@ -125,6 +130,7 @@ public class DataDefinitionMapper {
     newDataDefinition.setDataId(dataDefinition.getDataId());
     newDataDefinition.setDataSchema(dataDefinition.getDataSchema());
     newDataDefinition.setProductId(productId);
+    newDataDefinition.setCategory(Category.DEVELOPER);
 
     return newDataDefinition;
   }

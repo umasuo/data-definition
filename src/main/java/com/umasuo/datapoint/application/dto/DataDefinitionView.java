@@ -1,6 +1,8 @@
 package com.umasuo.datapoint.application.dto;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.umasuo.datapoint.infrastructure.enums.Category;
+
 import lombok.Data;
 
 import java.io.Serializable;
@@ -73,4 +75,6 @@ public class DataDefinitionView implements Serializable {
    * True means other developers can find this data, false means not.
    */
   private Boolean openable;
+
+  private Category category;
 }
