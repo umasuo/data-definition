@@ -40,7 +40,7 @@ public class DataDefinitionApplication {
   /**
    * logger.
    */
-  private final static Logger logger = LoggerFactory.getLogger(DataDefinitionService.class);
+  private final static Logger logger = LoggerFactory.getLogger(DataDefinitionApplication.class);
 
   /**
    * The DataDefinitionService.
@@ -267,6 +267,8 @@ public class DataDefinitionApplication {
     }
 
     definitionService.delete(id);
+
+    cacheApplication.deleteDeviceDefinition(developerId, dataDefinition.getProductId());
   }
 
   /**
