@@ -75,7 +75,9 @@ public class DataDefinitionMapper {
     model.setName(draft.getName());
     model.setDescription(draft.getDescription());
     model.setDataSchema(draft.getDataSchema().toString());
-    model.setOpenable(draft.getOpenable());
+    if (draft.getOpenable() != null) {
+      model.setOpenable(draft.getOpenable());
+    }
     model.setCategory(Category.PRODUCT);
 
     return model;
