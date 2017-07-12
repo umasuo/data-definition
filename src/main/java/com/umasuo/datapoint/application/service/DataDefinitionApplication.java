@@ -114,7 +114,7 @@ public class DataDefinitionApplication {
           " not belong to developer: " + developerId);
     }
 
-    checkVersion(version, definition.getVersion());
+//    checkVersion(version, definition.getVersion());
 
     actions.stream().forEach(action -> updaterService.handle(definition, action));
 
