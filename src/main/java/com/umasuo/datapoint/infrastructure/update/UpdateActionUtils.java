@@ -17,4 +17,6 @@ public class UpdateActionUtils {
   public static final String SET_NAME = "setName";
 
   public static final String SET_DESCRIPTION = "setDescription";
+
+  public static final String UPDATE_DATA_DEFINITION = "updateDataDefinition";
 }

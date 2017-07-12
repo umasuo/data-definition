@@ -7,6 +7,7 @@ import com.umasuo.datapoint.application.dto.action.SetDataId;
 import com.umasuo.datapoint.application.dto.action.SetDescription;
 import com.umasuo.datapoint.application.dto.action.SetName;
 import com.umasuo.datapoint.application.dto.action.SetSchema;
+import com.umasuo.datapoint.application.dto.action.UpdateDataDefinition;
 
 import java.io.Serializable;
 
@@ -22,6 +23,8 @@ import java.io.Serializable;
     @JsonSubTypes.Type(value = SetSchema.class, name = UpdateActionUtils.SET_SCHEMA),
     @JsonSubTypes.Type(value = SetName.class, name = UpdateActionUtils.SET_NAME),
     @JsonSubTypes.Type(value = SetDescription.class, name = UpdateActionUtils.SET_DESCRIPTION),
+    @JsonSubTypes.Type(value = UpdateDataDefinition.class,
+        name = UpdateActionUtils.UPDATE_DATA_DEFINITION),
 })
 public interface UpdateAction extends Serializable {
 
