@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -130,6 +131,19 @@ public class DeviceDataController {
 
     return result;
   }
+
+  @GetMapping(value = Router.DATA_DEFINITION_ROOT, params = {"productIds"})
+  public Map<String, List<DataDefinitionView>> getByProductIdList(@RequestHeader String developerId,
+      @RequestParam List<String> productIds){
+    logger.info("Enter. developerId: {}, productIds: {}.", developerId, productIds);
+
+    Map<String, List<DataDefinitionView>> result = definitionApplication
+        .getByProductIds(developerId, productIds);
+
+    logger.info("Exit.");
+
+    return result;
+   }
 
   /**
    * Gets all open data definition.

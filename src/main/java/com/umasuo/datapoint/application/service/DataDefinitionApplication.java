@@ -1,6 +1,7 @@
 package com.umasuo.datapoint.application.service;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.umasuo.datapoint.application.dto.CopyRequest;
 import com.umasuo.datapoint.application.dto.DataDefinitionDraft;
 import com.umasuo.datapoint.application.dto.DataDefinitionView;
@@ -26,6 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -127,7 +130,6 @@ public class DataDefinitionApplication {
     return result;
   }
 
-
   public List<DataDefinitionView> getByProductId(String developerId, String productId) {
     logger.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
 
@@ -143,6 +145,20 @@ public class DataDefinitionApplication {
     List<DataDefinitionView> result = DataDefinitionMapper.toView(dataDefinitions);
 
     logger.debug("Exit. dataDefinition size: {}.", result.size());
+
+    return result;
+  }
+
+  public Map<String, List<DataDefinitionView>> getByProductIds(String developerId,
+      List<String> productIds) {
+    logger.debug("Enter. developerId: {}, productIds: {}.", developerId, productIds);
+
+    // TODO: 17/7/12 简单粗暴的实现方式，待优化成批量处理
+    Map<String, List<DataDefinitionView>> result = Maps.newHashMap();
+
+    Consumer<String> consumer = id -> result.put(id, getByProductId(developerId, id));
+
+    productIds.stream().forEach(consumer);
 
     return result;
   }
@@ -235,19 +251,6 @@ public class DataDefinitionApplication {
     return newDataDefinitionIds;
   }
 
-  /**
-   * check the version.
-   *
-   * @param inputVersion Integer
-   * @param existVersion Integer
-   */
-  private void checkVersion(Integer inputVersion, Integer existVersion) {
-    if (!inputVersion.equals(existVersion)) {
-      logger.debug("DeviceDataDefinition version is not correct.");
-      throw new ConflictException("DeviceDataDefinition version is not correct.");
-    }
-  }
-
   public void delete(String id, String developerId, String productId) {
     logger.debug("Enter. id: {}, developerId: {}, productId: {}.", id, developerId, productId);
 
@@ -264,5 +267,18 @@ public class DataDefinitionApplication {
     }
 
     definitionService.delete(id);
+  }
+
+  /**
+   * check the version.
+   *
+   * @param inputVersion Integer
+   * @param existVersion Integer
+   */
+  private void checkVersion(Integer inputVersion, Integer existVersion) {
+    if (!inputVersion.equals(existVersion)) {
+      logger.debug("DeviceDataDefinition version is not correct.");
+      throw new ConflictException("DeviceDataDefinition version is not correct.");
+    }
   }
 }
