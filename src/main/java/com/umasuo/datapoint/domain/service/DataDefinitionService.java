@@ -164,13 +164,13 @@ public class DataDefinitionService {
    * Is exist name in developer.
    *
    * @param name the name
-   * @param developerId the developer id
+   * @param productId the developer id
    * @return the boolean
    */
-  public boolean isExistName(String name, String developerId) {
-    logger.debug("Enter. developerId: {}, name: {}.", developerId, name);
+  public boolean isExistName(String name, String productId) {
+    logger.debug("Enter. productId: {}, name: {}.", productId, name);
     DeviceDataDefinition sample = new DeviceDataDefinition();
-    sample.setDeveloperId(developerId);
+    sample.setProductId(productId);
     sample.setName(name);
 
     Example<DeviceDataDefinition> example = Example.of(sample);
