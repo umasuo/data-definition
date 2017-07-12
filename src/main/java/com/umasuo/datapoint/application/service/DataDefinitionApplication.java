@@ -76,8 +76,8 @@ public class DataDefinitionApplication {
 
     SchemaValidator.validate(draft.getDataSchema());
 
-    if (definitionService.isExistName(draft.getName(), developerId)) {
-      logger.debug("Name: {} has existed in developer: {}.", draft.getName(), developerId);
+    if (definitionService.isExistName(draft.getName(), draft.getProductId())) {
+      logger.debug("Name: {} has existed in developer: {}.", draft.getName(), draft.getProductId());
       throw new AlreadyExistException("Name has existed");
     }
 
