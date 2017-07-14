@@ -224,4 +224,14 @@ public class DataDefinitionService {
 
     logger.debug("Exit.");
   }
+
+  public void deleteByProduct(String developerId, String productId) {
+    logger.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
+
+    List<DeviceDataDefinition> dataDefinitions = getByProductId(developerId, productId);
+
+    repository.delete(dataDefinitions);
+
+    logger.debug("Exit.");
+  }
 }

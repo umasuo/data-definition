@@ -283,4 +283,14 @@ public class DataDefinitionApplication {
       throw new ConflictException("DeviceDataDefinition version is not correct.");
     }
   }
+
+  public void delete(String developerId, String productId) {
+    logger.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
+
+    definitionService.deleteByProduct(developerId, productId);
+
+    cacheApplication.deleteDeviceDefinition(developerId, productId);
+
+    logger.debug("Exit.");
+  }
 }

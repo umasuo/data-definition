@@ -119,6 +119,15 @@ public class DeviceDataController {
     logger.info("Exit.");
   }
 
+  @DeleteMapping(value = Router.DATA_DEFINITION_ROOT)
+  public void delete(@RequestHeader String developerId, @RequestParam String productId) {
+    logger.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
+
+    definitionApplication.delete(developerId, productId);
+
+    logger.info("Exit.");
+  }
+
 
   @GetMapping(value = Router.DATA_DEFINITION_ROOT, params = {"productId"})
   public List<DataDefinitionView> getByProductId(@RequestHeader String developerId,
