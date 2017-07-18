@@ -6,6 +6,7 @@ import com.umasuo.datapoint.application.dto.mapper.DeveloperDataMapper;
 import com.umasuo.datapoint.domain.model.DeveloperDataDefinition;
 import com.umasuo.datapoint.domain.model.DeviceDataDefinition;
 import com.umasuo.datapoint.domain.model.PlatformDataDefinition;
+import com.umasuo.datapoint.domain.service.DataDefinitionService;
 import com.umasuo.datapoint.infrastructure.util.RedisUtils;
 
 import org.slf4j.Logger;
@@ -30,6 +31,9 @@ public class CacheApplication {
 
   @Autowired
   private transient RedisTemplate redisTemplate;
+
+  @Autowired
+  private transient DataDefinitionService definitionService;
 
 
   public Map<String, List<PlatformDataDefinition>> getAllPlatformDefinition() {
@@ -113,6 +117,29 @@ public class CacheApplication {
     return result;
   }
 
+  public DeviceDataDefinition getDeviceDataDefinition(String developerId, String productId,
+      String id) {
+    LOG.debug("Enter. developerId: {}, productId: {}, id: {}.", developerId, productId, id);
+
+    String key = String.format(RedisUtils.DEVICE_DEFINITION_FORMAT, developerId, productId);
+
+    DeviceDataDefinition dataDefinition =
+        (DeviceDataDefinition) redisTemplate.opsForHash().get(key, id);
+
+    if (dataDefinition == null) {
+      List<DeviceDataDefinition> dataDefinitions =
+          definitionService.getByProductId(developerId, productId);
+
+      cacheDeviceDefinition(developerId, productId, dataDefinitions);
+
+      dataDefinition =
+          dataDefinitions.stream().filter(data -> id.equals(data.getId())).findAny().orElse(null);
+    }
+
+    LOG.debug("Exit. dataDefinition: {}.", dataDefinition);
+
+    return dataDefinition;
+  }
 
 
   public void cacheDeviceDefinition(String developerId, String productId,

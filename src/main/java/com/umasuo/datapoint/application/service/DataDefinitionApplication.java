@@ -293,4 +293,32 @@ public class DataDefinitionApplication {
 
     logger.debug("Exit.");
   }
+
+  public DataDefinitionView get(String developerId, String productId, String id) {
+    logger.debug("Enter. developerId: {}, productId: {}, id: {}.", developerId, productId, id);
+
+    DeviceDataDefinition dataDefinition =
+        cacheApplication.getDeviceDataDefinition(developerId, productId, id);
+
+    if (dataDefinition == null) {
+      logger.debug("DataDefinition: {} not exist.", id);
+      throw new NotExistException("DataDefinition not exist");
+    }
+
+    if (!developerId.equals(dataDefinition.getDeveloperId())) {
+      logger.debug("DataDefinition: {} is not belong to developer: {}.", id, developerId);
+      throw new AuthFailedException("DataDefinition is not belong to developer");
+    }
+
+    if (!productId.equals(dataDefinition.getProductId())) {
+      logger.debug("DataDefinition: {} is not belong to product: {}.", id, productId);
+      throw new AuthFailedException("DataDefinition is not belong to product");
+    }
+
+    DataDefinitionView result = DataDefinitionMapper.toView(dataDefinition);
+
+    logger.debug("Exit. dataDefinition: {}.", result);
+
+    return result;
+  }
 }

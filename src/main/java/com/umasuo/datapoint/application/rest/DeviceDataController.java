@@ -155,6 +155,25 @@ public class DeviceDataController {
    }
 
   /**
+   * 获取单个Data definition。
+   * 内部接口，不对外开放。
+   *
+   * @param id
+   * @return
+   */
+  @GetMapping(value = Router.DATA_DEFINITION_WITH_ID)
+  public DataDefinitionView get(@PathVariable("id") String id,
+      @RequestHeader String developerId, @RequestParam String productId) {
+    logger.info("Enter. developerId: {}, productId: {}, id: {}.", developerId, productId, id);
+
+    DataDefinitionView result = definitionApplication.get(developerId, productId, id);
+
+    logger.info("Exit. dataDefinition: {}.", result);
+
+    return result;
+  }
+
+  /**
    * Gets all open data definition.
    *
    * @param developerId the developer id
