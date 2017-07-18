@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import sun.rmi.runtime.Log;
-
 /**
  * Created by umasuo on 17/5/22.
  */
