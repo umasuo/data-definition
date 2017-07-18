@@ -58,6 +58,9 @@ public class DataDefinitionMapper {
       view.setCategory(model.getCategory());
 
       view.setDataSchema(JsonUtils.deserialize(model.getDataSchema(), JsonNode.class));
+
+      view.setSchema(model.getDataSchema());
+
     }
     return view;
   }

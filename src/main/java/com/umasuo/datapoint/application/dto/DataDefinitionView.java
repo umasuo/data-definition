@@ -58,6 +58,8 @@ public class DataDefinitionView implements Serializable {
   @NotNull
   private JsonNode dataSchema;
 
+  private String schema;
+
   /**
    * name of this definition.
    */
