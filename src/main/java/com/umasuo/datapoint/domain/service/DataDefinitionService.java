@@ -2,7 +2,6 @@ package com.umasuo.datapoint.domain.service;
 
 import com.umasuo.datapoint.application.dto.DataDefinitionView;
 import com.umasuo.datapoint.application.dto.mapper.DataDefinitionMapper;
-import com.umasuo.datapoint.application.service.RestClient;
 import com.umasuo.datapoint.domain.model.DeviceDataDefinition;
 import com.umasuo.datapoint.infrastructure.repository.DataDefinitionRepository;
 import com.umasuo.exception.AlreadyExistException;
@@ -29,12 +28,6 @@ public class DataDefinitionService {
 
   @Autowired
   private DataDefinitionRepository repository;
-
-  /**
-   * The Rest client.
-   */
-  @Autowired
-  private transient RestClient restClient;
 
   /**
    * create data definition with sample
