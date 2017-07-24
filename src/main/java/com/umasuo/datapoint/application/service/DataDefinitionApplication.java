@@ -187,17 +187,17 @@ public class DataDefinitionApplication {
 
     if (isCopyFromPlatform) {
       List<String> copyPlatformDataIds = copyFromPlatformData(
-          developerId, request.getDeviceDefinitionId(), request.getPlatformDataDefinitionIds());
+          developerId, request.getProductId(), request.getPlatformDataDefinitionIds());
       newDataDefinitionIds.addAll(copyPlatformDataIds);
     }
 
     if (isCopyFromDeveloper) {
       List<String> copyDeveloperDataIds = copyFromDeveloperData(
-          developerId, request.getDeviceDefinitionId(), request.getDeveloperDataDefinitionIds());
+          developerId, request.getProductId(), request.getDeveloperDataDefinitionIds());
       newDataDefinitionIds.addAll(copyDeveloperDataIds);
     }
 
-    cacheApplication.deleteDeviceDefinition(developerId, request.getDeviceDefinitionId());
+    cacheApplication.deleteDeviceDefinition(developerId, request.getProductId());
 
     logger.info("Exit. newDataDefinitionIds: {}.", newDataDefinitionIds);
     return newDataDefinitionIds;

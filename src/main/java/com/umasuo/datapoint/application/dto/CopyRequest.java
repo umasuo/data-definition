@@ -15,7 +15,7 @@ public class CopyRequest implements Serializable {
 
   private static final long serialVersionUID = 761761676157756311L;
   @NotNull
-  private String deviceDefinitionId;
+  private String productId;
 
   private List<String> platformDataDefinitionIds;
 
