@@ -14,6 +14,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by umasuo on 17/3/8.
@@ -100,6 +101,26 @@ public class DataDefinitionService {
     logger.debug("Exit. saved DeviceDataDefinition: {}.", result);
 
     return result;
+  }
+
+  /**
+   * Save all list.
+   *
+   * @param dataDefinitions the data definitions
+   * @return the list
+   */
+  public List<String> saveAll(List<DeviceDataDefinition> dataDefinitions) {
+    logger.debug("Enter. dataDefinitions size: {}.", dataDefinitions.size());
+
+    List<DeviceDataDefinition> savedDataDefinitions = repository.save(dataDefinitions);
+
+
+    List<String> dataDefinitionIds = savedDataDefinitions.stream()
+        .map(DeviceDataDefinition::getId).collect(Collectors.toList());
+
+    logger.debug("Exit. dataDefinition ids: {}.", dataDefinitionIds);
+
+    return dataDefinitionIds;
   }
 
   /**
@@ -199,21 +220,6 @@ public class DataDefinitionService {
     logger.debug("Exit. dataDefinition size: {}.", result.size());
 
     return result;
-  }
-
-  /**
-   * Save all list.
-   *
-   * @param dataDefinitions the data definitions
-   * @return the list
-   */
-  public List<DeviceDataDefinition> saveAll(List<DeviceDataDefinition> dataDefinitions) {
-    logger.debug("Enter. dataDefinitions size: {}.", dataDefinitions.size());
-    List<DeviceDataDefinition> savedDataDefinitions = repository.save(dataDefinitions);
-
-    logger.debug("Exit.");
-
-    return savedDataDefinitions;
   }
 
   /**

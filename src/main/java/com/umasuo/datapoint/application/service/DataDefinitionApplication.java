@@ -14,6 +14,7 @@ import com.umasuo.datapoint.domain.service.DeveloperDataService;
 import com.umasuo.datapoint.domain.service.PlatformDataService;
 import com.umasuo.datapoint.infrastructure.update.UpdateAction;
 import com.umasuo.datapoint.infrastructure.update.UpdaterService;
+import com.umasuo.datapoint.infrastructure.validator.CopyRequestValidator;
 import com.umasuo.datapoint.infrastructure.validator.SchemaValidator;
 import com.umasuo.exception.AuthFailedException;
 import com.umasuo.exception.ConflictException;
@@ -24,11 +25,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /**
  * Created by umasuo on 17/6/11.
@@ -89,6 +90,77 @@ public class DataDefinitionApplication {
     logger.debug("Exit. view: {}.", view);
 
     return view;
+  }
+
+  /**
+   * 处理拷贝数据定义的请求。
+   * 请求分为开发者的数据定义和平台的数据定义。
+   */
+  public List<String> handleCopyRequest(String developerId, CopyRequest request) {
+    logger.info("Enter. developerId: {}, copyRequest: {}.", developerId, request);
+
+    List<String> newDataDefinitionIds = Lists.newArrayList();
+
+    // 拷贝平台的数据定义
+    boolean isCopyFromPlatform = !CollectionUtils.isEmpty(request.getPlatformDataDefinitionIds());
+
+    // 拷贝开发者的数据定义
+    boolean isCopyFromDeveloper = !CollectionUtils.isEmpty(request.getDeveloperDataDefinitionIds());
+
+    // 平台和开发者的数据定义不能同时为空
+    CopyRequestValidator.validateNullRequest(isCopyFromPlatform, isCopyFromDeveloper);
+
+    if (isCopyFromPlatform) {
+      List<String> copyPlatformDataIds = copyFromPlatformData(
+          developerId, request.getProductId(), request.getPlatformDataDefinitionIds());
+      newDataDefinitionIds.addAll(copyPlatformDataIds);
+    }
+
+    if (isCopyFromDeveloper) {
+      List<String> copyDeveloperDataIds = copyFromDeveloperData(
+          developerId, request.getProductId(), request.getDeveloperDataDefinitionIds());
+      newDataDefinitionIds.addAll(copyDeveloperDataIds);
+    }
+
+    cacheApplication.deleteDeviceDefinition(developerId, request.getProductId());
+
+    logger.info("Exit. newDataDefinitionIds: {}.", newDataDefinitionIds);
+    return newDataDefinitionIds;
+  }
+
+  /**
+   * 拷贝平台的数据定义.
+   */
+  private List<String> copyFromPlatformData(String developerId, String productId,
+      List<String> requestIds) {
+
+    List<PlatformDataDefinition> dataDefinitions = platformDataService.getByIds(requestIds);
+
+    CopyRequestValidator.matchRequestIds(requestIds, dataDefinitions);
+
+    List<DeviceDataDefinition> newDataDefinitions =
+        DataDefinitionMapper.copyFromPlatformData(developerId, productId, dataDefinitions);
+
+    List<String> newDataDefinitionIds = definitionService.saveAll(newDataDefinitions);
+
+    return newDataDefinitionIds;
+  }
+
+  /**
+   * 拷贝开发者的数据定义
+   */
+  private List<String> copyFromDeveloperData(String developerId, String productId,
+      List<String> requestIds) {
+    List<DeveloperDataDefinition> dataDefinitions = developerDataService.getByIds(requestIds);
+
+    CopyRequestValidator.matchRequestIds(requestIds, dataDefinitions);
+
+    List<DeviceDataDefinition> newDataDefinitions = DataDefinitionMapper
+        .copyFromDeveloperData(developerId, productId, dataDefinitions);
+
+    List<String> newDataDefinitionIds = definitionService.saveAll(newDataDefinitions);
+
+    return newDataDefinitionIds;
   }
 
   /**
@@ -160,94 +232,6 @@ public class DataDefinitionApplication {
     productIds.stream().forEach(consumer);
 
     return result;
-  }
-
-  /**
-   * 处理拷贝数据定义的请求。
-   * 请求分为开发者的数据定义和平台的数据定义。
-   */
-  public List<String> handleCopyRequest(String developerId, CopyRequest request) {
-    logger.info("Enter. developerId: {}, copyRequest: {}.", developerId, request);
-    List<String> newDataDefinitionIds = Lists.newArrayList();
-
-    // 拷贝平台的数据定义
-    boolean isCopyFromPlatform = request.getPlatformDataDefinitionIds() != null &&
-        !request.getPlatformDataDefinitionIds().isEmpty();
-
-    // 拷贝开发者的数据定义
-    boolean isCopyFromDeveloper = request.getDeveloperDataDefinitionIds() != null &&
-        !request.getDeveloperDataDefinitionIds().isEmpty();
-
-    // 平台和开发者的数据定义不能同时为空
-    if (!isCopyFromPlatform && !isCopyFromDeveloper) {
-      logger.debug("Can not copy from null request data definition id");
-      throw new ParametersException("Can not copy from null request data definition id");
-    }
-
-    if (isCopyFromPlatform) {
-      List<String> copyPlatformDataIds = copyFromPlatformData(
-          developerId, request.getProductId(), request.getPlatformDataDefinitionIds());
-      newDataDefinitionIds.addAll(copyPlatformDataIds);
-    }
-
-    if (isCopyFromDeveloper) {
-      List<String> copyDeveloperDataIds = copyFromDeveloperData(
-          developerId, request.getProductId(), request.getDeveloperDataDefinitionIds());
-      newDataDefinitionIds.addAll(copyDeveloperDataIds);
-    }
-
-    cacheApplication.deleteDeviceDefinition(developerId, request.getProductId());
-
-    logger.info("Exit. newDataDefinitionIds: {}.", newDataDefinitionIds);
-    return newDataDefinitionIds;
-  }
-
-  /**
-   * 拷贝开发者的数据定义
-   */
-  private List<String> copyFromDeveloperData(String developerId, String deviceDefinitionId,
-      List<String> requestIds) {
-    List<DeveloperDataDefinition> dataDefinitions = developerDataService.getByIds(requestIds);
-
-    if (requestIds.size() != dataDefinitions.size()) {
-      logger.debug("Can not find all dataDefinition: {}.", requestIds);
-      throw new NotExistException("DeviceDataDefinition not exist");
-    }
-
-    List<DeviceDataDefinition> newDataDefinitions = DataDefinitionMapper
-        .copyFromDeveloperData(developerId, deviceDefinitionId, dataDefinitions);
-
-    List<DeviceDataDefinition> savedDataDefinitions = definitionService.saveAll(newDataDefinitions);
-
-    List<String> newDataDefinitionIds = savedDataDefinitions.stream()
-        .map(DeviceDataDefinition::getId).collect(Collectors.toList());
-
-    return newDataDefinitionIds;
-  }
-
-  /**
-   * 拷贝平台的数据定义.
-   */
-  private List<String> copyFromPlatformData(String developerId, String deviceDefinitionId,
-      List<String> requestIds) {
-
-    List<PlatformDataDefinition> dataDefinitions =
-        platformDataService.getByIds(requestIds);
-
-    if (requestIds.size() != dataDefinitions.size()) {
-      logger.debug("Can not find all dataDefinition: {}.", requestIds);
-      throw new NotExistException("DeviceDataDefinition not exist");
-    }
-
-    List<DeviceDataDefinition> newDataDefinitions = DataDefinitionMapper
-        .copyFromPlatformData(developerId, deviceDefinitionId, dataDefinitions);
-
-    List<DeviceDataDefinition> savedDataDefinitions = definitionService.saveAll(newDataDefinitions);
-
-    List<String> newDataDefinitionIds = savedDataDefinitions.stream()
-        .map(DeviceDataDefinition::getId).collect(Collectors.toList());
-
-    return newDataDefinitionIds;
   }
 
   public void delete(String id, String developerId, String productId) {

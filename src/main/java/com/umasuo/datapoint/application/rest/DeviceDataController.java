@@ -80,6 +80,7 @@ public class DeviceDataController {
     List<String> dateDefinitionIds = definitionApplication.handleCopyRequest(developerId, request);
 
     logger.info("Exit. newDataDefinitionIds: {}.", dateDefinitionIds);
+
     return dateDefinitionIds;
   }
 
