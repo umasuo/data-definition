@@ -16,6 +16,7 @@ import com.umasuo.datapoint.infrastructure.update.UpdateAction;
 import com.umasuo.datapoint.infrastructure.update.UpdaterService;
 import com.umasuo.datapoint.infrastructure.validator.CopyRequestValidator;
 import com.umasuo.datapoint.infrastructure.validator.SchemaValidator;
+import com.umasuo.datapoint.infrastructure.validator.VersionValidator;
 import com.umasuo.exception.AuthFailedException;
 import com.umasuo.exception.ConflictException;
 import com.umasuo.exception.NotExistException;
@@ -185,7 +186,7 @@ public class DataDefinitionApplication {
           " not belong to developer: " + developerId);
     }
 
-//    checkVersion(version, definition.getVersion());
+//    VersionValidator.checkVersion(version, definition.getVersion());
 
     actions.stream().forEach(action -> updaterService.handle(definition, action));
 
@@ -252,19 +253,6 @@ public class DataDefinitionApplication {
     definitionService.delete(id);
 
     cacheApplication.deleteDeviceDefinition(developerId, dataDefinition.getProductId());
-  }
-
-  /**
-   * check the version.
-   *
-   * @param inputVersion Integer
-   * @param existVersion Integer
-   */
-  private void checkVersion(Integer inputVersion, Integer existVersion) {
-    if (!inputVersion.equals(existVersion)) {
-      logger.debug("DeviceDataDefinition version is not correct.");
-      throw new ConflictException("DeviceDataDefinition version is not correct.");
-    }
   }
 
   public void delete(String developerId, String productId) {
