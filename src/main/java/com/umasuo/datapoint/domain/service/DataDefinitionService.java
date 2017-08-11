@@ -124,18 +124,22 @@ public class DataDefinitionService {
   }
 
   /**
-   * get one from db.
+   * Get one from db.
    *
    * @param id the id
    * @return by id
    */
   public DeviceDataDefinition getById(String id) {
-    logger.debug("GetDataDefinitionById: id: {}", id);
+    logger.debug("Enter. id: {}", id);
 
     DeviceDataDefinition valueInDb = this.repository.findOne(id);
+
     if (valueInDb == null) {
+      logger.debug("Can not find dataDefinition: {}.", id);
       throw new NotExistException("DeviceDataDefinition not exist.");
     }
+
+    logger.debug("Exit.");
     return valueInDb;
   }
 

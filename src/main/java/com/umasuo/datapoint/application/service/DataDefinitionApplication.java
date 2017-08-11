@@ -16,9 +16,7 @@ import com.umasuo.datapoint.infrastructure.update.UpdateAction;
 import com.umasuo.datapoint.infrastructure.update.UpdaterService;
 import com.umasuo.datapoint.infrastructure.validator.CopyRequestValidator;
 import com.umasuo.datapoint.infrastructure.validator.SchemaValidator;
-import com.umasuo.datapoint.infrastructure.validator.VersionValidator;
 import com.umasuo.exception.AuthFailedException;
-import com.umasuo.exception.ConflictException;
 import com.umasuo.exception.NotExistException;
 import com.umasuo.exception.ParametersException;
 
@@ -96,6 +94,10 @@ public class DataDefinitionApplication {
   /**
    * 处理拷贝数据定义的请求。
    * 请求分为开发者的数据定义和平台的数据定义。
+   *
+   * @param developerId the developer id
+   * @param request the request
+   * @return the list
    */
   public List<String> handleCopyRequest(String developerId, CopyRequest request) {
     logger.info("Enter. developerId: {}, copyRequest: {}.", developerId, request);
@@ -131,6 +133,11 @@ public class DataDefinitionApplication {
 
   /**
    * 拷贝平台的数据定义.
+   *
+   * @param developerId the developer id
+   * @param productId the product id
+   * @param requestIds the dataDefinition id list
+   * @return new dataDefinition id list
    */
   private List<String> copyFromPlatformData(String developerId, String productId,
       List<String> requestIds) {
@@ -148,7 +155,12 @@ public class DataDefinitionApplication {
   }
 
   /**
-   * 拷贝开发者的数据定义
+   * 拷贝开发者的数据定义.
+   *
+   * @param developerId the developer id
+   * @param productId the product id
+   * @param requestIds the dataDefinition id list
+   * @return new dataDefinition id list
    */
   private List<String> copyFromDeveloperData(String developerId, String productId,
       List<String> requestIds) {
@@ -175,7 +187,7 @@ public class DataDefinitionApplication {
    */
   public DataDefinitionView update(String id, String developerId, Integer version,
       List<UpdateAction> actions) {
-    logger.debug("Enter: id: {}, version: {}, developerId actions: {}",
+    logger.debug("Enter. id: {}, version: {}, developerId:{}, actions: {}.",
         id, version, developerId, actions);
 
     DeviceDataDefinition definition = definitionService.getById(id);
@@ -202,11 +214,18 @@ public class DataDefinitionApplication {
     return result;
   }
 
+  /**
+   * 获取productId对应的所有dataDefinition.
+   *
+   * @param developerId the developer id
+   * @param productId the product id
+   * @return dataDefinition list
+   */
   public List<DataDefinitionView> getByProductId(String developerId, String productId) {
     logger.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
 
     List<DeviceDataDefinition> dataDefinitions =
-        cacheApplication.getDeviceDataDefinition(developerId, productId);
+        cacheApplication.getProductDataDefinition(developerId, productId);
 
     if (dataDefinitions.isEmpty()) {
       dataDefinitions = definitionService.getByProductId(developerId, productId);
@@ -221,6 +240,13 @@ public class DataDefinitionApplication {
     return result;
   }
 
+  /**
+   * Gets by product ids.
+   *
+   * @param developerId the developer id
+   * @param productIds the product ids
+   * @return the by product ids
+   */
   public Map<String, List<DataDefinitionView>> getByProductIds(String developerId,
       List<String> productIds) {
     logger.debug("Enter. developerId: {}, productIds: {}.", developerId, productIds);
@@ -235,6 +261,13 @@ public class DataDefinitionApplication {
     return result;
   }
 
+  /**
+   * Delete.
+   *
+   * @param id the id
+   * @param developerId the developer id
+   * @param productId the product id
+   */
   public void delete(String id, String developerId, String productId) {
     logger.debug("Enter. id: {}, developerId: {}, productId: {}.", id, developerId, productId);
 
@@ -255,6 +288,12 @@ public class DataDefinitionApplication {
     cacheApplication.deleteDeviceDefinition(developerId, dataDefinition.getProductId());
   }
 
+  /**
+   * Delete.
+   *
+   * @param developerId the developer id
+   * @param productId the product id
+   */
   public void delete(String developerId, String productId) {
     logger.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
 
@@ -265,11 +304,19 @@ public class DataDefinitionApplication {
     logger.debug("Exit.");
   }
 
+  /**
+   * Get data definition view.
+   *
+   * @param developerId the developer id
+   * @param productId the product id
+   * @param id the id
+   * @return the data definition view
+   */
   public DataDefinitionView get(String developerId, String productId, String id) {
     logger.debug("Enter. developerId: {}, productId: {}, id: {}.", developerId, productId, id);
 
     DeviceDataDefinition dataDefinition =
-        cacheApplication.getDeviceDataDefinition(developerId, productId, id);
+        cacheApplication.getProductDataDefinition(developerId, productId, id);
 
     if (dataDefinition == null) {
       logger.debug("DataDefinition: {} not exist.", id);

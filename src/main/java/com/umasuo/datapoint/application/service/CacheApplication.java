@@ -104,7 +104,7 @@ public class CacheApplication {
     return result;
   }
 
-  public List<DeviceDataDefinition> getDeviceDataDefinition(String developerId, String productId) {
+  public List<DeviceDataDefinition> getProductDataDefinition(String developerId, String productId) {
 
     LOG.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
 
@@ -117,7 +117,7 @@ public class CacheApplication {
     return result;
   }
 
-  public DeviceDataDefinition getDeviceDataDefinition(String developerId, String productId,
+  public DeviceDataDefinition getProductDataDefinition(String developerId, String productId,
       String id) {
     LOG.debug("Enter. developerId: {}, productId: {}, id: {}.", developerId, productId, id);
 
