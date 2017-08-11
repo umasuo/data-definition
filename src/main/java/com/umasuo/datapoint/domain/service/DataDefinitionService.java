@@ -144,29 +144,6 @@ public class DataDefinitionService {
   }
 
   /**
-   * Gets by data id.
-   *
-   * @param dataId the data id
-   * @param developerId the developer id
-   * @return the by data id
-   */
-  public DeviceDataDefinition getByDataId(String dataId, String developerId) {
-    logger.debug("Enter. dataId: {}, developerId: {}.", dataId, developerId);
-
-    DeviceDataDefinition sample = new DeviceDataDefinition();
-    sample.setDeveloperId(developerId);
-    sample.setDataId(dataId);
-    Example<DeviceDataDefinition> example = Example.of(sample);
-    DeviceDataDefinition valueInDb = this.repository.findOne(example);
-    if (valueInDb == null) {
-      throw new NotExistException("DeviceDataDefinition not exist for dataId: " + dataId);
-    }
-
-    logger.debug("Exit. dataDefinition: {}.", valueInDb);
-    return valueInDb;
-  }
-
-  /**
    * Gets all open data.
    *
    * @param developerId the developer id
@@ -185,43 +162,6 @@ public class DataDefinitionService {
     List<DataDefinitionView> result = DataDefinitionMapper.toView(openDataDefinitions);
 
     logger.info("Exit. dataDefinition size: {}.", result.size());
-
-    return result;
-  }
-
-  /**
-   * Get all data definitions by developer id.
-   *
-   * @param developerId the developer id
-   * @return a map of result, key is the DeviceDataDefinition's id, and value is the exist result,
-   * if a DeviceDataDefinition not exist or not belong to the developer, value is false.
-   */
-  public List<DeviceDataDefinition> getDeveloperDefinition(String developerId) {
-    logger.debug("Enter. developerId: {}.", developerId);
-
-    DeviceDataDefinition sample = new DeviceDataDefinition();
-    sample.setDeveloperId(developerId);
-    Example<DeviceDataDefinition> example = Example.of(sample);
-
-    List<DeviceDataDefinition> result = repository.findAll(example);
-
-    logger.debug("Exit. result size: {}.", result.size());
-
-    return result;
-  }
-
-  /**
-   * Gets by ids.
-   *
-   * @param dataDefinitionIds the data definition ids
-   * @return the by ids
-   */
-  public List<DeviceDataDefinition> getByIds(List<String> dataDefinitionIds) {
-    logger.debug("Enter. dataDefinitionIds: {}.", dataDefinitionIds);
-
-    List<DeviceDataDefinition> result = repository.findAll(dataDefinitionIds);
-
-    logger.debug("Exit. dataDefinition size: {}.", result.size());
 
     return result;
   }
