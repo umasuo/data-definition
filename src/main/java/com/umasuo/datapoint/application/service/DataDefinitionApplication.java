@@ -215,6 +215,51 @@ public class DataDefinitionApplication {
   }
 
   /**
+   * Delete.
+   *
+   * @param developerId the developer id
+   * @param productId the product id
+   * @param id the id
+   */
+  public void delete(String developerId, String productId, String id) {
+    logger.debug("Enter. id: {}, developerId: {}, productId: {}.", id, developerId, productId);
+
+    DeviceDataDefinition dataDefinition = definitionService.getById(id);
+
+    if (!developerId.equals(dataDefinition.getDeveloperId())) {
+      logger.debug("DataDefinition: {} is not belong to developer: {}.", id, developerId);
+      throw new AuthFailedException("Developer has not auth to delete dataDefinition");
+    }
+
+    if (!productId.equals(dataDefinition.getProductId())) {
+      logger.debug("DataDefinition: {} is not belong to product: {}.", id, productId);
+      throw new NotExistException("Product do not have this dataDefinition.");
+    }
+
+    definitionService.delete(id);
+
+    cacheApplication.deleteDeviceDefinition(developerId, dataDefinition.getProductId());
+
+    logger.debug("Exit.");
+  }
+
+  /**
+   * Delete.
+   *
+   * @param developerId the developer id
+   * @param productId the product id
+   */
+  public void delete(String developerId, String productId) {
+    logger.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
+
+    definitionService.deleteByProduct(developerId, productId);
+
+    cacheApplication.deleteDeviceDefinition(developerId, productId);
+
+    logger.debug("Exit.");
+  }
+
+  /**
    * 获取productId对应的所有dataDefinition.
    *
    * @param developerId the developer id
@@ -262,49 +307,6 @@ public class DataDefinitionApplication {
   }
 
   /**
-   * Delete.
-   *
-   * @param id the id
-   * @param developerId the developer id
-   * @param productId the product id
-   */
-  public void delete(String id, String developerId, String productId) {
-    logger.debug("Enter. id: {}, developerId: {}, productId: {}.", id, developerId, productId);
-
-    DeviceDataDefinition dataDefinition = definitionService.getById(id);
-
-    if (!developerId.equals(dataDefinition.getDeveloperId())) {
-      logger.debug("DataDefinition: {} is not belong to developer: {}.", id, developerId);
-      throw new AuthFailedException("Developer has not auth to delete dataDefinition");
-    }
-
-    if (!productId.equals(dataDefinition.getProductId())) {
-      logger.debug("DataDefinition: {} is not belong to product: {}.", id, productId);
-      throw new NotExistException("Product do not have this dataDefinition.");
-    }
-
-    definitionService.delete(id);
-
-    cacheApplication.deleteDeviceDefinition(developerId, dataDefinition.getProductId());
-  }
-
-  /**
-   * Delete.
-   *
-   * @param developerId the developer id
-   * @param productId the product id
-   */
-  public void delete(String developerId, String productId) {
-    logger.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
-
-    definitionService.deleteByProduct(developerId, productId);
-
-    cacheApplication.deleteDeviceDefinition(developerId, productId);
-
-    logger.debug("Exit.");
-  }
-
-  /**
    * Get data definition view.
    *
    * @param developerId the developer id
@@ -319,18 +321,20 @@ public class DataDefinitionApplication {
         cacheApplication.getProductDataDefinition(developerId, productId, id);
 
     if (dataDefinition == null) {
-      logger.debug("DataDefinition: {} not exist.", id);
-      throw new NotExistException("DataDefinition not exist");
-    }
+      logger.debug("Cache fail, query dataDefinition from database and cache.");
 
-    if (!developerId.equals(dataDefinition.getDeveloperId())) {
-      logger.debug("DataDefinition: {} is not belong to developer: {}.", id, developerId);
-      throw new AuthFailedException("DataDefinition is not belong to developer");
-    }
+      List<DeviceDataDefinition> dataDefinitions =
+          definitionService.getByProductId(developerId, productId);
 
-    if (!productId.equals(dataDefinition.getProductId())) {
-      logger.debug("DataDefinition: {} is not belong to product: {}.", id, productId);
-      throw new AuthFailedException("DataDefinition is not belong to product");
+      cacheApplication.cacheDeviceDefinition(developerId, productId, dataDefinitions);
+
+      dataDefinition =
+          dataDefinitions.stream().filter(data -> id.equals(data.getId())).findAny().orElse(null);
+
+      if (dataDefinition == null) {
+        logger.debug("DataDefinition: {} not exist.", id);
+        throw new NotExistException("DataDefinition not exist");
+      }
     }
 
     DataDefinitionView result = DataDefinitionMapper.toView(dataDefinition);

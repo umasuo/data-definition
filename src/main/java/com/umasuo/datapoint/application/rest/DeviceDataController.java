@@ -114,7 +114,7 @@ public class DeviceDataController {
       @RequestHeader String developerId, @RequestParam String productId) {
     logger.info("Enter. id: {}, developerId: {}, productId: {}.", id, developerId, productId);
 
-    definitionApplication.delete(id, developerId, productId);
+    definitionApplication.delete(developerId, productId, id);
 
     logger.info("Exit.");
   }
