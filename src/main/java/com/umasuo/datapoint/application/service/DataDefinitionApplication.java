@@ -81,7 +81,7 @@ public class DataDefinitionApplication {
     DeviceDataDefinition definition =
         definitionService.save(DataDefinitionMapper.toEntity(draft, developerId));
 
-    cacheApplication.deleteDeviceDefinition(developerId, draft.getProductId());
+    cacheApplication.deleteProductDataDefinition(developerId, draft.getProductId());
 
     DataDefinitionView view = DataDefinitionMapper.toView(definition);
 
@@ -124,7 +124,7 @@ public class DataDefinitionApplication {
       newDataDefinitionIds.addAll(copyDeveloperDataIds);
     }
 
-    cacheApplication.deleteDeviceDefinition(developerId, request.getProductId());
+    cacheApplication.deleteProductDataDefinition(developerId, request.getProductId());
 
     logger.info("Exit. newDataDefinitionIds: {}.", newDataDefinitionIds);
     return newDataDefinitionIds;
@@ -190,6 +190,7 @@ public class DataDefinitionApplication {
         id, version, developerId, actions);
 
     DeviceDataDefinition definition = definitionService.getById(id);
+
     DefinitionValidator.validateDeveloper(developerId, definition.getDeveloperId(), id);
 
 //    VersionValidator.checkVersion(version, definition.getVersion());
@@ -198,7 +199,7 @@ public class DataDefinitionApplication {
 
     DeviceDataDefinition updatedDefinition = definitionService.save(definition);
 
-    cacheApplication.deleteDeviceDefinition(developerId, definition.getProductId());
+    cacheApplication.deleteProductDataDefinition(developerId, definition.getProductId());
 
     DataDefinitionView result = DataDefinitionMapper.toView(updatedDefinition);
 
@@ -226,7 +227,7 @@ public class DataDefinitionApplication {
 
     definitionService.delete(id);
 
-    cacheApplication.deleteDeviceDefinition(developerId, dataDefinition.getProductId());
+    cacheApplication.deleteProductDataDefinition(developerId, dataDefinition.getProductId());
 
     logger.debug("Exit.");
   }
@@ -242,7 +243,7 @@ public class DataDefinitionApplication {
 
     definitionService.deleteByProduct(developerId, productId);
 
-    cacheApplication.deleteDeviceDefinition(developerId, productId);
+    cacheApplication.deleteProductDataDefinition(developerId, productId);
 
     logger.debug("Exit.");
   }
@@ -260,10 +261,10 @@ public class DataDefinitionApplication {
     List<DeviceDataDefinition> dataDefinitions =
         cacheApplication.getProductDataDefinition(developerId, productId);
 
-    if (dataDefinitions.isEmpty()) {
+    if (CollectionUtils.isEmpty(dataDefinitions)) {
       dataDefinitions = definitionService.getByProductId(developerId, productId);
 
-      cacheApplication.cacheDeviceDefinition(developerId, productId, dataDefinitions);
+      cacheApplication.cacheProductDataDefinition(developerId, productId, dataDefinitions);
     }
 
     List<DataDefinitionView> result = DataDefinitionMapper.toView(dataDefinitions);
@@ -314,7 +315,7 @@ public class DataDefinitionApplication {
       List<DeviceDataDefinition> dataDefinitions =
           definitionService.getByProductId(developerId, productId);
 
-      cacheApplication.cacheDeviceDefinition(developerId, productId, dataDefinitions);
+      cacheApplication.cacheProductDataDefinition(developerId, productId, dataDefinitions);
 
       dataDefinition =
           dataDefinitions.stream().filter(data -> id.equals(data.getId())).findAny().orElse(null);
