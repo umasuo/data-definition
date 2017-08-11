@@ -30,27 +30,60 @@ public class DataDefinitionService {
   private DataDefinitionRepository repository;
 
   /**
-   * create data definition with sample
+   * 判断dataId是否已经在developer＋product下存在。
    *
-   * @param sample the sample
-   * @return the data definition
+   * @param developerId the developer id
+   * @param productId the product id
+   * @param dataId the data id
    */
-  public DeviceDataDefinition create(DeviceDataDefinition sample) {
-    logger.debug("Enter. sample: {}.", sample);
+  public void isExistDataId(String developerId, String productId, String dataId) {
+    logger.debug("Enter. developerId: {}, productId: {}, dataId: {}.",
+        developerId, productId, dataId);
 
-    // 同一个开发者的同一个产品下，其dataId需要唯一
     DeviceDataDefinition ex = new DeviceDataDefinition();
-    ex.setDataId(sample.getDataId());
-    ex.setDeveloperId(sample.getDeveloperId());
-    ex.setProductId(sample.getProductId());
+    ex.setDataId(dataId);
+    ex.setDeveloperId(developerId);
+    ex.setProductId(productId);
     Example<DeviceDataDefinition> example = Example.of(ex);
-    DeviceDataDefinition valueInDb = this.repository.findOne(example);
-    if (valueInDb != null) {
-      throw new AlreadyExistException("Data Definition already exist for dataId: "
-          + ex.getDataId());
+
+    boolean exists = this.repository.exists(example);
+    if (exists) {
+      logger.debug("DataId: {} has existed for product: {}, developer: {}.",
+          dataId, productId, developerId);
+      throw new AlreadyExistException("Data Definition already exist for dataId: " + dataId);
     }
 
-    return this.repository.save(sample);
+    logger.debug("Exit. dataId is unique.");
+  }
+
+  /**
+   * Is exist name in developer.
+   *
+   * @param developerId the developer id
+   * @param productId the developer id
+   * @param name the name
+   * @return the boolean
+   */
+  public boolean isExistName(String developerId, String productId , String name) {
+    logger.debug("Enter. developerId: {}, productId: {}, name: {}.", developerId, productId, name);
+
+    DeviceDataDefinition sample = new DeviceDataDefinition();
+    sample.setProductId(productId);
+    sample.setName(name);
+
+    Example<DeviceDataDefinition> example = Example.of(sample);
+
+    boolean exists = repository.exists(example);
+
+    if (exists) {
+      logger.debug("Name: {} has existed in product: {}, developer: {}.",
+          name, productId, developerId);
+      throw new AlreadyExistException("Name has existed");
+    }
+
+    logger.debug("Exit. exist: {}.", exists);
+
+    return exists;
   }
 
   /**
@@ -152,29 +185,12 @@ public class DataDefinitionService {
     return result;
   }
 
-
   /**
-   * Is exist name in developer.
+   * Gets by ids.
    *
-   * @param name the name
-   * @param productId the developer id
-   * @return the boolean
+   * @param dataDefinitionIds the data definition ids
+   * @return the by ids
    */
-  public boolean isExistName(String name, String productId) {
-    logger.debug("Enter. productId: {}, name: {}.", productId, name);
-    DeviceDataDefinition sample = new DeviceDataDefinition();
-    sample.setProductId(productId);
-    sample.setName(name);
-
-    Example<DeviceDataDefinition> example = Example.of(sample);
-
-    boolean result = repository.exists(example);
-
-    logger.debug("Exit. exist: {}.", result);
-
-    return result;
-  }
-
   public List<DeviceDataDefinition> getByIds(List<String> dataDefinitionIds) {
     logger.debug("Enter. dataDefinitionIds: {}.", dataDefinitionIds);
 
@@ -185,6 +201,12 @@ public class DataDefinitionService {
     return result;
   }
 
+  /**
+   * Save all list.
+   *
+   * @param dataDefinitions the data definitions
+   * @return the list
+   */
   public List<DeviceDataDefinition> saveAll(List<DeviceDataDefinition> dataDefinitions) {
     logger.debug("Enter. dataDefinitions size: {}.", dataDefinitions.size());
     List<DeviceDataDefinition> savedDataDefinitions = repository.save(dataDefinitions);
@@ -194,6 +216,13 @@ public class DataDefinitionService {
     return savedDataDefinitions;
   }
 
+  /**
+   * Gets by product id.
+   *
+   * @param developerId the developer id
+   * @param productId the product id
+   * @return the by product id
+   */
   public List<DeviceDataDefinition> getByProductId(String developerId, String productId) {
     logger.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
 
@@ -210,6 +239,11 @@ public class DataDefinitionService {
     return result;
   }
 
+  /**
+   * Delete.
+   *
+   * @param id the id
+   */
   public void delete(String id) {
     logger.debug("Enter. id: {}.", id);
 
@@ -218,6 +252,12 @@ public class DataDefinitionService {
     logger.debug("Exit.");
   }
 
+  /**
+   * Delete by product.
+   *
+   * @param developerId the developer id
+   * @param productId the product id
+   */
   public void deleteByProduct(String developerId, String productId) {
     logger.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
 

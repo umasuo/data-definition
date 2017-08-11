@@ -46,8 +46,7 @@ public class DeviceDataController {
   private transient DataDefinitionApplication definitionApplication;
 
   /**
-   * 新建数据定义
-   * <p>
+   * 新建数据定义.
    *
    * @param definitionDraft 数据定义draft
    * @param developerId     开发者ID
@@ -146,8 +145,8 @@ public class DeviceDataController {
       @RequestParam List<String> productIds){
     logger.info("Enter. developerId: {}, productIds: {}.", developerId, productIds);
 
-    Map<String, List<DataDefinitionView>> result = definitionApplication
-        .getByProductIds(developerId, productIds);
+    Map<String, List<DataDefinitionView>> result =
+        definitionApplication.getByProductIds(developerId, productIds);
 
     logger.info("Exit.");
 

@@ -15,7 +15,6 @@ import com.umasuo.datapoint.domain.service.PlatformDataService;
 import com.umasuo.datapoint.infrastructure.update.UpdateAction;
 import com.umasuo.datapoint.infrastructure.update.UpdaterService;
 import com.umasuo.datapoint.infrastructure.validator.SchemaValidator;
-import com.umasuo.exception.AlreadyExistException;
 import com.umasuo.exception.AuthFailedException;
 import com.umasuo.exception.ConflictException;
 import com.umasuo.exception.NotExistException;
@@ -76,19 +75,19 @@ public class DataDefinitionApplication {
 
     SchemaValidator.validate(draft.getDataSchema());
 
-    if (definitionService.isExistName(draft.getName(), draft.getProductId())) {
-      logger.debug("Name: {} has existed in developer: {}.", draft.getName(), draft.getProductId());
-      throw new AlreadyExistException("Name has existed");
-    }
+    definitionService.isExistName(developerId, draft.getProductId(), draft.getName());
 
-    DeviceDataDefinition definition = definitionService
-        .create(DataDefinitionMapper.toEntity(draft, developerId));
+    definitionService.isExistDataId(developerId, draft.getProductId(), draft.getDataId());
+
+    DeviceDataDefinition definition =
+        definitionService.save(DataDefinitionMapper.toEntity(draft, developerId));
 
     cacheApplication.deleteDeviceDefinition(developerId, draft.getProductId());
 
     DataDefinitionView view = DataDefinitionMapper.toView(definition);
 
     logger.debug("Exit. view: {}.", view);
+
     return view;
   }
 
