@@ -65,7 +65,7 @@ public class DataDefinitionService {
    * @param name the name
    * @return the boolean
    */
-  public boolean isExistName(String developerId, String productId , String name) {
+  public void isExistName(String developerId, String productId , String name) {
     logger.debug("Enter. developerId: {}, productId: {}, name: {}.", developerId, productId, name);
 
     DeviceDataDefinition sample = new DeviceDataDefinition();
@@ -82,9 +82,7 @@ public class DataDefinitionService {
       throw new AlreadyExistException("Name has existed");
     }
 
-    logger.debug("Exit. exist: {}.", exists);
-
-    return exists;
+    logger.debug("Exit. name is unique.");
   }
 
   /**
