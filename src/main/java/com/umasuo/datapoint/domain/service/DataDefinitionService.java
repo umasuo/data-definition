@@ -122,72 +122,6 @@ public class DataDefinitionService {
   }
 
   /**
-   * Get one from db.
-   *
-   * @param id the id
-   * @return by id
-   */
-  public DeviceDataDefinition getById(String id) {
-    logger.debug("Enter. id: {}", id);
-
-    DeviceDataDefinition valueInDb = this.repository.findOne(id);
-
-    if (valueInDb == null) {
-      logger.debug("Can not find dataDefinition: {}.", id);
-      throw new NotExistException("DeviceDataDefinition not exist.");
-    }
-
-    logger.debug("Exit.");
-    return valueInDb;
-  }
-
-  /**
-   * Gets all open data.
-   *
-   * @param developerId the developer id
-   * @return the all open data
-   */
-  public List<DataDefinitionView> getAllOpenData(String developerId) {
-    logger.info("Enter. developerId: {}.", developerId);
-
-    DeviceDataDefinition sample = new DeviceDataDefinition();
-    sample.setOpenable(true);
-    sample.setDeveloperId(developerId);
-
-    Example<DeviceDataDefinition> example = Example.of(sample);
-    List<DeviceDataDefinition> openDataDefinitions = repository.findAll(example);
-
-    List<DataDefinitionView> result = DataDefinitionMapper.toView(openDataDefinitions);
-
-    logger.info("Exit. dataDefinition size: {}.", result.size());
-
-    return result;
-  }
-
-  /**
-   * Gets by product id.
-   *
-   * @param developerId the developer id
-   * @param productId the product id
-   * @return the by product id
-   */
-  public List<DeviceDataDefinition> getByProductId(String developerId, String productId) {
-    logger.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
-
-    DeviceDataDefinition sample = new DeviceDataDefinition();
-    sample.setDeveloperId(developerId);
-    sample.setProductId(productId);
-
-    Example<DeviceDataDefinition> example = Example.of(sample);
-
-    List<DeviceDataDefinition> result = repository.findAll(example);
-
-    logger.debug("Exit. dataDefinition size: {}.", result.size());
-
-    return result;
-  }
-
-  /**
    * Delete.
    *
    * @param id the id
@@ -214,5 +148,72 @@ public class DataDefinitionService {
     repository.delete(dataDefinitions);
 
     logger.debug("Exit.");
+  }
+
+  /**
+   * Get one from db.
+   *
+   * @param id the id
+   * @return by id
+   */
+  public DeviceDataDefinition getById(String id) {
+    logger.debug("Enter. id: {}", id);
+
+    DeviceDataDefinition valueInDb = this.repository.findOne(id);
+
+    if (valueInDb == null) {
+      logger.debug("Can not find dataDefinition: {}.", id);
+      throw new NotExistException("DataDefinition not exist.");
+    }
+
+    logger.debug("Exit.");
+
+    return valueInDb;
+  }
+
+  /**
+   * Gets by product id.
+   *
+   * @param developerId the developer id
+   * @param productId the product id
+   * @return the by product id
+   */
+  public List<DeviceDataDefinition> getByProductId(String developerId, String productId) {
+    logger.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
+
+    DeviceDataDefinition sample = new DeviceDataDefinition();
+    sample.setDeveloperId(developerId);
+    sample.setProductId(productId);
+
+    Example<DeviceDataDefinition> example = Example.of(sample);
+
+    List<DeviceDataDefinition> result = repository.findAll(example);
+
+    logger.debug("Exit. dataDefinition size: {}.", result.size());
+
+    return result;
+  }
+
+  /**
+   * Gets all open data.
+   *
+   * @param developerId the developer id
+   * @return the all open data
+   */
+  public List<DataDefinitionView> getAllOpenData(String developerId) {
+    logger.info("Enter. developerId: {}.", developerId);
+
+    DeviceDataDefinition sample = new DeviceDataDefinition();
+    sample.setOpenable(true);
+    sample.setDeveloperId(developerId);
+
+    Example<DeviceDataDefinition> example = Example.of(sample);
+    List<DeviceDataDefinition> openDataDefinitions = repository.findAll(example);
+
+    List<DataDefinitionView> result = DataDefinitionMapper.toView(openDataDefinitions);
+
+    logger.info("Exit. dataDefinition size: {}.", result.size());
+
+    return result;
   }
 }

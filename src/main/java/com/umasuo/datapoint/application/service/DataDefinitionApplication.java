@@ -15,10 +15,9 @@ import com.umasuo.datapoint.domain.service.PlatformDataService;
 import com.umasuo.datapoint.infrastructure.update.UpdateAction;
 import com.umasuo.datapoint.infrastructure.update.UpdaterService;
 import com.umasuo.datapoint.infrastructure.validator.CopyRequestValidator;
+import com.umasuo.datapoint.infrastructure.validator.DefinitionValidator;
 import com.umasuo.datapoint.infrastructure.validator.SchemaValidator;
-import com.umasuo.exception.AuthFailedException;
 import com.umasuo.exception.NotExistException;
-import com.umasuo.exception.ParametersException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -191,12 +190,7 @@ public class DataDefinitionApplication {
         id, version, developerId, actions);
 
     DeviceDataDefinition definition = definitionService.getById(id);
-    if (!definition.getDeveloperId().equals(developerId)) {
-      logger.debug("Can not update dataDefinition: {} not belong to developer: {}.",
-          id, developerId);
-      throw new ParametersException("Can not update dataDefinition: " + id +
-          " not belong to developer: " + developerId);
-    }
+    DefinitionValidator.validateDeveloper(developerId, definition.getDeveloperId(), id);
 
 //    VersionValidator.checkVersion(version, definition.getVersion());
 
@@ -226,15 +220,9 @@ public class DataDefinitionApplication {
 
     DeviceDataDefinition dataDefinition = definitionService.getById(id);
 
-    if (!developerId.equals(dataDefinition.getDeveloperId())) {
-      logger.debug("DataDefinition: {} is not belong to developer: {}.", id, developerId);
-      throw new AuthFailedException("Developer has not auth to delete dataDefinition");
-    }
+    DefinitionValidator.validateDeveloper(developerId, dataDefinition.getDeveloperId(), id);
 
-    if (!productId.equals(dataDefinition.getProductId())) {
-      logger.debug("DataDefinition: {} is not belong to product: {}.", id, productId);
-      throw new NotExistException("Product do not have this dataDefinition.");
-    }
+    DefinitionValidator.validateProduct(productId, dataDefinition.getProductId(), id);
 
     definitionService.delete(id);
 
