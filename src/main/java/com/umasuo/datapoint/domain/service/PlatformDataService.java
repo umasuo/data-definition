@@ -2,7 +2,6 @@ package com.umasuo.datapoint.domain.service;
 
 import com.umasuo.datapoint.domain.model.PlatformDataDefinition;
 import com.umasuo.datapoint.infrastructure.repository.PlatformDataRepository;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,19 +11,21 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Created by umasuo on 17/3/8.
+ * PlatformDataService.
  */
 @Service
 public class PlatformDataService {
 
   /**
-   * logger.
+   * LOGGER.
    */
-  private final static Logger logger = LoggerFactory.getLogger(PlatformDataService.class);
+  private final static Logger LOGGER = LoggerFactory.getLogger(PlatformDataService.class);
 
+  /**
+   * repository.
+   */
   @Autowired
-  private PlatformDataRepository repository;
-
+  private transient PlatformDataRepository repository;
 
   /**
    * get one from db.
@@ -33,7 +34,7 @@ public class PlatformDataService {
    * @return by id
    */
   public List<PlatformDataDefinition> getByProductTypeId(String productTypeId) {
-    logger.debug("Enter. productTypeId: {}", productTypeId);
+    LOGGER.debug("Enter. productTypeId: {}", productTypeId);
 
     PlatformDataDefinition sample = new PlatformDataDefinition();
     sample.setProductTypeId(productTypeId);
@@ -42,7 +43,7 @@ public class PlatformDataService {
 
     List<PlatformDataDefinition> result = repository.findAll(example);
 
-    logger.debug("Exit. dataDefinition size: {}.", result.size());
+    LOGGER.debug("Exit. dataDefinition size: {}.", result.size());
 
     return result;
   }
@@ -54,21 +55,26 @@ public class PlatformDataService {
    * @return PlatformDataDefinition列表
    */
   public List<PlatformDataDefinition> getByIds(List<String> dataDefinitionIds) {
-    logger.debug("Enter. dataDefinitionIds: {}.", dataDefinitionIds);
+    LOGGER.debug("Enter. dataDefinitionIds: {}.", dataDefinitionIds);
 
     List<PlatformDataDefinition> dataDefinitions = repository.findAll(dataDefinitionIds);
 
-    logger.debug("Exit. found dataDefinitions size: {}.", dataDefinitions.size());
+    LOGGER.debug("Exit. found dataDefinitions size: {}.", dataDefinitions.size());
 
     return dataDefinitions;
   }
 
+  /**
+   * Get all platform data definition.
+   *
+   * @return
+   */
   public List<PlatformDataDefinition> getAll() {
-    logger.debug("Enter.");
+    LOGGER.debug("Enter.");
 
     List<PlatformDataDefinition> dataDefinitions = repository.findAll();
 
-    logger.debug("Exit. platformDataDefinition size: {}.", dataDefinitions.size());
+    LOGGER.debug("Exit. platformDataDefinition size: {}.", dataDefinitions.size());
 
     return dataDefinitions;
   }

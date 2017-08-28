@@ -1,13 +1,10 @@
 package com.umasuo.datapoint.domain.model;
 
 import lombok.Data;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,16 +15,17 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 
 /**
- * Created by umasuo on 17/3/8.
+ * PlatformDataDefinition.
  */
 @Data
 @Entity
 @Table(name = "platform_data_definition")
 @EntityListeners(AuditingEntityListener.class)
-public class PlatformDataDefinition implements Serializable{
+public class PlatformDataDefinition{
 
-  private static final long serialVersionUID = -3480326990339520679L;
-
+  /**
+   * Id.
+   */
   @Id
   @GeneratedValue(generator = "uuid")
   @GenericGenerator(name = "uuid", strategy = "uuid2")

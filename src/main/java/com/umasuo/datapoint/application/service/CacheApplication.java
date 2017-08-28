@@ -7,7 +7,6 @@ import com.umasuo.datapoint.domain.model.DeveloperDataDefinition;
 import com.umasuo.datapoint.domain.model.DeviceDataDefinition;
 import com.umasuo.datapoint.domain.model.PlatformDataDefinition;
 import com.umasuo.datapoint.infrastructure.util.RedisUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Davis on 17/7/4.
+ * CacheApplication.
  */
 @Service
 public class CacheApplication {
@@ -27,8 +26,11 @@ public class CacheApplication {
   /**
    * Logger.
    */
-  private static final Logger LOG = LoggerFactory.getLogger(CacheApplication.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(CacheApplication.class);
 
+  /**
+   * Redis template.
+   */
   @Autowired
   private transient RedisTemplate redisTemplate;
 
@@ -38,7 +40,7 @@ public class CacheApplication {
    * @return key : productType Id, value: platformDataDefinition list
    */
   public Map<String, List<PlatformDataDefinition>> getAllPlatformDefinition() {
-    LOG.debug("Enter.");
+    LOGGER.debug("Enter.");
 
     Map<String, List<PlatformDataDefinition>> result =
         redisTemplate.opsForHash().entries(RedisUtils.PLATFORM_DEFINITION_KEY);
@@ -47,7 +49,7 @@ public class CacheApplication {
       result = Maps.newHashMap();
     }
 
-    LOG.debug("Exit.");
+    LOGGER.debug("Exit.");
 
     return result;
   }
@@ -58,11 +60,11 @@ public class CacheApplication {
    * @param views key: productType Id, value: platformDataDefinition list
    */
   public void cachePlatformDefinition(Map<String, List<PlatformDataDefinition>> views) {
-    LOG.debug("Enter. platformDataDefinition size: {}.", views.size());
+    LOGGER.debug("Enter. platformDataDefinition size: {}.", views.size());
 
     redisTemplate.opsForHash().putAll(RedisUtils.PLATFORM_DEFINITION_KEY, views);
 
-    LOG.debug("Exit.");
+    LOGGER.debug("Exit.");
   }
 
   /**
@@ -72,11 +74,11 @@ public class CacheApplication {
    * @return PlatformDataDefinition list
    */
   public List<PlatformDataDefinition> getPlatformDefinitionByType(String productTypeId) {
-    LOG.debug("Enter. productTypeId: {}.", productTypeId);
+    LOGGER.debug("Enter. productTypeId: {}.", productTypeId);
     List<PlatformDataDefinition> result = (List<PlatformDataDefinition>) redisTemplate.opsForHash()
         .get(RedisUtils.PLATFORM_DEFINITION_KEY, productTypeId);
 
-    LOG.debug("Exit. result: {}.", result);
+    LOGGER.debug("Exit. result: {}.", result);
     return result;
   }
 
@@ -86,13 +88,13 @@ public class CacheApplication {
    * @param developerId the developerId
    */
   public void deleteDeveloperDefinition(String developerId) {
-    LOG.debug("Enter. developerId: {}.", developerId);
+    LOGGER.debug("Enter. developerId: {}.", developerId);
 
     String key = String.format(RedisUtils.DEVELOPER_DEFINITION_FORMAT, developerId);
 
     redisTemplate.delete(key);
 
-    LOG.debug("Exit.");
+    LOGGER.debug("Exit.");
   }
 
   /**
@@ -102,13 +104,13 @@ public class CacheApplication {
    * @return DeveloperDataDefinition list
    */
   public List<DeveloperDataDefinition> getAllDeveloperDefinition(String developerId) {
-    LOG.debug("Enter. developerId: {}.", developerId);
+    LOGGER.debug("Enter. developerId: {}.", developerId);
 
     String key = String.format(RedisUtils.DEVELOPER_DEFINITION_FORMAT, developerId);
 
     List<DeveloperDataDefinition> result = redisTemplate.opsForHash().values(key);
 
-    LOG.debug("Exit. developer dataDefinition size: {}.", result.size());
+    LOGGER.debug("Exit. developer dataDefinition size: {}.", result.size());
 
     return result;
   }
@@ -121,15 +123,15 @@ public class CacheApplication {
    */
   public void cacheDeveloperDefinition(String developerId,
       List<DeveloperDataDefinition> definitions) {
-    LOG.debug("Enter. developer: {}, dataDefinition size: {}.", developerId, definitions.size());
+    LOGGER.debug("Enter. developer: {}, dataDefinition size: {}.", developerId, definitions.size());
 
-    Map<String, DeveloperDataDefinition> entityMap = DeveloperDataMapper.toEntityMap(definitions);
+    Map<String, DeveloperDataDefinition> entityMap = DeveloperDataMapper.toModelMap(definitions);
 
     String key = String.format(RedisUtils.DEVELOPER_DEFINITION_FORMAT, developerId);
 
     redisTemplate.opsForHash().putAll(key, entityMap);
 
-    LOG.debug("Exit.");
+    LOGGER.debug("Exit.");
   }
 
   /**
@@ -140,14 +142,14 @@ public class CacheApplication {
    * @return DeveloperDataDefinition developer definition by id
    */
   public DeveloperDataDefinition getDeveloperDefinitionById(String developerId, String id) {
-    LOG.debug("Enter. developerId: {}, id: {}.", developerId, id);
+    LOGGER.debug("Enter. developerId: {}, id: {}.", developerId, id);
 
     String key = String.format(RedisUtils.DEVELOPER_DEFINITION_FORMAT, developerId);
 
     DeveloperDataDefinition result =
         (DeveloperDataDefinition) redisTemplate.opsForHash().get(key, id);
 
-    LOG.debug("Exit. dataDefinition: {}.", result);
+    LOGGER.debug("Exit. dataDefinition: {}.", result);
 
     return result;
   }
@@ -161,14 +163,14 @@ public class CacheApplication {
    */
   public List<DeviceDataDefinition> getProductDataDefinition(String developerId, String productId) {
 
-    LOG.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
+    LOGGER.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
 
     String key = String.format(RedisUtils.DEVICE_DEFINITION_FORMAT, developerId, productId);
 
     List<DeviceDataDefinition> result = (List<DeviceDataDefinition>)
         redisTemplate.opsForHash().values(key);
 
-    LOG.debug("Exit. dataDefinition size: {}.", result.size());
+    LOGGER.debug("Exit. dataDefinition size: {}.", result.size());
     return result;
   }
 
@@ -182,14 +184,14 @@ public class CacheApplication {
    */
   public DeviceDataDefinition getProductDataDefinition(String developerId, String productId,
       String id) {
-    LOG.debug("Enter. developerId: {}, productId: {}, id: {}.", developerId, productId, id);
+    LOGGER.debug("Enter. developerId: {}, productId: {}, id: {}.", developerId, productId, id);
 
     String key = String.format(RedisUtils.DEVICE_DEFINITION_FORMAT, developerId, productId);
 
     DeviceDataDefinition dataDefinition =
         (DeviceDataDefinition) redisTemplate.opsForHash().get(key, id);
 
-    LOG.debug("Exit. dataDefinition: {}.", dataDefinition);
+    LOGGER.debug("Exit. dataDefinition: {}.", dataDefinition);
 
     return dataDefinition;
   }
@@ -204,16 +206,16 @@ public class CacheApplication {
    */
   public void cacheProductDataDefinition(String developerId, String productId,
       List<DeviceDataDefinition> dataDefinitions) {
-    LOG.debug("Enter. developerId: {}, productId: {}, dataDefinition size: {}.",
+    LOGGER.debug("Enter. developerId: {}, productId: {}, dataDefinition size: {}.",
         developerId, productId, dataDefinitions.size());
 
     String key = String.format(RedisUtils.DEVICE_DEFINITION_FORMAT, developerId, productId);
 
-    Map<String, DeviceDataDefinition> entityMap = DataDefinitionMapper.toEntityMap(dataDefinitions);
+    Map<String, DeviceDataDefinition> entityMap = DataDefinitionMapper.toModelMap(dataDefinitions);
 
     redisTemplate.opsForHash().putAll(key, entityMap);
 
-    LOG.debug("Exit.");
+    LOGGER.debug("Exit.");
   }
 
   /**
@@ -223,13 +225,13 @@ public class CacheApplication {
    * @param productId the product id
    */
   public void deleteProductDataDefinition(String developerId, String productId) {
-    LOG.debug("Enter. developerId: {}, productId: {}, dataDefinition size: {}.",
+    LOGGER.debug("Enter. developerId: {}, productId: {}, dataDefinition size: {}.",
         developerId, productId);
 
     String key = String.format(RedisUtils.DEVICE_DEFINITION_FORMAT, developerId, productId);
 
     redisTemplate.delete(key);
 
-    LOG.debug("Exit.");
+    LOGGER.debug("Exit.");
   }
 }

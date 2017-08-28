@@ -3,18 +3,13 @@ package com.umasuo.datapoint.application.dto;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 
-import java.io.Serializable;
-
 import javax.validation.constraints.NotNull;
 
 /**
  * 创建新的数据格点定义的时候需要上传的定义。
- * Created by umasuo on 17/3/8.
  */
 @Data
-public class DataDefinitionDraft implements Serializable {
-
-  private static final long serialVersionUID = 5759775280956048065L;
+public class DataDefinitionDraft {
 
   /**
    * 数据格点ID，需要对开发者唯一，例如: s001。

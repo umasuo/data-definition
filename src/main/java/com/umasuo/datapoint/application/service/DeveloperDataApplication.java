@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Created by Davis on 17/6/30.
+ * DeveloperDataApplication.
  */
 @Service
 public class DeveloperDataApplication {
@@ -26,14 +26,26 @@ public class DeveloperDataApplication {
   /**
    * Logger.
    */
-  private static final Logger LOG = LoggerFactory.getLogger(DeveloperDataApplication.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(DeveloperDataApplication.class);
 
+  /**
+   * Developer data definition service.
+   */
   @Autowired
   private transient DeveloperDataService developerDataService;
 
+  /**
+   * Cache application.
+   */
   @Autowired
   private transient CacheApplication cacheApplication;
 
+  /**
+   * Create developer data definition.
+   * @param developerId
+   * @param draft
+   * @return
+   */
   public DeveloperDataDefinitionView create(String developerId,
       DeveloperDataDefinitionDraft draft) {
 
@@ -43,32 +55,37 @@ public class DeveloperDataApplication {
     boolean isNameExist = developerDataService.isNameExist(developerId, draft.getName());
 
     if (isNameExist) {
-      LOG.debug("Can not add dateDefinition with name exist.");
+      LOGGER.debug("Can not add dateDefinition with name exist.");
       throw new AlreadyExistException("DataDefinition name exist");
     }
 
     boolean isDataIdExist = developerDataService.isDataIdExist(developerId, draft.getDataId());
 
     if (isDataIdExist) {
-      LOG.debug("Can not add dateDefinition with dataId exist.");
+      LOGGER.debug("Can not add dateDefinition with dataId exist.");
       throw new AlreadyExistException("DataDefinition dataId exist");
     }
 
-    DeveloperDataDefinition dataDefinition = DeveloperDataMapper.toEntity(developerId, draft);
+    DeveloperDataDefinition dataDefinition = DeveloperDataMapper.toModel(developerId, draft);
 
     developerDataService.save(dataDefinition);
 
     cacheApplication.deleteDeveloperDefinition(developerId);
 
-    DeveloperDataDefinitionView result = DeveloperDataMapper.toModel(dataDefinition);
+    DeveloperDataDefinitionView result = DeveloperDataMapper.toView(dataDefinition);
 
-    LOG.debug("Exit. newDataDefinition id: {}.", result.getId());
+    LOGGER.debug("Exit. newDataDefinition id: {}.", result.getId());
 
     return result;
   }
 
+  /**
+   * Delete Developer data definition.
+   * @param developerId
+   * @param id
+   */
   public void delete(String developerId, String id) {
-    LOG.debug("Enter. developerId: {}, dataDefinition id: {}.", developerId, id);
+    LOGGER.debug("Enter. developerId: {}, dataDefinition id: {}.", developerId, id);
 
     //todo version
     getById(developerId, id);
@@ -78,20 +95,31 @@ public class DeveloperDataApplication {
     cacheApplication.deleteDeveloperDefinition(developerId);
   }
 
+  /**
+   * Get one data definition by id.
+   * @param developerId
+   * @param id
+   * @return
+   */
   public DeveloperDataDefinitionView getOne(String developerId, String id) {
-    LOG.debug("Enter. developerId: {}, dataDefinition id: {}.", developerId, id);
+    LOGGER.debug("Enter. developerId: {}, dataDefinition id: {}.", developerId, id);
 
     DeveloperDataDefinition dataDefinition = getById(developerId, id);
 
-    DeveloperDataDefinitionView result = DeveloperDataMapper.toModel(dataDefinition);
+    DeveloperDataDefinitionView result = DeveloperDataMapper.toView(dataDefinition);
 
-    LOG.debug("Exit.");
+    LOGGER.debug("Exit.");
 
     return result;
   }
 
+  /**
+   * Get developer's data definition.
+   * @param developerId
+   * @return
+   */
   public List<DeveloperDataDefinitionView> getDeveloperData(String developerId) {
-    LOG.debug("Enter. developerId: {}.", developerId);
+    LOGGER.debug("Enter. developerId: {}.", developerId);
 
     List<DeveloperDataDefinition> dataDefinitions =
         cacheApplication.getAllDeveloperDefinition(developerId);
@@ -102,23 +130,29 @@ public class DeveloperDataApplication {
       cacheApplication.cacheDeveloperDefinition(developerId, dataDefinitions);
     }
 
-    List<DeveloperDataDefinitionView> result = DeveloperDataMapper.toModel(dataDefinitions);
+    List<DeveloperDataDefinitionView> result = DeveloperDataMapper.toView(dataDefinitions);
 
-    LOG.debug("Exit. developerDataDefinition size: {}.", result.size());
+    LOGGER.debug("Exit. developerDataDefinition size: {}.", result.size());
 
     return result;
   }
 
+  /**
+   * Get
+   * @param developerId
+   * @param id
+   * @return
+   */
   private DeveloperDataDefinition getById(String developerId, String id) {
 
     DeveloperDataDefinition dataDefinition = developerDataService.getById(id);
     if (dataDefinition == null) {
-      LOG.debug("Can not find dataDefinition by id: {}.", id);
+      LOGGER.debug("Can not find dataDefinition by id: {}.", id);
       throw new NotExistException("DataDefinition not found");
     }
 
     if (!dataDefinition.getDeveloperId().equals(developerId)) {
-      LOG.debug("Do not have auth to delete dataDefinition.");
+      LOGGER.debug("Do not have auth to delete dataDefinition.");
       throw new AuthFailedException("Do not have auth to delete dataDefinition");
     }
     return dataDefinition;

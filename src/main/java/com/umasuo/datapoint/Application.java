@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Created by umasuo on 17/2/9.
+ * Service starter.
  */
 @SpringBootApplication(scanBasePackages = "com.umasuo")
 @RestController

@@ -22,71 +22,96 @@ import java.util.List;
 import javax.validation.Valid;
 
 /**
- * Created by Davis on 17/6/30.
+ * DeveloperDataDefinitionController.
  */
 @CrossOrigin
 @RestController
-public class DeveloperDataController {
+public class DeveloperDataDefinitionController {
 
   /**
    * Logger.
    */
-  private static final Logger LOG = LoggerFactory.getLogger(DeveloperDataController.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(DeveloperDataDefinitionController.class);
 
+  /**
+   * Developer data application.
+   */
   @Autowired
   private transient DeveloperDataApplication developerDataApplication;
 
+  /**
+   * Create.
+   *
+   * @param developerId
+   * @param draft
+   * @return
+   */
   @PostMapping(Router.DEVELOPER_DATA_ROOT)
-  public DeveloperDataDefinitionView create(@RequestHeader("developerId") String developerId,
-      @RequestBody @Valid DeveloperDataDefinitionDraft draft) {
-    LOG.info("Enter. developerId: {}, dataDefinition draft: {}.", developerId, draft);
+  public DeveloperDataDefinitionView create(@RequestHeader String developerId,
+                                            @RequestBody @Valid DeveloperDataDefinitionDraft
+                                                draft) {
+    LOGGER.info("Enter. developerId: {}, dataDefinition draft: {}.", developerId, draft);
 
     DeveloperDataDefinitionView newDataDefinition =
         developerDataApplication.create(developerId, draft);
 
-    LOG.info("Exit. newDataDefinition id: {}.", newDataDefinition.getId());
+    LOGGER.info("Exit. newDataDefinition id: {}.", newDataDefinition.getId());
 
     return newDataDefinition;
   }
 
+  /**
+   * Delete.
+   *
+   * @param developerId
+   * @param id
+   */
   @DeleteMapping(Router.DEVELOPER_DATA_WITH_ID)
-  public void delete(@RequestHeader("developerId") String developerId, @PathVariable String id) {
-    LOG.info("Enter. developerId: {}, dataDefinition id: {}.", developerId, id);
+  public void delete(@RequestHeader String developerId, @PathVariable String id) {
+    LOGGER.info("Enter. developerId: {}, dataDefinition id: {}.", developerId, id);
 
     developerDataApplication.delete(developerId, id);
 
-    LOG.info("Exit.");
+    LOGGER.info("Exit.");
   }
 
-  public DeveloperDataDefinitionView update() {
-    // TODO: 17/6/30
-    return null;
-  }
-
+  /**
+   * Get one data definition.
+   *
+   * @param developerId
+   * @param id
+   * @return
+   */
   @GetMapping(Router.DEVELOPER_DATA_WITH_ID)
-  public DeveloperDataDefinitionView getOne(@RequestHeader("developerId") String developerId,
-      @PathVariable String id) {
-    LOG.info("Enter. developerId: {}, dataDefinition id: {}.", developerId, id);
+  public DeveloperDataDefinitionView getOne(@RequestHeader String developerId,
+                                            @PathVariable String id) {
+    LOGGER.info("Enter. developerId: {}, dataDefinition id: {}.", developerId, id);
 
     DeveloperDataDefinitionView result = developerDataApplication.getOne(developerId, id);
 
-    LOG.trace("found developerDataDefinition: {}.", result);
-    LOG.info("Exit.");
+    LOGGER.trace("found developerDataDefinition: {}.", result);
+    LOGGER.info("Exit.");
 
     return result;
   }
 
+  /**
+   * Get developer data.
+   *
+   * @param developerId
+   * @return
+   */
   @GetMapping(Router.DEVELOPER_DATA_ROOT)
   public List<DeveloperDataDefinitionView> getDeveloperData(
-      @RequestHeader("developerId") String developerId) {
+      @RequestHeader String developerId) {
 
-    LOG.info("Enter. developerId: {}.", developerId);
+    LOGGER.info("Enter. developerId: {}.", developerId);
 
     List<DeveloperDataDefinitionView> result =
         developerDataApplication.getDeveloperData(developerId);
 
-    LOG.trace("found developerDataDefinition: {}.", result);
-    LOG.info("Exit. developerDataDefinition size: {}.", result.size());
+    LOGGER.trace("found developerDataDefinition: {}.", result);
+    LOGGER.info("Exit. developerDataDefinition size: {}.", result.size());
 
     return result;
   }

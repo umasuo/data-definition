@@ -1,7 +1,7 @@
 package com.umasuo.datapoint.infrastructure;
 
 /**
- * Created by umasuo on 17/3/7.
+ * Router.
  */
 public class Router {
 
@@ -9,7 +9,7 @@ public class Router {
    * data definition root.
    */
   public static final String DATA_DEFINITION_ROOT = "/data-definitions";
-  
+
   /**
    * definition with id.
    */
@@ -20,9 +20,18 @@ public class Router {
    */
   public static final String DATA_COPY = DATA_DEFINITION_ROOT + "/copy";
 
+  /**
+   * Platform data definition root.
+   */
   public static final String PLATFORM_DATA_ROOT = DATA_DEFINITION_ROOT + "/platform";
 
+  /**
+   * Developer data definition root.
+   */
   public static final String DEVELOPER_DATA_ROOT = DATA_DEFINITION_ROOT + "/developer";
 
+  /**
+   * Developer data definition with id.
+   */
   public static final String DEVELOPER_DATA_WITH_ID = DEVELOPER_DATA_ROOT + "/{id}";
 }

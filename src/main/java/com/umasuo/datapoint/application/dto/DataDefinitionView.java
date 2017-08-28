@@ -7,7 +7,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * Created by umasuo on 17/3/8.
+ * DataDefinitionView.
  */
 @Data
 public class DataDefinitionView implements Serializable {
@@ -47,6 +47,9 @@ public class DataDefinitionView implements Serializable {
    */
   private String dataId;
 
+  /**
+   * Data schema.
+   */
   private String schema;
 
   /**
@@ -65,5 +68,8 @@ public class DataDefinitionView implements Serializable {
    */
   private Boolean openable;
 
+  /**
+   * Data definition category.
+   */
   private Category category;
 }

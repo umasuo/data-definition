@@ -18,7 +18,6 @@ import com.umasuo.datapoint.infrastructure.validator.CopyRequestValidator;
 import com.umasuo.datapoint.infrastructure.validator.DefinitionValidator;
 import com.umasuo.datapoint.infrastructure.validator.SchemaValidator;
 import com.umasuo.exception.NotExistException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,15 +29,15 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * Created by umasuo on 17/6/11.
+ * DataDefinitionApplication.
  */
 @Service
 public class DataDefinitionApplication {
 
   /**
-   * logger.
+   * LOGGER.
    */
-  private final static Logger logger = LoggerFactory.getLogger(DataDefinitionApplication.class);
+  private final static Logger LOGGER = LoggerFactory.getLogger(DataDefinitionApplication.class);
 
   /**
    * The DataDefinitionService.
@@ -46,13 +45,21 @@ public class DataDefinitionApplication {
   @Autowired
   private transient DataDefinitionService definitionService;
 
+  /**
+   * Platform data definition service.
+   */
   @Autowired
   private transient PlatformDataService platformDataService;
 
+  /**
+   * Developer data definition service.
+   */
   @Autowired
   private transient DeveloperDataService developerDataService;
 
-
+  /**
+   * Cache application service.
+   */
   @Autowired
   private transient CacheApplication cacheApplication;
 
@@ -65,12 +72,12 @@ public class DataDefinitionApplication {
   /**
    * Create DeviceDataDefinition.
    *
-   * @param draft the draft
+   * @param draft       the draft
    * @param developerId the developer id
    * @return the data definition view
    */
   public DataDefinitionView create(DataDefinitionDraft draft, String developerId) {
-    logger.debug("Enter. draft: {}, developerId: {}.", draft, developerId);
+    LOGGER.debug("Enter. draft: {}, developerId: {}.", draft, developerId);
 
     SchemaValidator.validate(draft.getDataSchema());
 
@@ -79,13 +86,13 @@ public class DataDefinitionApplication {
     definitionService.isExistDataId(developerId, draft.getProductId(), draft.getDataId());
 
     DeviceDataDefinition definition =
-        definitionService.save(DataDefinitionMapper.toEntity(draft, developerId));
+        definitionService.save(DataDefinitionMapper.toModel(draft, developerId));
 
     cacheApplication.deleteProductDataDefinition(developerId, draft.getProductId());
 
     DataDefinitionView view = DataDefinitionMapper.toView(definition);
 
-    logger.debug("Exit. view: {}.", view);
+    LOGGER.debug("Exit. view: {}.", view);
 
     return view;
   }
@@ -95,11 +102,11 @@ public class DataDefinitionApplication {
    * 请求分为开发者的数据定义和平台的数据定义。
    *
    * @param developerId the developer id
-   * @param request the request
+   * @param request     the request
    * @return the list
    */
   public List<String> handleCopyRequest(String developerId, CopyRequest request) {
-    logger.info("Enter. developerId: {}, copyRequest: {}.", developerId, request);
+    LOGGER.info("Enter. developerId: {}, copyRequest: {}.", developerId, request);
 
     List<String> newDataDefinitionIds = Lists.newArrayList();
 
@@ -126,7 +133,7 @@ public class DataDefinitionApplication {
 
     cacheApplication.deleteProductDataDefinition(developerId, request.getProductId());
 
-    logger.info("Exit. newDataDefinitionIds: {}.", newDataDefinitionIds);
+    LOGGER.info("Exit. newDataDefinitionIds: {}.", newDataDefinitionIds);
     return newDataDefinitionIds;
   }
 
@@ -134,12 +141,12 @@ public class DataDefinitionApplication {
    * 拷贝平台的数据定义.
    *
    * @param developerId the developer id
-   * @param productId the product id
-   * @param requestIds the dataDefinition id list
+   * @param productId   the product id
+   * @param requestIds  the dataDefinition id list
    * @return new dataDefinition id list
    */
   private List<String> copyFromPlatformData(String developerId, String productId,
-      List<String> requestIds) {
+                                            List<String> requestIds) {
 
     List<PlatformDataDefinition> dataDefinitions = platformDataService.getByIds(requestIds);
 
@@ -157,12 +164,12 @@ public class DataDefinitionApplication {
    * 拷贝开发者的数据定义.
    *
    * @param developerId the developer id
-   * @param productId the product id
-   * @param requestIds the dataDefinition id list
+   * @param productId   the product id
+   * @param requestIds  the dataDefinition id list
    * @return new dataDefinition id list
    */
   private List<String> copyFromDeveloperData(String developerId, String productId,
-      List<String> requestIds) {
+                                             List<String> requestIds) {
     List<DeveloperDataDefinition> dataDefinitions = developerDataService.getByIds(requestIds);
 
     CopyRequestValidator.matchRequestIds(requestIds, dataDefinitions);
@@ -178,15 +185,15 @@ public class DataDefinitionApplication {
   /**
    * Update DeviceDataDefinition.
    *
-   * @param id the id
+   * @param id          the id
    * @param developerId the developer id
-   * @param version the version
-   * @param actions the actions
+   * @param version     the version
+   * @param actions     the actions
    * @return updated DataDefinitionView
    */
   public DataDefinitionView update(String id, String developerId, Integer version,
-      List<UpdateAction> actions) {
-    logger.debug("Enter. id: {}, version: {}, developerId:{}, actions: {}.",
+                                   List<UpdateAction> actions) {
+    LOGGER.debug("Enter. id: {}, version: {}, developerId:{}, actions: {}.",
         id, version, developerId, actions);
 
     DeviceDataDefinition definition = definitionService.getById(id);
@@ -203,8 +210,8 @@ public class DataDefinitionApplication {
 
     DataDefinitionView result = DataDefinitionMapper.toView(updatedDefinition);
 
-    logger.trace("Updated DeviceDataDefinition: {}.", result);
-    logger.debug("Exit.");
+    LOGGER.trace("Updated DeviceDataDefinition: {}.", result);
+    LOGGER.debug("Exit.");
 
     return result;
   }
@@ -213,11 +220,11 @@ public class DataDefinitionApplication {
    * Delete.
    *
    * @param developerId the developer id
-   * @param productId the product id
-   * @param id the id
+   * @param productId   the product id
+   * @param id          the id
    */
   public void delete(String developerId, String productId, String id) {
-    logger.debug("Enter. id: {}, developerId: {}, productId: {}.", id, developerId, productId);
+    LOGGER.debug("Enter. id: {}, developerId: {}, productId: {}.", id, developerId, productId);
 
     DeviceDataDefinition dataDefinition = definitionService.getById(id);
 
@@ -229,34 +236,34 @@ public class DataDefinitionApplication {
 
     cacheApplication.deleteProductDataDefinition(developerId, dataDefinition.getProductId());
 
-    logger.debug("Exit.");
+    LOGGER.debug("Exit.");
   }
 
   /**
    * Delete.
    *
    * @param developerId the developer id
-   * @param productId the product id
+   * @param productId   the product id
    */
   public void delete(String developerId, String productId) {
-    logger.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
+    LOGGER.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
 
     definitionService.deleteByProduct(developerId, productId);
 
     cacheApplication.deleteProductDataDefinition(developerId, productId);
 
-    logger.debug("Exit.");
+    LOGGER.debug("Exit.");
   }
 
   /**
    * 获取productId对应的所有dataDefinition.
    *
    * @param developerId the developer id
-   * @param productId the product id
+   * @param productId   the product id
    * @return dataDefinition list
    */
   public List<DataDefinitionView> getByProductId(String developerId, String productId) {
-    logger.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
+    LOGGER.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
 
     List<DeviceDataDefinition> dataDefinitions =
         cacheApplication.getProductDataDefinition(developerId, productId);
@@ -269,7 +276,7 @@ public class DataDefinitionApplication {
 
     List<DataDefinitionView> result = DataDefinitionMapper.toView(dataDefinitions);
 
-    logger.debug("Exit. dataDefinition size: {}.", result.size());
+    LOGGER.debug("Exit. dataDefinition size: {}.", result.size());
 
     return result;
   }
@@ -278,12 +285,12 @@ public class DataDefinitionApplication {
    * Gets by product ids.
    *
    * @param developerId the developer id
-   * @param productIds the product ids
+   * @param productIds  the product ids
    * @return the by product ids
    */
   public Map<String, List<DataDefinitionView>> getByProductIds(String developerId,
-      List<String> productIds) {
-    logger.debug("Enter. developerId: {}, productIds: {}.", developerId, productIds);
+                                                               List<String> productIds) {
+    LOGGER.debug("Enter. developerId: {}, productIds: {}.", developerId, productIds);
 
     // TODO: 17/7/12 简单粗暴的实现方式，待优化成批量处理
     Map<String, List<DataDefinitionView>> result = Maps.newHashMap();
@@ -299,18 +306,18 @@ public class DataDefinitionApplication {
    * Get data definition view.
    *
    * @param developerId the developer id
-   * @param productId the product id
-   * @param id the id
+   * @param productId   the product id
+   * @param id          the id
    * @return the data definition view
    */
   public DataDefinitionView get(String developerId, String productId, String id) {
-    logger.debug("Enter. developerId: {}, productId: {}, id: {}.", developerId, productId, id);
+    LOGGER.debug("Enter. developerId: {}, productId: {}, id: {}.", developerId, productId, id);
 
     DeviceDataDefinition dataDefinition =
         cacheApplication.getProductDataDefinition(developerId, productId, id);
 
     if (dataDefinition == null) {
-      logger.debug("Cache fail, query dataDefinition from database and cache.");
+      LOGGER.debug("Cache fail, query dataDefinition from database and cache.");
 
       List<DeviceDataDefinition> dataDefinitions =
           definitionService.getByProductId(developerId, productId);
@@ -321,14 +328,14 @@ public class DataDefinitionApplication {
           dataDefinitions.stream().filter(data -> id.equals(data.getId())).findAny().orElse(null);
 
       if (dataDefinition == null) {
-        logger.debug("DataDefinition: {} not exist.", id);
+        LOGGER.debug("DataDefinition: {} not exist.", id);
         throw new NotExistException("DataDefinition not exist");
       }
     }
 
     DataDefinitionView result = DataDefinitionMapper.toView(dataDefinition);
 
-    logger.debug("Exit. dataDefinition: {}.", result);
+    LOGGER.debug("Exit. dataDefinition: {}.", result);
 
     return result;
   }

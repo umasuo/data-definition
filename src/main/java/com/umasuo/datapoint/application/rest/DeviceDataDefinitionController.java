@@ -7,7 +7,6 @@ import com.umasuo.datapoint.application.service.DataDefinitionApplication;
 import com.umasuo.datapoint.domain.service.DataDefinitionService;
 import com.umasuo.datapoint.infrastructure.Router;
 import com.umasuo.datapoint.infrastructure.update.UpdateRequest;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,20 +27,27 @@ import java.util.Map;
 import javax.validation.Valid;
 
 /**
- * Created by umasuo on 17/3/8.
+ * DeviceDataDefinitionController.
  */
 @RestController
 @CrossOrigin
-public class DeviceDataController {
+public class DeviceDataDefinitionController {
 
   /**
-   * logger.
+   * LOGGER.
    */
-  private final static Logger logger = LoggerFactory.getLogger(DeviceDataController.class);
+  private final static Logger LOGGER = LoggerFactory.getLogger(DeviceDataDefinitionController
+      .class);
 
+  /**
+   * Data definition service.
+   */
   @Autowired
   private transient DataDefinitionService definitionService;
 
+  /**
+   * Data definition app.
+   */
   @Autowired
   private transient DataDefinitionApplication definitionApplication;
 
@@ -56,11 +62,11 @@ public class DeviceDataController {
   @PostMapping(value = Router.DATA_DEFINITION_ROOT)
   public DataDefinitionView create(@RequestBody @Valid DataDefinitionDraft definitionDraft,
                                    @RequestHeader String developerId) {
-    logger.info("Enter. definitionDraft: {}, developerId: {}.", definitionDraft, developerId);
+    LOGGER.info("Enter. definitionDraft: {}, developerId: {}.", definitionDraft, developerId);
 
     DataDefinitionView view = definitionApplication.create(definitionDraft, developerId);
 
-    logger.info("Exit. dataDefinition: {}", view);
+    LOGGER.info("Exit. dataDefinition: {}", view);
     return view;
   }
 
@@ -75,11 +81,11 @@ public class DeviceDataController {
   @PostMapping(Router.DATA_COPY)
   public List<String> copy(@RequestHeader("developerId") String developerId,
                            @RequestBody @Valid CopyRequest request) {
-    logger.info("Enter. developerId: {}, copyRequest: {}.", developerId, request);
+    LOGGER.info("Enter. developerId: {}, copyRequest: {}.", developerId, request);
 
     List<String> dateDefinitionIds = definitionApplication.handleCopyRequest(developerId, request);
 
-    logger.info("Exit. newDataDefinitionIds: {}.", dateDefinitionIds);
+    LOGGER.info("Exit. newDataDefinitionIds: {}.", dateDefinitionIds);
 
     return dateDefinitionIds;
   }
@@ -96,63 +102,90 @@ public class DeviceDataController {
   public DataDefinitionView update(@PathVariable String id,
                                    @RequestHeader String developerId,
                                    @RequestBody @Valid UpdateRequest updateRequest) {
-    logger.info("Enter. dataDefinitionId: {}, updateRequest: {}, developerId: {}.",
+    LOGGER.info("Enter. dataDefinitionId: {}, updateRequest: {}, developerId: {}.",
         id, updateRequest, developerId);
 
     DataDefinitionView result =
         definitionApplication.update(id, developerId, updateRequest.getVersion(), updateRequest
             .getActions());
 
-    logger.trace("Updated definition: {}.", result);
-    logger.info("Exit.");
+    LOGGER.trace("Updated definition: {}.", result);
+    LOGGER.info("Exit.");
 
     return result;
   }
 
+  /**
+   * Delete.
+   *
+   * @param id
+   * @param developerId
+   * @param productId
+   */
   @DeleteMapping(value = Router.DATA_DEFINITION_WITH_ID)
   public void delete(@PathVariable String id,
-      @RequestHeader String developerId, @RequestParam String productId) {
-    logger.info("Enter. id: {}, developerId: {}, productId: {}.", id, developerId, productId);
+                     @RequestHeader String developerId, @RequestParam String productId) {
+    LOGGER.info("Enter. id: {}, developerId: {}, productId: {}.", id, developerId, productId);
 
     definitionApplication.delete(developerId, productId, id);
 
-    logger.info("Exit.");
+    LOGGER.info("Exit.");
   }
 
+  /**
+   * Delete.
+   *
+   * @param developerId
+   * @param productId
+   */
   @DeleteMapping(value = Router.DATA_DEFINITION_ROOT)
   public void delete(@RequestHeader String developerId, @RequestParam String productId) {
-    logger.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
+    LOGGER.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
 
     definitionApplication.delete(developerId, productId);
 
-    logger.info("Exit.");
+    LOGGER.info("Exit.");
   }
 
-
+  /**
+   * Get by product id.
+   *
+   * @param developerId
+   * @param productId
+   * @return
+   */
   @GetMapping(value = Router.DATA_DEFINITION_ROOT, params = {"productId"})
   public List<DataDefinitionView> getByProductId(@RequestHeader String developerId,
-      @RequestParam String productId) {
-    logger.info("Enter. developerId: {}, productId: {}.", developerId, productId);
+                                                 @RequestParam String productId) {
+    LOGGER.info("Enter. developerId: {}, productId: {}.", developerId, productId);
 
-    List<DataDefinitionView> result  = definitionApplication.getByProductId(developerId, productId);
+    List<DataDefinitionView> result = definitionApplication.getByProductId(developerId, productId);
 
-    logger.info("Exit. dataDefinition size: {}.", result.size());
+    LOGGER.info("Exit. dataDefinition size: {}.", result.size());
 
     return result;
   }
 
+  /**
+   * Get by product id list.
+   *
+   * @param developerId
+   * @param productIds
+   * @return
+   */
   @GetMapping(value = Router.DATA_DEFINITION_ROOT, params = {"productIds"})
   public Map<String, List<DataDefinitionView>> getByProductIdList(@RequestHeader String developerId,
-      @RequestParam List<String> productIds){
-    logger.info("Enter. developerId: {}, productIds: {}.", developerId, productIds);
+                                                                  @RequestParam List<String>
+                                                                      productIds) {
+    LOGGER.info("Enter. developerId: {}, productIds: {}.", developerId, productIds);
 
     Map<String, List<DataDefinitionView>> result =
         definitionApplication.getByProductIds(developerId, productIds);
 
-    logger.info("Exit.");
+    LOGGER.info("Exit.");
 
     return result;
-   }
+  }
 
   /**
    * 获取单个Data definition。
@@ -163,12 +196,12 @@ public class DeviceDataController {
    */
   @GetMapping(value = Router.DATA_DEFINITION_WITH_ID)
   public DataDefinitionView get(@PathVariable("id") String id,
-      @RequestHeader String developerId, @RequestParam String productId) {
-    logger.info("Enter. developerId: {}, productId: {}, id: {}.", developerId, productId, id);
+                                @RequestHeader String developerId, @RequestParam String productId) {
+    LOGGER.info("Enter. developerId: {}, productId: {}, id: {}.", developerId, productId, id);
 
     DataDefinitionView result = definitionApplication.get(developerId, productId, id);
 
-    logger.info("Exit. dataDefinition: {}.", result);
+    LOGGER.info("Exit. dataDefinition: {}.", result);
 
     return result;
   }
@@ -182,11 +215,11 @@ public class DeviceDataController {
   @GetMapping(value = Router.DATA_DEFINITION_ROOT, params = {"isOpen", "developerId"})
   public List<DataDefinitionView> getAllOpenData(@RequestParam String developerId,
                                                  @RequestParam Boolean isOpen) {
-    logger.info("Enter. developerId: {}.", developerId);
+    LOGGER.info("Enter. developerId: {}.", developerId);
 
     List<DataDefinitionView> result = definitionService.getAllOpenData(developerId);
 
-    logger.info("Exit. dataDefinition size: {}.", result.size());
+    LOGGER.info("Exit. dataDefinition size: {}.", result.size());
 
     return result;
   }

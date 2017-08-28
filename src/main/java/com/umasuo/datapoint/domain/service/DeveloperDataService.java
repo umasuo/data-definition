@@ -2,7 +2,6 @@ package com.umasuo.datapoint.domain.service;
 
 import com.umasuo.datapoint.domain.model.DeveloperDataDefinition;
 import com.umasuo.datapoint.infrastructure.repository.DeveloperDataRepository;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,21 +11,21 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Created by umasuo on 17/3/8.
+ * DeveloperDataService.
  */
 @Service
 public class DeveloperDataService {
 
   /**
-   * logger.
+   * LOGGER.
    */
-  private final static Logger logger = LoggerFactory.getLogger(DeveloperDataService.class);
+  private final static Logger LOGGER = LoggerFactory.getLogger(DeveloperDataService.class);
 
   /**
    * DeveloperDataRepository.
    */
   @Autowired
-  private DeveloperDataRepository repository;
+  private transient DeveloperDataRepository repository;
 
   /**
    * Save DeviceDataDefinition.
@@ -35,11 +34,11 @@ public class DeveloperDataService {
    * @return the data definition
    */
   public DeveloperDataDefinition save(DeveloperDataDefinition dataDefinition) {
-    logger.debug("Enter. dataDefinition: {}.", dataDefinition);
+    LOGGER.debug("Enter. dataDefinition: {}.", dataDefinition);
 
     DeveloperDataDefinition result = repository.save(dataDefinition);
 
-    logger.debug("Exit. saved DeveloperDataDefinition: {}.", result);
+    LOGGER.debug("Exit. saved DeveloperDataDefinition: {}.", result);
 
     return result;
   }
@@ -51,7 +50,7 @@ public class DeveloperDataService {
    * @return by id
    */
   public DeveloperDataDefinition getById(String id) {
-    logger.debug("Enter. id: {}.", id);
+    LOGGER.debug("Enter. id: {}.", id);
 
     DeveloperDataDefinition result = this.repository.findOne(id);
 
@@ -61,12 +60,12 @@ public class DeveloperDataService {
   /**
    * Gets by data id.
    *
-   * @param dataId the data id
+   * @param dataId      the data id
    * @param developerId the developer id
    * @return the by data id
    */
   public DeveloperDataDefinition getByDataId(String dataId, String developerId) {
-    logger.debug("Enter. dataId: {}, developerId: {}.", dataId, developerId);
+    LOGGER.debug("Enter. dataId: {}, developerId: {}.", dataId, developerId);
 
     DeveloperDataDefinition sample = new DeveloperDataDefinition();
     sample.setDeveloperId(developerId);
@@ -76,7 +75,7 @@ public class DeveloperDataService {
 
     DeveloperDataDefinition result = this.repository.findOne(example);
 
-    logger.debug("Exit. dataDefinition: {}.", result);
+    LOGGER.debug("Exit. dataDefinition: {}.", result);
 
     return result;
   }
@@ -89,7 +88,7 @@ public class DeveloperDataService {
    * if a DeviceDataDefinition not exist or not belong to the developer, value is false.
    */
   public List<DeveloperDataDefinition> getDeveloperDefinition(String developerId) {
-    logger.debug("Enter. developerId: {}.", developerId);
+    LOGGER.debug("Enter. developerId: {}.", developerId);
 
     DeveloperDataDefinition sample = new DeveloperDataDefinition();
     sample.setDeveloperId(developerId);
@@ -97,21 +96,33 @@ public class DeveloperDataService {
 
     List<DeveloperDataDefinition> result = repository.findAll(example);
 
-    logger.debug("Exit. result size: {}.", result.size());
+    LOGGER.debug("Exit. result size: {}.", result.size());
 
     return result;
   }
 
+  /**
+   * Delete developer data definition.
+   *
+   * @param id
+   */
   public void delete(String id) {
-    logger.debug("Enter. id: {}.", id);
+    LOGGER.debug("Enter. id: {}.", id);
 
     repository.delete(id);
 
-    logger.debug("Exit.");
+    LOGGER.debug("Exit.");
   }
 
+  /**
+   * Check if name is exist.
+   *
+   * @param developerId
+   * @param name
+   * @return
+   */
   public boolean isNameExist(String developerId, String name) {
-    logger.debug("Enter. developerId: {}, name: {}.", developerId, name);
+    LOGGER.debug("Enter. developerId: {}, name: {}.", developerId, name);
 
     DeveloperDataDefinition sample = new DeveloperDataDefinition();
 
@@ -122,13 +133,20 @@ public class DeveloperDataService {
 
     boolean result = repository.exists(example);
 
-    logger.debug("Exit. is name exist? {}", result);
+    LOGGER.debug("Exit. is name exist? {}", result);
 
     return result;
   }
 
+  /**
+   * Check if data definition id exist.
+   *
+   * @param developerId
+   * @param dataId
+   * @return
+   */
   public boolean isDataIdExist(String developerId, String dataId) {
-    logger.debug("Enter. developerId: {}, dataId: {}.", developerId, dataId);
+    LOGGER.debug("Enter. developerId: {}, dataId: {}.", developerId, dataId);
 
     DeveloperDataDefinition sample = new DeveloperDataDefinition();
 
@@ -139,17 +157,23 @@ public class DeveloperDataService {
 
     boolean result = repository.exists(example);
 
-    logger.debug("Exit. is dataId exist? {}", result);
+    LOGGER.debug("Exit. is dataId exist? {}", result);
 
     return result;
   }
 
+  /**
+   * Get all developer data definitions by data definition id.
+   *
+   * @param developerDataDefinitionIds
+   * @return
+   */
   public List<DeveloperDataDefinition> getByIds(List<String> developerDataDefinitionIds) {
-    logger.debug("Enter. developerDataDefinitionIds: {}.", developerDataDefinitionIds);
+    LOGGER.debug("Enter. developerDataDefinitionIds: {}.", developerDataDefinitionIds);
 
     List<DeveloperDataDefinition> result = repository.findAll(developerDataDefinitionIds);
 
-    logger.debug("Exit.");
+    LOGGER.debug("Exit.");
     return result;
   }
 }

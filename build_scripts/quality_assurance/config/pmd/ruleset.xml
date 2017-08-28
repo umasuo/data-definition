@@ -44,7 +44,9 @@
     <exclude name="InvalidSlf4jMessageFormat" />
   </rule>
   <rule ref="build_scripts/quality_assurance/config/pmd/rulesets/migrating.xml"></rule>
-  <rule ref="build_scripts/quality_assurance/config/pmd/rulesets/naming.xml"></rule>
+  <rule ref="build_scripts/quality_assurance/config/pmd/rulesets/naming.xml">
+    <exclude name="ShortVariable"/>
+  </rule>
   <rule ref="build_scripts/quality_assurance/config/pmd/rulesets/optimizations.xml">
     <!-- too many final -->
     <exclude name="MethodArgumentCouldBeFinal"></exclude>
@@ -55,7 +57,9 @@
     <!-- some generated code throws exception and we need to extends them -->
     <exclude name="SignatureDeclareThrowsException" />
   </rule>
-  <rule ref="build_scripts/quality_assurance/config/pmd/rulesets/strings.xml"></rule>
+  <rule ref="build_scripts/quality_assurance/config/pmd/rulesets/strings.xml">
+    <exclude name="AvoidDuplicateLiterals"/>
+  </rule>
   <rule ref="build_scripts/quality_assurance/config/pmd/rulesets/sunsecure.xml"></rule>
   <rule ref="build_scripts/quality_assurance/config/pmd/rulesets/typeresolution.xml">
     <!-- some generated code throws exception and we need to extends them -->

@@ -7,13 +7,12 @@ import com.umasuo.datapoint.infrastructure.update.UpdateAction;
 import com.umasuo.datapoint.infrastructure.update.UpdateActionUtils;
 import com.umasuo.datapoint.infrastructure.validator.SchemaValidator;
 import com.umasuo.model.Updater;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
- * Created by Davis on 17/7/4.
+ * Update service for schema.
  */
 @Service(UpdateActionUtils.SET_SCHEMA)
 public class SetSchemaService implements Updater<DeviceDataDefinition, UpdateAction> {
@@ -21,11 +20,16 @@ public class SetSchemaService implements Updater<DeviceDataDefinition, UpdateAct
   /**
    * Logger.
    */
-  private static final Logger LOG = LoggerFactory.getLogger(SetSchemaService.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(SetSchemaService.class);
 
+  /**
+   * Update data definition's schema.
+   * @param deviceDataDefinition
+   * @param updateAction
+   */
   @Override
   public void handle(DeviceDataDefinition deviceDataDefinition, UpdateAction updateAction) {
-    LOG.debug("Enter.");
+    LOGGER.debug("Enter.");
 
     JsonNode schema = ((SetSchema) updateAction).getSchema();
 
@@ -33,6 +37,6 @@ public class SetSchemaService implements Updater<DeviceDataDefinition, UpdateAct
 
     deviceDataDefinition.setDataSchema(schema.toString());
 
-    LOG.debug("Exit.");
+    LOGGER.debug("Exit.");
   }
 }

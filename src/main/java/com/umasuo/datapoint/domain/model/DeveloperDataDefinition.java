@@ -1,7 +1,6 @@
 package com.umasuo.datapoint.domain.model;
 
 import lombok.Data;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -16,7 +15,7 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 
 /**
- * Created by Davis on 17/6/30.
+ * DeveloperDataDefinition.
  */
 @Data
 @Entity
@@ -24,6 +23,9 @@ import javax.persistence.Version;
 @EntityListeners(AuditingEntityListener.class)
 public class DeveloperDataDefinition {
 
+  /**
+   * Id.
+   */
   @Id
   @GeneratedValue(generator = "uuid")
   @GenericGenerator(name = "uuid", strategy = "uuid2")

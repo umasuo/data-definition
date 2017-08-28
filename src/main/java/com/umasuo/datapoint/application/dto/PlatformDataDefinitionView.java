@@ -1,21 +1,13 @@
 package com.umasuo.datapoint.application.dto;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import lombok.Data;
 
-import java.io.Serializable;
-
 /**
- * Created by umasuo on 17/3/8.
+ * PlatformDataDefinitionView.
  */
 @Data
-public final class PlatformDataDefinitionView implements Serializable {
-
-  /**
-   * auto generated serial id.
-   */
-  private static final long serialVersionUID = 7500245666736988395L;
+public final class PlatformDataDefinitionView {
 
   /**
    * auto generated uuid.
@@ -25,12 +17,12 @@ public final class PlatformDataDefinitionView implements Serializable {
   /**
    * The Created at.
    */
-  protected Long createdAt;
+  private Long createdAt;
 
   /**
    * The Last modified at.
    */
-  protected Long lastModifiedAt;
+  private Long lastModifiedAt;
 
   /**
    * version used for update date check.
@@ -57,5 +49,8 @@ public final class PlatformDataDefinitionView implements Serializable {
    */
   private String description;
 
+  /**
+   * Product type id.
+   */
   private String productTypeId;
 }

@@ -1,14 +1,11 @@
 package com.umasuo.datapoint.domain.model;
 
 import com.umasuo.datapoint.infrastructure.enums.Category;
-
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,16 +16,17 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 
 /**
- * Created by umasuo on 17/3/8.
+ * DeviceDataDefinition.
  */
 @Data
 @Entity
 @Table(name = "device_data_definition")
 @EntityListeners(AuditingEntityListener.class)
-public class DeviceDataDefinition implements Serializable{
+public class DeviceDataDefinition {
 
-  private static final long serialVersionUID = 6809407785157874299L;
-
+  /**
+   * Id.
+   */
   @Id
   @GeneratedValue(generator = "uuid")
   @GenericGenerator(name = "uuid", strategy = "uuid2")
@@ -92,5 +90,8 @@ public class DeviceDataDefinition implements Serializable{
    */
   private Boolean openable;
 
+  /**
+   * Data definition category.
+   */
   private Category category;
 }

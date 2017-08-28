@@ -2,29 +2,33 @@ package com.umasuo.datapoint.application.dto.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.umasuo.datapoint.application.dto.DeveloperDataDefinitionDraft;
 import com.umasuo.datapoint.application.dto.DeveloperDataDefinitionView;
 import com.umasuo.datapoint.domain.model.DeveloperDataDefinition;
-import com.umasuo.datapoint.infrastructure.util.JsonUtils;
+import com.umasuo.util.JsonUtils;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
- * Created by Davis on 17/6/30.
+ * DeveloperDataMapper.
  */
 public final class DeveloperDataMapper {
 
   /**
-   * Instantiates a new Developer data mapper.
+   * private default constructor.
    */
-  public DeveloperDataMapper() {
+  private DeveloperDataMapper() {
   }
 
-  public static DeveloperDataDefinitionView toModel(DeveloperDataDefinition entity) {
+  /**
+   * To model.
+   *
+   * @param entity
+   * @return
+   */
+  public static DeveloperDataDefinitionView toView(DeveloperDataDefinition entity) {
     DeveloperDataDefinitionView model = new DeveloperDataDefinitionView();
 
     model.setId(entity.getId());
@@ -41,16 +45,29 @@ public final class DeveloperDataMapper {
     return model;
   }
 
-  public static List<DeveloperDataDefinitionView> toModel(List<DeveloperDataDefinition> entities) {
+  /**
+   * To Model list.
+   *
+   * @param entities
+   * @return
+   */
+  public static List<DeveloperDataDefinitionView> toView(List<DeveloperDataDefinition> entities) {
     List<DeveloperDataDefinitionView> models = Lists.newArrayList();
 
-    entities.stream().forEach(entity -> models.add(toModel(entity)));
+    entities.stream().forEach(entity -> models.add(toView(entity)));
 
     return models;
   }
 
-  public static DeveloperDataDefinition toEntity(String developerId,
-      DeveloperDataDefinitionDraft draft) {
+  /**
+   * To model.
+   *
+   * @param developerId
+   * @param draft
+   * @return
+   */
+  public static DeveloperDataDefinition toModel(String developerId,
+                                                DeveloperDataDefinitionDraft draft) {
     DeveloperDataDefinition entity = new DeveloperDataDefinition();
 
     entity.setDeveloperId(developerId);
@@ -62,7 +79,13 @@ public final class DeveloperDataMapper {
     return entity;
   }
 
-  public static Map<String, DeveloperDataDefinition> toEntityMap(
+  /**
+   * To model map.
+   *
+   * @param definitions
+   * @return
+   */
+  public static Map<String, DeveloperDataDefinition> toModelMap(
       List<DeveloperDataDefinition> definitions) {
     Map<String, DeveloperDataDefinition> entityMap =
         definitions.stream().collect(Collectors.toMap(x -> x.getId(), x -> x));

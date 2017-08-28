@@ -6,7 +6,6 @@ import com.umasuo.datapoint.domain.model.DeviceDataDefinition;
 import com.umasuo.datapoint.infrastructure.repository.DataDefinitionRepository;
 import com.umasuo.exception.AlreadyExistException;
 import com.umasuo.exception.NotExistException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,28 +16,31 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Created by umasuo on 17/3/8.
+ * DataDefinitionService.
  */
 @Service
 public class DataDefinitionService {
 
   /**
-   * logger.
+   * LOGGER.
    */
-  private final static Logger logger = LoggerFactory.getLogger(DataDefinitionService.class);
+  private final static Logger LOGGER = LoggerFactory.getLogger(DataDefinitionService.class);
 
+  /**
+   * Repository.
+   */
   @Autowired
-  private DataDefinitionRepository repository;
+  private transient DataDefinitionRepository repository;
 
   /**
    * 判断dataId是否已经在developer＋product下存在。
    *
    * @param developerId the developer id
-   * @param productId the product id
-   * @param dataId the data id
+   * @param productId   the product id
+   * @param dataId      the data id
    */
   public void isExistDataId(String developerId, String productId, String dataId) {
-    logger.debug("Enter. developerId: {}, productId: {}, dataId: {}.",
+    LOGGER.debug("Enter. developerId: {}, productId: {}, dataId: {}.",
         developerId, productId, dataId);
 
     DeviceDataDefinition ex = new DeviceDataDefinition();
@@ -49,24 +51,24 @@ public class DataDefinitionService {
 
     boolean exists = this.repository.exists(example);
     if (exists) {
-      logger.debug("DataId: {} has existed for product: {}, developer: {}.",
+      LOGGER.debug("DataId: {} has existed for product: {}, developer: {}.",
           dataId, productId, developerId);
       throw new AlreadyExistException("Data Definition already exist for dataId: " + dataId);
     }
 
-    logger.debug("Exit. dataId is unique.");
+    LOGGER.debug("Exit. dataId is unique.");
   }
 
   /**
    * Is exist name in developer.
    *
    * @param developerId the developer id
-   * @param productId the developer id
-   * @param name the name
+   * @param productId   the developer id
+   * @param name        the name
    * @return the boolean
    */
-  public void isExistName(String developerId, String productId , String name) {
-    logger.debug("Enter. developerId: {}, productId: {}, name: {}.", developerId, productId, name);
+  public void isExistName(String developerId, String productId, String name) {
+    LOGGER.debug("Enter. developerId: {}, productId: {}, name: {}.", developerId, productId, name);
 
     DeviceDataDefinition sample = new DeviceDataDefinition();
     sample.setProductId(productId);
@@ -77,12 +79,12 @@ public class DataDefinitionService {
     boolean exists = repository.exists(example);
 
     if (exists) {
-      logger.debug("Name: {} has existed in product: {}, developer: {}.",
+      LOGGER.debug("Name: {} has existed in product: {}, developer: {}.",
           name, productId, developerId);
       throw new AlreadyExistException("Name has existed");
     }
 
-    logger.debug("Exit. name is unique.");
+    LOGGER.debug("Exit. name is unique.");
   }
 
   /**
@@ -92,11 +94,11 @@ public class DataDefinitionService {
    * @return the data definition
    */
   public DeviceDataDefinition save(DeviceDataDefinition dataDefinition) {
-    logger.debug("Enter. dataDefinition: {}.", dataDefinition);
+    LOGGER.debug("Enter. dataDefinition: {}.", dataDefinition);
 
     DeviceDataDefinition result = repository.save(dataDefinition);
 
-    logger.debug("Exit. saved DeviceDataDefinition: {}.", result);
+    LOGGER.debug("Exit. saved DeviceDataDefinition: {}.", result);
 
     return result;
   }
@@ -108,7 +110,7 @@ public class DataDefinitionService {
    * @return the list
    */
   public List<String> saveAll(List<DeviceDataDefinition> dataDefinitions) {
-    logger.debug("Enter. dataDefinitions size: {}.", dataDefinitions.size());
+    LOGGER.debug("Enter. dataDefinitions size: {}.", dataDefinitions.size());
 
     List<DeviceDataDefinition> savedDataDefinitions = repository.save(dataDefinitions);
 
@@ -116,7 +118,7 @@ public class DataDefinitionService {
     List<String> dataDefinitionIds = savedDataDefinitions.stream()
         .map(DeviceDataDefinition::getId).collect(Collectors.toList());
 
-    logger.debug("Exit. dataDefinition ids: {}.", dataDefinitionIds);
+    LOGGER.debug("Exit. dataDefinition ids: {}.", dataDefinitionIds);
 
     return dataDefinitionIds;
   }
@@ -127,27 +129,27 @@ public class DataDefinitionService {
    * @param id the id
    */
   public void delete(String id) {
-    logger.debug("Enter. id: {}.", id);
+    LOGGER.debug("Enter. id: {}.", id);
 
     repository.delete(id);
 
-    logger.debug("Exit.");
+    LOGGER.debug("Exit.");
   }
 
   /**
    * Delete by product.
    *
    * @param developerId the developer id
-   * @param productId the product id
+   * @param productId   the product id
    */
   public void deleteByProduct(String developerId, String productId) {
-    logger.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
+    LOGGER.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
 
     List<DeviceDataDefinition> dataDefinitions = getByProductId(developerId, productId);
 
     repository.delete(dataDefinitions);
 
-    logger.debug("Exit.");
+    LOGGER.debug("Exit.");
   }
 
   /**
@@ -157,16 +159,16 @@ public class DataDefinitionService {
    * @return by id
    */
   public DeviceDataDefinition getById(String id) {
-    logger.debug("Enter. id: {}", id);
+    LOGGER.debug("Enter. id: {}", id);
 
     DeviceDataDefinition valueInDb = this.repository.findOne(id);
 
     if (valueInDb == null) {
-      logger.debug("Can not find dataDefinition: {}.", id);
+      LOGGER.debug("Can not find dataDefinition: {}.", id);
       throw new NotExistException("DataDefinition not exist.");
     }
 
-    logger.debug("Exit.");
+    LOGGER.debug("Exit.");
 
     return valueInDb;
   }
@@ -175,11 +177,11 @@ public class DataDefinitionService {
    * Gets by product id.
    *
    * @param developerId the developer id
-   * @param productId the product id
+   * @param productId   the product id
    * @return the by product id
    */
   public List<DeviceDataDefinition> getByProductId(String developerId, String productId) {
-    logger.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
+    LOGGER.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
 
     DeviceDataDefinition sample = new DeviceDataDefinition();
     sample.setDeveloperId(developerId);
@@ -189,7 +191,7 @@ public class DataDefinitionService {
 
     List<DeviceDataDefinition> result = repository.findAll(example);
 
-    logger.debug("Exit. dataDefinition size: {}.", result.size());
+    LOGGER.debug("Exit. dataDefinition size: {}.", result.size());
 
     return result;
   }
@@ -201,7 +203,7 @@ public class DataDefinitionService {
    * @return the all open data
    */
   public List<DataDefinitionView> getAllOpenData(String developerId) {
-    logger.info("Enter. developerId: {}.", developerId);
+    LOGGER.info("Enter. developerId: {}.", developerId);
 
     DeviceDataDefinition sample = new DeviceDataDefinition();
     sample.setOpenable(true);
@@ -212,7 +214,7 @@ public class DataDefinitionService {
 
     List<DataDefinitionView> result = DataDefinitionMapper.toView(openDataDefinitions);
 
-    logger.info("Exit. dataDefinition size: {}.", result.size());
+    LOGGER.info("Exit. dataDefinition size: {}.", result.size());
 
     return result;
   }

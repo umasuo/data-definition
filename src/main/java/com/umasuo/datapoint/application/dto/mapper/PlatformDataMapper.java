@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.umasuo.datapoint.application.dto.PlatformDataDefinitionView;
 import com.umasuo.datapoint.domain.model.PlatformDataDefinition;
-import com.umasuo.datapoint.infrastructure.util.JsonUtils;
+import com.umasuo.util.JsonUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -13,28 +13,37 @@ import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 /**
- * Created by Davis on 17/6/29.
+ * PlatformDataMapper.
  */
 public final class PlatformDataMapper {
 
   /**
-   * Instantiates a new Platform data mapper.
+   * Private default constructor.
    */
   private PlatformDataMapper() {
   }
 
-
-  public static List<PlatformDataDefinitionView> toModel(List<PlatformDataDefinition> entities) {
+  /**
+   * To view list.
+   * @param entities
+   * @return
+   */
+  public static List<PlatformDataDefinitionView> toView(List<PlatformDataDefinition> entities) {
     List<PlatformDataDefinitionView> models = Lists.newArrayList();
 
     if (entities != null) {
-      entities.stream().forEach(entity -> models.add(toModel(entity)));
+      entities.stream().forEach(entity -> models.add(toView(entity)));
     }
 
     return models;
   }
 
-  public static PlatformDataDefinitionView toModel(PlatformDataDefinition entity) {
+  /**
+   * To view.
+   * @param entity
+   * @return
+   */
+  public static PlatformDataDefinitionView toView(PlatformDataDefinition entity) {
     PlatformDataDefinitionView model = new PlatformDataDefinitionView();
 
     model.setName(entity.getName());
@@ -47,7 +56,12 @@ public final class PlatformDataMapper {
     return model;
   }
 
-  public static Map<String, List<PlatformDataDefinition>> toEntityMap(
+  /**
+   * To model map.
+   * @param dataDefinitions
+   * @return
+   */
+  public static Map<String, List<PlatformDataDefinition>> toModelMap(
       List<PlatformDataDefinition> dataDefinitions) {
 
     Map<String, List<PlatformDataDefinition>> mapModel = Maps.newHashMap();
@@ -66,12 +80,17 @@ public final class PlatformDataMapper {
     return mapModel;
   }
 
+  /**
+   * To model map.
+   * @param entityMap
+   * @return
+   */
   public static Map<String, List<PlatformDataDefinitionView>> toModelMap(
       Map<String, List<PlatformDataDefinition>> entityMap) {
     Map<String, List<PlatformDataDefinitionView>> modelMap = Maps.newHashMap();
 
     Consumer<? super Entry<String, List<PlatformDataDefinition>>> consumer =
-        entry -> modelMap.put(entry.getKey(), toModel(entry.getValue()));
+        entry -> modelMap.put(entry.getKey(), toView(entry.getValue()));
 
     entityMap.entrySet().stream().forEach(consumer);
 

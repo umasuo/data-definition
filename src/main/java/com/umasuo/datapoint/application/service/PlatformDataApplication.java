@@ -4,7 +4,6 @@ import com.umasuo.datapoint.application.dto.PlatformDataDefinitionView;
 import com.umasuo.datapoint.application.dto.mapper.PlatformDataMapper;
 import com.umasuo.datapoint.domain.model.PlatformDataDefinition;
 import com.umasuo.datapoint.domain.service.PlatformDataService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Davis on 17/7/4.
+ * PlatformDataApplication.
  */
 @Service
 public class PlatformDataApplication {
@@ -22,25 +21,36 @@ public class PlatformDataApplication {
   /**
    * Logger.
    */
-  private static final Logger LOG = LoggerFactory.getLogger(PlatformDataApplication.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(PlatformDataApplication.class);
 
+  /**
+   * Platform data definition service.
+   */
   @Autowired
   private transient PlatformDataService platformDataService;
 
+  /**
+   * Cache application.
+   */
   @Autowired
   private transient CacheApplication cacheApplication;
 
+  /**
+   * Get all platform.
+   *
+   * @return
+   */
   public Map<String, List<PlatformDataDefinitionView>> getAll() {
-    LOG.info("Enter.");
+    LOGGER.info("Enter.");
 
     Map<String, List<PlatformDataDefinition>> cacheDefinitions =
         cacheApplication.getAllPlatformDefinition();
 
     if (cacheDefinitions == null || cacheDefinitions.isEmpty()) {
-      LOG.debug("Cache fail, get from database.");
+      LOGGER.debug("Cache fail, get from database.");
       List<PlatformDataDefinition> dataDefinitions = platformDataService.getAll();
 
-      cacheDefinitions = PlatformDataMapper.toEntityMap(dataDefinitions);
+      cacheDefinitions = PlatformDataMapper.toModelMap(dataDefinitions);
 
       cacheApplication.cachePlatformDefinition(cacheDefinitions);
     }
@@ -48,12 +58,18 @@ public class PlatformDataApplication {
     Map<String, List<PlatformDataDefinitionView>> result =
         PlatformDataMapper.toModelMap(cacheDefinitions);
 
-    LOG.info("Exit. dataDefinition size: {}.", result.size());
+    LOGGER.info("Exit. dataDefinition size: {}.", result.size());
     return result;
   }
 
+  /**
+   * Get all platform data definition by product type.
+   *
+   * @param productTypeId
+   * @return
+   */
   public List<PlatformDataDefinitionView> getByProductType(String productTypeId) {
-    LOG.debug("Enter. productTypeId: {}.", productTypeId);
+    LOGGER.debug("Enter. productTypeId: {}.", productTypeId);
 
     List<PlatformDataDefinition> cacheDefinitions =
         cacheApplication.getPlatformDefinitionByType(productTypeId);
@@ -62,14 +78,14 @@ public class PlatformDataApplication {
       List<PlatformDataDefinition> dataDefinitions = platformDataService.getAll();
 
       Map<String, List<PlatformDataDefinition>> entityMap =
-          PlatformDataMapper.toEntityMap(dataDefinitions);
+          PlatformDataMapper.toModelMap(dataDefinitions);
 
       cacheApplication.cachePlatformDefinition(entityMap);
 
       cacheDefinitions = entityMap.get(productTypeId);
     }
 
-    List<PlatformDataDefinitionView> result = PlatformDataMapper.toModel(cacheDefinitions);
+    List<PlatformDataDefinitionView> result = PlatformDataMapper.toView(cacheDefinitions);
 
     return result;
   }

@@ -31,5 +31,5 @@ dependencies {
     compile('org.apache.commons:commons-lang3:3.4')
 
     // Commons lib from github project
-    compile("com.umasuo:commons:0.2")
+    compile("com.umasuo:commons:0.3")
 }

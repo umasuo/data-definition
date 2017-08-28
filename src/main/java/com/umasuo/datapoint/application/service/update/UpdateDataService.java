@@ -1,20 +1,18 @@
 package com.umasuo.datapoint.application.service.update;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.umasuo.datapoint.application.dto.action.SetSchema;
 import com.umasuo.datapoint.application.dto.action.UpdateDataDefinition;
 import com.umasuo.datapoint.domain.model.DeviceDataDefinition;
 import com.umasuo.datapoint.infrastructure.update.UpdateAction;
 import com.umasuo.datapoint.infrastructure.update.UpdateActionUtils;
 import com.umasuo.datapoint.infrastructure.validator.SchemaValidator;
 import com.umasuo.model.Updater;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
- * Created by Davis on 17/7/12.
+ * Update data definition service.
  */
 @Service(UpdateActionUtils.UPDATE_DATA_DEFINITION)
 public class UpdateDataService implements Updater<DeviceDataDefinition, UpdateAction> {
@@ -22,11 +20,16 @@ public class UpdateDataService implements Updater<DeviceDataDefinition, UpdateAc
   /**
    * Logger.
    */
-  private static final Logger LOG = LoggerFactory.getLogger(SetSchemaService.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(SetSchemaService.class);
 
+  /**
+   * Update data definition.
+   * @param deviceDataDefinition
+   * @param updateAction
+   */
   @Override
   public void handle(DeviceDataDefinition deviceDataDefinition, UpdateAction updateAction) {
-    LOG.debug("Enter.");
+    LOGGER.debug("Enter.");
 
     UpdateDataDefinition action = (UpdateDataDefinition) updateAction;
 
@@ -41,6 +44,6 @@ public class UpdateDataService implements Updater<DeviceDataDefinition, UpdateAc
     deviceDataDefinition.setDataId(action.getDataId());
     deviceDataDefinition.setOpenable(action.getOpenable());
 
-    LOG.debug("Exit.");
+    LOGGER.debug("Exit.");
   }
 }

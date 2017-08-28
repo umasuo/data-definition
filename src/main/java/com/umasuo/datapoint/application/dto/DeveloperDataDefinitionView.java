@@ -1,13 +1,10 @@
 package com.umasuo.datapoint.application.dto;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
-
 /**
- * Created by Davis on 17/6/30.
+ * DeveloperDataDefinitionView.
  */
 @Data
 public class DeveloperDataDefinitionView {
