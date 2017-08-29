@@ -4,6 +4,7 @@ import com.umasuo.datapoint.application.dto.PlatformDataDefinitionDraft;
 import com.umasuo.datapoint.application.dto.PlatformDataDefinitionView;
 import com.umasuo.datapoint.application.service.PlatformDataApplication;
 import com.umasuo.datapoint.infrastructure.Router;
+import com.umasuo.datapoint.infrastructure.update.UpdateRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,12 +14,15 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
+
+import javax.validation.Valid;
 
 /**
  * PlatformDataDefinitionController.
@@ -82,6 +86,23 @@ public class PlatformDataDefinitionController {
     dataApplication.delete(id, productTypeId);
 
     LOG.debug("Exit.");
+  }
+
+
+  /**
+   * Update.
+   *
+   * @param id the id
+   * @param updateRequest the update request
+   */
+  @PutMapping(value = Router.PLATFORM_DATA_WITH_ID)
+  public void update(@PathVariable("id") String id,
+      @RequestBody @Valid UpdateRequest updateRequest) {
+    LOG.info("Enter. dataDefinitionId: {}, updateRequest: {}.", id, updateRequest);
+
+    dataApplication.update(id, updateRequest.getVersion(), updateRequest.getActions());
+
+    LOG.info("Exit.");
   }
 
   /**

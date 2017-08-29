@@ -34,4 +34,9 @@ public class UpdateActionUtils {
    * Update data definition.
    */
   public static final String UPDATE_DATA_DEFINITION = "updateDataDefinition";
+
+  /**
+   * The constant UPDATE_PRODUCT_TYPE_DATA.
+   */
+  public static final String UPDATE_PRODUCT_TYPE_DATA = "updateProductTypeData";
 }

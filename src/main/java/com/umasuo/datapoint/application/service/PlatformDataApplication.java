@@ -5,6 +5,8 @@ import com.umasuo.datapoint.application.dto.PlatformDataDefinitionView;
 import com.umasuo.datapoint.application.dto.mapper.PlatformDataMapper;
 import com.umasuo.datapoint.domain.model.PlatformDataDefinition;
 import com.umasuo.datapoint.domain.service.PlatformDataService;
+import com.umasuo.datapoint.infrastructure.update.UpdateAction;
+import com.umasuo.datapoint.infrastructure.update.UpdaterService;
 import com.umasuo.exception.ParametersException;
 
 import org.slf4j.Logger;
@@ -37,6 +39,12 @@ public class PlatformDataApplication {
    */
   @Autowired
   private transient CacheApplication cacheApplication;
+
+  /**
+   * The UpdateService.
+   */
+  @Autowired
+  private transient UpdaterService updaterService;
 
   /**
    * Get all platform.
@@ -151,5 +159,32 @@ public class PlatformDataApplication {
     cacheApplication.deletePlatformDefinition();
 
     LOGGER.debug("Exit.");
+  }
+
+  /**
+   * Update platform data definition view.
+   *
+   * @param id the id
+   * @param version the version
+   * @param actions the actions
+   * @return the platform data definition view
+   */
+  public PlatformDataDefinitionView update(String id, Integer version, List<UpdateAction> actions) {
+    LOGGER.debug("Enter. id: {}, version: {}, actions: {}.", id, version, actions);
+
+    PlatformDataDefinition definition = platformDataService.getById(id);
+
+    actions.stream().forEach(action -> updaterService.handle(definition, action));
+
+    PlatformDataDefinition updatedDefinition = platformDataService.save(definition);
+
+    cacheApplication.deletePlatformDefinition();
+
+    PlatformDataDefinitionView result = PlatformDataMapper.toView(updatedDefinition);
+
+    LOGGER.trace("Updated DeviceDataDefinition: {}.", result);
+    LOGGER.debug("Exit.");
+
+    return result;
   }
 }
