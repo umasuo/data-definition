@@ -52,7 +52,7 @@ public class PlatformDataService {
    * 根据id列表查询对应的PlatformDataDefinition。
    *
    * @param dataDefinitionIds id列表
-   * @return PlatformDataDefinition列表
+   * @return PlatformDataDefinition列表 by ids
    */
   public List<PlatformDataDefinition> getByIds(List<String> dataDefinitionIds) {
     LOGGER.debug("Enter. dataDefinitionIds: {}.", dataDefinitionIds);
@@ -67,7 +67,7 @@ public class PlatformDataService {
   /**
    * Get all platform data definition.
    *
-   * @return
+   * @return all
    */
   public List<PlatformDataDefinition> getAll() {
     LOGGER.debug("Enter.");
@@ -77,5 +77,39 @@ public class PlatformDataService {
     LOGGER.debug("Exit. platformDataDefinition size: {}.", dataDefinitions.size());
 
     return dataDefinitions;
+  }
+
+  /**
+   * Save platform data definition.
+   *
+   * @param dataDefinition the data definition
+   * @return the platform data definition
+   */
+  public PlatformDataDefinition save(PlatformDataDefinition dataDefinition) {
+    LOGGER.debug("Enter.");
+
+    repository.save(dataDefinition);
+
+    LOGGER.debug("Enter. new platformDataDefinition id: {}.", dataDefinition.getId());
+
+    return dataDefinition;
+  }
+
+
+  /**
+   * Delete by product type.
+   *
+   * @param productTypeId the product type id
+   */
+  public void deleteByProductType(String productTypeId) {
+    LOGGER.debug("Enter. productType id: {}.", productTypeId);
+
+    List<PlatformDataDefinition> dataDefinitions = getByProductTypeId(productTypeId);
+
+    LOGGER.debug("delete dataDefinition size: {}.", dataDefinitions.size());
+
+    repository.delete(dataDefinitions);
+
+    LOGGER.debug("Exit.");
   }
 }

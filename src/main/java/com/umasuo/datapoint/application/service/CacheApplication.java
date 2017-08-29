@@ -83,6 +83,18 @@ public class CacheApplication {
   }
 
   /**
+   * 删除平台预设的产品数据。
+   */
+  public void deletePlatformDefinition() {
+    LOGGER.debug("Enter.");
+
+    redisTemplate.delete(RedisUtils.PLATFORM_DEFINITION_KEY);
+
+
+    LOGGER.debug("Exit.");
+  }
+
+  /**
    * 删除开发者的所有数据定义。
    *
    * @param developerId the developerId

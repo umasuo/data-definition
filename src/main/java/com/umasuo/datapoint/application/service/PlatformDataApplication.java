@@ -1,5 +1,6 @@
 package com.umasuo.datapoint.application.service;
 
+import com.umasuo.datapoint.application.dto.PlatformDataDefinitionDraft;
 import com.umasuo.datapoint.application.dto.PlatformDataDefinitionView;
 import com.umasuo.datapoint.application.dto.mapper.PlatformDataMapper;
 import com.umasuo.datapoint.domain.model.PlatformDataDefinition;
@@ -38,7 +39,7 @@ public class PlatformDataApplication {
   /**
    * Get all platform.
    *
-   * @return
+   * @return all all
    */
   public Map<String, List<PlatformDataDefinitionView>> getAll() {
     LOGGER.info("Enter.");
@@ -65,8 +66,8 @@ public class PlatformDataApplication {
   /**
    * Get all platform data definition by product type.
    *
-   * @param productTypeId
-   * @return
+   * @param productTypeId the product type id
+   * @return by product type
    */
   public List<PlatformDataDefinitionView> getByProductType(String productTypeId) {
     LOGGER.debug("Enter. productTypeId: {}.", productTypeId);
@@ -88,5 +89,41 @@ public class PlatformDataApplication {
     List<PlatformDataDefinitionView> result = PlatformDataMapper.toView(cacheDefinitions);
 
     return result;
+  }
+
+  /**
+   * Create platform data definition view.
+   *
+   * @param draft the draft
+   * @return the platform data definition view
+   */
+  public PlatformDataDefinitionView create(PlatformDataDefinitionDraft draft) {
+    LOGGER.debug("Enter. draft: {}.", draft);
+
+    PlatformDataDefinition dataDefinition = PlatformDataMapper.toModel(draft);
+
+    platformDataService.save(dataDefinition);
+
+    PlatformDataDefinitionView result = PlatformDataMapper.toView(dataDefinition);
+    cacheApplication.deletePlatformDefinition();
+
+    LOGGER.debug("Exit. new platformDataDefinition id: {}.", result.getId());
+    return result;
+  }
+
+
+  /**
+   * Delete by product type.
+   *
+   * @param productTypeId the product type id
+   */
+  public void deleteByProductType(String productTypeId) {
+    LOGGER.debug("Enter. productType id: {}.", productTypeId);
+
+    platformDataService.deleteByProductType(productTypeId);
+
+    cacheApplication.deletePlatformDefinition();
+
+    LOGGER.debug("Exit.");
   }
 }

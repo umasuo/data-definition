@@ -3,6 +3,7 @@ package com.umasuo.datapoint.application.dto.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.umasuo.datapoint.application.dto.PlatformDataDefinitionDraft;
 import com.umasuo.datapoint.application.dto.PlatformDataDefinitionView;
 import com.umasuo.datapoint.domain.model.PlatformDataDefinition;
 import com.umasuo.util.JsonUtils;
@@ -25,8 +26,9 @@ public final class PlatformDataMapper {
 
   /**
    * To view list.
-   * @param entities
-   * @return
+   *
+   * @param entities the entities
+   * @return list
    */
   public static List<PlatformDataDefinitionView> toView(List<PlatformDataDefinition> entities) {
     List<PlatformDataDefinitionView> models = Lists.newArrayList();
@@ -40,8 +42,9 @@ public final class PlatformDataMapper {
 
   /**
    * To view.
-   * @param entity
-   * @return
+   *
+   * @param entity the entity
+   * @return platform data definition view
    */
   public static PlatformDataDefinitionView toView(PlatformDataDefinition entity) {
     PlatformDataDefinitionView model = new PlatformDataDefinitionView();
@@ -58,8 +61,9 @@ public final class PlatformDataMapper {
 
   /**
    * To model map.
-   * @param dataDefinitions
-   * @return
+   *
+   * @param dataDefinitions the data definitions
+   * @return map
    */
   public static Map<String, List<PlatformDataDefinition>> toModelMap(
       List<PlatformDataDefinition> dataDefinitions) {
@@ -82,8 +86,9 @@ public final class PlatformDataMapper {
 
   /**
    * To model map.
-   * @param entityMap
-   * @return
+   *
+   * @param entityMap the entity map
+   * @return map
    */
   public static Map<String, List<PlatformDataDefinitionView>> toModelMap(
       Map<String, List<PlatformDataDefinition>> entityMap) {
@@ -95,5 +100,23 @@ public final class PlatformDataMapper {
     entityMap.entrySet().stream().forEach(consumer);
 
     return modelMap;
+  }
+
+  /**
+   * Convert PlatformDataDefinitionDraft to PlatformDataDefinition.
+   *
+   * @param draft the draft
+   * @return the platform data definition
+   */
+  public static PlatformDataDefinition toModel(PlatformDataDefinitionDraft draft) {
+    PlatformDataDefinition dataDefinition = new PlatformDataDefinition();
+
+    dataDefinition.setProductTypeId(draft.getProductTypeId());
+    dataDefinition.setName(draft.getName());
+    dataDefinition.setDataId(draft.getDataId());
+    dataDefinition.setDataSchema(draft.getDataSchema().toString());
+    dataDefinition.setDescription(draft.getDescription());
+
+    return dataDefinition;
   }
 }
