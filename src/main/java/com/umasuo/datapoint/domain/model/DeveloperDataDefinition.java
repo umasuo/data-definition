@@ -6,6 +6,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -21,7 +23,12 @@ import javax.persistence.Version;
 @Entity
 @Table(name = "developer_data_definition")
 @EntityListeners(AuditingEntityListener.class)
-public class DeveloperDataDefinition {
+public class DeveloperDataDefinition implements Serializable{
+
+  /**
+   * The serialVersionUID.
+   */
+  private static final long serialVersionUID = -4926325845712914163L;
 
   /**
    * Id.

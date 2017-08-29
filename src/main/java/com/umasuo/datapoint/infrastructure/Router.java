@@ -26,6 +26,11 @@ public class Router {
   public static final String PLATFORM_DATA_ROOT = DATA_DEFINITION_ROOT + "/platform";
 
   /**
+   * The constant PLATFORM_DATA_WITH_ID.
+   */
+  public static final String PLATFORM_DATA_WITH_ID = PLATFORM_DATA_ROOT + "/{id}";
+
+  /**
    * Developer data definition root.
    */
   public static final String DEVELOPER_DATA_ROOT = DATA_DEFINITION_ROOT + "/developer";

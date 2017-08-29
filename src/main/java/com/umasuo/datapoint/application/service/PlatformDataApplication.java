@@ -5,6 +5,8 @@ import com.umasuo.datapoint.application.dto.PlatformDataDefinitionView;
 import com.umasuo.datapoint.application.dto.mapper.PlatformDataMapper;
 import com.umasuo.datapoint.domain.model.PlatformDataDefinition;
 import com.umasuo.datapoint.domain.service.PlatformDataService;
+import com.umasuo.exception.ParametersException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -121,6 +123,30 @@ public class PlatformDataApplication {
     LOGGER.debug("Enter. productType id: {}.", productTypeId);
 
     platformDataService.deleteByProductType(productTypeId);
+
+    cacheApplication.deletePlatformDefinition();
+
+    LOGGER.debug("Exit.");
+  }
+
+  /**
+   * Delete.
+   *
+   * @param id the id
+   * @param productTypeId the product type id
+   */
+  public void delete(String id, String productTypeId) {
+    LOGGER.debug("Enter. id: {}, productType id: {}.", id, productTypeId);
+
+    PlatformDataDefinition dataDefinition = platformDataService.getById(id);
+
+    if (!productTypeId.equals(dataDefinition.getProductTypeId())) {
+      LOGGER.debug("PlatformDataDefinition: {} is not belong to productType: {}.",
+          id, productTypeId);
+      throw new ParametersException("Can't delete platformDataDefinition not belong to productType");
+    }
+
+    platformDataService.delete(id);
 
     cacheApplication.deletePlatformDefinition();
 

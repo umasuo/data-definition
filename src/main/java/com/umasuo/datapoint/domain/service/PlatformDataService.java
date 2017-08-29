@@ -2,6 +2,8 @@ package com.umasuo.datapoint.domain.service;
 
 import com.umasuo.datapoint.domain.model.PlatformDataDefinition;
 import com.umasuo.datapoint.infrastructure.repository.PlatformDataRepository;
+import com.umasuo.exception.NotExistException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +48,29 @@ public class PlatformDataService {
     LOGGER.debug("Exit. dataDefinition size: {}.", result.size());
 
     return result;
+  }
+
+
+  /**
+   * Gets by id.
+   *
+   * @param id the id
+   * @return the by id
+   */
+  public PlatformDataDefinition getById(String id) {
+    LOGGER.debug("Enter. id: {}.", id);
+
+    PlatformDataDefinition dataDefinition = repository.getOne(id);
+
+    if (dataDefinition == null) {
+      LOGGER.debug("Can not find platformDataDefinition: {}.", id);
+      throw new NotExistException("PlatformDataDefinition not exist");
+    }
+
+    LOGGER.trace("platformDataDefinition: {}.", dataDefinition);
+    LOGGER.debug("Exit.");
+
+    return dataDefinition;
   }
 
   /**
@@ -111,5 +136,19 @@ public class PlatformDataService {
     repository.delete(dataDefinitions);
 
     LOGGER.debug("Exit.");
+  }
+
+  /**
+   * Delete.
+   *
+   * @param id the id
+   */
+  public void delete(String id) {
+    LOGGER.debug("Enter. id: {}.", id);
+
+    repository.delete(id);
+
+    LOGGER.debug("Exit.");
+
   }
 }

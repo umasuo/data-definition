@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -64,6 +65,21 @@ public class PlatformDataDefinitionController {
     LOG.debug("Enter. productType id: {}.", productTypeId);
 
     dataApplication.deleteByProductType(productTypeId);
+
+    LOG.debug("Exit.");
+  }
+
+  /**
+   * Delete.
+   *
+   * @param id the id
+   * @param productTypeId the product type id
+   */
+  @DeleteMapping(value = Router.PLATFORM_DATA_WITH_ID)
+  public void delete(@PathVariable("id") String id, @RequestParam String productTypeId) {
+    LOG.debug("Enter. id: {}, productType id: {}.", id, productTypeId);
+
+    dataApplication.delete(id, productTypeId);
 
     LOG.debug("Exit.");
   }
