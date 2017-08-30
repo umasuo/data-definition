@@ -1,7 +1,6 @@
 package com.umasuo.datapoint.application.service.update;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.umasuo.datapoint.application.dto.action.UpdateDataDefinition;
 import com.umasuo.datapoint.application.dto.action.UpdateProductTypeData;
 import com.umasuo.datapoint.domain.model.PlatformDataDefinition;
 import com.umasuo.datapoint.infrastructure.update.UpdateAction;
