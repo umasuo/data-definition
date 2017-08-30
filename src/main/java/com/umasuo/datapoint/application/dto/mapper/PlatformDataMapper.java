@@ -1,12 +1,10 @@
 package com.umasuo.datapoint.application.dto.mapper;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.umasuo.datapoint.application.dto.PlatformDataDefinitionDraft;
 import com.umasuo.datapoint.application.dto.PlatformDataDefinitionView;
 import com.umasuo.datapoint.domain.model.PlatformDataDefinition;
-import com.umasuo.util.JsonUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -55,7 +53,7 @@ public final class PlatformDataMapper {
     model.setDescription(entity.getDescription());
     model.setId(entity.getId());
     model.setDataId(entity.getDataId());
-    model.setDataSchema(JsonUtils.deserialize(entity.getDataSchema(), JsonNode.class));
+    model.setSchema(entity.getDataSchema());
 
     return model;
   }
