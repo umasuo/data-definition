@@ -2,6 +2,7 @@ package com.umasuo.datapoint.application.service.update;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.umasuo.datapoint.application.dto.action.UpdateDataDefinition;
+import com.umasuo.datapoint.application.dto.action.UpdateProductTypeData;
 import com.umasuo.datapoint.domain.model.PlatformDataDefinition;
 import com.umasuo.datapoint.infrastructure.update.UpdateAction;
 import com.umasuo.datapoint.infrastructure.update.UpdateActionUtils;
@@ -32,17 +33,15 @@ public class UpdatePlatformDataService implements Updater<PlatformDataDefinition
   public void handle(PlatformDataDefinition dataDefinition, UpdateAction updateAction) {
     LOGGER.debug("Enter.");
 
-    UpdateDataDefinition action = (UpdateDataDefinition) updateAction;
+    UpdateProductTypeData action = (UpdateProductTypeData) updateAction;
 
     JsonNode schema = action.getDataSchema();
 
     SchemaValidator.validate(schema);
 
     dataDefinition.setDataSchema(schema.toString());
-
     dataDefinition.setDescription(action.getDescription());
     dataDefinition.setName(action.getName());
-    dataDefinition.setDataId(action.getDataId());
 
     LOGGER.debug("Exit.");
   }

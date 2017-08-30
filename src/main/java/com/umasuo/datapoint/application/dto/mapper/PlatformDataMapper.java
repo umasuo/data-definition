@@ -50,6 +50,7 @@ public final class PlatformDataMapper {
     PlatformDataDefinitionView model = new PlatformDataDefinitionView();
 
     model.setName(entity.getName());
+    model.setVersion(entity.getVersion());
     model.setProductTypeId(entity.getProductTypeId());
     model.setDescription(entity.getDescription());
     model.setId(entity.getId());
