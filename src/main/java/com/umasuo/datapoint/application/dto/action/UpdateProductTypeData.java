@@ -1,6 +1,5 @@
 package com.umasuo.datapoint.application.dto.action;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.umasuo.datapoint.infrastructure.update.UpdateAction;
 import com.umasuo.datapoint.infrastructure.update.UpdateActionUtils;
 
@@ -30,7 +29,7 @@ public class UpdateProductTypeData implements UpdateAction {
    * The data schema.
    */
   @NotNull
-  private JsonNode dataSchema;
+  private String schema;
 
   /**
    * The description.

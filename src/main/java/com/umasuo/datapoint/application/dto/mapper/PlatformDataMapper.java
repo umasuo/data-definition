@@ -113,7 +113,7 @@ public final class PlatformDataMapper {
     dataDefinition.setProductTypeId(draft.getProductTypeId());
     dataDefinition.setName(draft.getName());
     dataDefinition.setDataId(draft.getDataId());
-    dataDefinition.setDataSchema(draft.getDataSchema().toString());
+    dataDefinition.setDataSchema(draft.getSchema());
     dataDefinition.setDescription(draft.getDescription());
 
     return dataDefinition;

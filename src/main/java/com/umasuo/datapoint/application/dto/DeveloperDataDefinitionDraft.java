@@ -1,6 +1,5 @@
 package com.umasuo.datapoint.application.dto;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -32,6 +31,6 @@ public class DeveloperDataDefinitionDraft {
    * Data Schema in json.
    */
   @NotNull(message = "DataSchema can not be null")
-  private JsonNode dataSchema;
+  private String schema;
 
 }

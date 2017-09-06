@@ -18,6 +18,7 @@ import com.umasuo.datapoint.infrastructure.validator.CopyRequestValidator;
 import com.umasuo.datapoint.infrastructure.validator.DefinitionValidator;
 import com.umasuo.datapoint.infrastructure.validator.SchemaValidator;
 import com.umasuo.exception.NotExistException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,14 +73,14 @@ public class DataDefinitionApplication {
   /**
    * Create DeviceDataDefinition.
    *
-   * @param draft       the draft
+   * @param draft the draft
    * @param developerId the developer id
    * @return the data definition view
    */
   public DataDefinitionView create(DataDefinitionDraft draft, String developerId) {
     LOGGER.debug("Enter. draft: {}, developerId: {}.", draft, developerId);
 
-    SchemaValidator.validate(draft.getDataSchema());
+    SchemaValidator.validate(draft.getSchema());
 
     definitionService.isExistName(developerId, draft.getProductId(), draft.getName());
 
@@ -102,7 +103,7 @@ public class DataDefinitionApplication {
    * 请求分为开发者的数据定义和平台的数据定义。
    *
    * @param developerId the developer id
-   * @param request     the request
+   * @param request the request
    * @return the list
    */
   public List<String> handleCopyRequest(String developerId, CopyRequest request) {
@@ -141,12 +142,12 @@ public class DataDefinitionApplication {
    * 拷贝平台的数据定义.
    *
    * @param developerId the developer id
-   * @param productId   the product id
-   * @param requestIds  the dataDefinition id list
+   * @param productId the product id
+   * @param requestIds the dataDefinition id list
    * @return new dataDefinition id list
    */
   private List<String> copyFromPlatformData(String developerId, String productId,
-                                            List<String> requestIds) {
+      List<String> requestIds) {
 
     List<PlatformDataDefinition> dataDefinitions = platformDataService.getByIds(requestIds);
 
@@ -164,12 +165,12 @@ public class DataDefinitionApplication {
    * 拷贝开发者的数据定义.
    *
    * @param developerId the developer id
-   * @param productId   the product id
-   * @param requestIds  the dataDefinition id list
+   * @param productId the product id
+   * @param requestIds the dataDefinition id list
    * @return new dataDefinition id list
    */
   private List<String> copyFromDeveloperData(String developerId, String productId,
-                                             List<String> requestIds) {
+      List<String> requestIds) {
     List<DeveloperDataDefinition> dataDefinitions = developerDataService.getByIds(requestIds);
 
     CopyRequestValidator.matchRequestIds(requestIds, dataDefinitions);
@@ -185,14 +186,14 @@ public class DataDefinitionApplication {
   /**
    * Update DeviceDataDefinition.
    *
-   * @param id          the id
+   * @param id the id
    * @param developerId the developer id
-   * @param version     the version
-   * @param actions     the actions
+   * @param version the version
+   * @param actions the actions
    * @return updated DataDefinitionView
    */
   public DataDefinitionView update(String id, String developerId, Integer version,
-                                   List<UpdateAction> actions) {
+      List<UpdateAction> actions) {
     LOGGER.debug("Enter. id: {}, version: {}, developerId:{}, actions: {}.",
         id, version, developerId, actions);
 
@@ -220,8 +221,8 @@ public class DataDefinitionApplication {
    * Delete.
    *
    * @param developerId the developer id
-   * @param productId   the product id
-   * @param id          the id
+   * @param productId the product id
+   * @param id the id
    */
   public void delete(String developerId, String productId, String id) {
     LOGGER.debug("Enter. id: {}, developerId: {}, productId: {}.", id, developerId, productId);
@@ -243,7 +244,7 @@ public class DataDefinitionApplication {
    * Delete.
    *
    * @param developerId the developer id
-   * @param productId   the product id
+   * @param productId the product id
    */
   public void delete(String developerId, String productId) {
     LOGGER.debug("Enter. developerId: {}, productId: {}.", developerId, productId);
@@ -259,7 +260,7 @@ public class DataDefinitionApplication {
    * 获取productId对应的所有dataDefinition.
    *
    * @param developerId the developer id
-   * @param productId   the product id
+   * @param productId the product id
    * @return dataDefinition list
    */
   public List<DataDefinitionView> getByProductId(String developerId, String productId) {
@@ -285,11 +286,11 @@ public class DataDefinitionApplication {
    * Gets by product ids.
    *
    * @param developerId the developer id
-   * @param productIds  the product ids
+   * @param productIds the product ids
    * @return the by product ids
    */
   public Map<String, List<DataDefinitionView>> getByProductIds(String developerId,
-                                                               List<String> productIds) {
+      List<String> productIds) {
     LOGGER.debug("Enter. developerId: {}, productIds: {}.", developerId, productIds);
 
     // TODO: 17/7/12 简单粗暴的实现方式，待优化成批量处理
@@ -306,8 +307,8 @@ public class DataDefinitionApplication {
    * Get data definition view.
    *
    * @param developerId the developer id
-   * @param productId   the product id
-   * @param id          the id
+   * @param productId the product id
+   * @param id the id
    * @return the data definition view
    */
   public DataDefinitionView get(String developerId, String productId, String id) {

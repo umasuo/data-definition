@@ -1,8 +1,8 @@
 package com.umasuo.datapoint.application.dto.action;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.umasuo.datapoint.infrastructure.update.UpdateAction;
 import com.umasuo.datapoint.infrastructure.update.UpdateActionUtils;
+
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -29,7 +29,7 @@ public class UpdateDataDefinition implements UpdateAction {
    * Data definition json schema.
    */
   @NotNull
-  private JsonNode dataSchema;
+  private String schema;
 
   /**
    * Data definition description.

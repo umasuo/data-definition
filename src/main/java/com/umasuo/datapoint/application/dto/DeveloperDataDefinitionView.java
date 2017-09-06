@@ -1,6 +1,5 @@
 package com.umasuo.datapoint.application.dto;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 
 /**
@@ -42,7 +41,7 @@ public class DeveloperDataDefinitionView {
   /**
    * the data structure.
    */
-  private JsonNode dataSchema;
+  private String schema;
 
   /**
    * name of this definition.

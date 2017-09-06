@@ -1,6 +1,5 @@
 package com.umasuo.datapoint.application.dto;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -37,7 +36,7 @@ public class DataDefinitionDraft {
    * 数据具体的结构.
    */
   @NotNull
-  private JsonNode dataSchema;
+  private String schema;
 
   /**
    * The Openable.

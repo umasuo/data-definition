@@ -50,7 +50,7 @@ public class DeveloperDataApplication {
       DeveloperDataDefinitionDraft draft) {
 
     //检查schema是否正确
-    SchemaValidator.validate(draft.getDataSchema());
+    SchemaValidator.validate(draft.getSchema());
 
     boolean isNameExist = developerDataService.isNameExist(developerId, draft.getName());
 
