@@ -47,6 +47,96 @@ public class PlatformDataApplication {
   private transient UpdaterService updaterService;
 
   /**
+   * Create platform data definition view.
+   *
+   * @param draft the draft
+   * @return the platform data definition view
+   */
+  public PlatformDataDefinitionView create(PlatformDataDefinitionDraft draft) {
+    LOGGER.debug("Enter. draft: {}.", draft);
+
+    PlatformDataDefinition dataDefinition = PlatformDataMapper.toModel(draft);
+
+    platformDataService.existDataId(draft.getProductTypeId(), dataDefinition.getDataId());
+
+    platformDataService.save(dataDefinition);
+
+    PlatformDataDefinitionView result = PlatformDataMapper.toView(dataDefinition);
+    cacheApplication.deletePlatformDefinition();
+
+    LOGGER.debug("Exit. new platformDataDefinition id: {}.", result.getId());
+    return result;
+  }
+
+
+  /**
+   * Delete by product type.
+   *
+   * @param productTypeId the product type id
+   */
+  public void deleteByProductType(String productTypeId) {
+    LOGGER.debug("Enter. productType id: {}.", productTypeId);
+
+    platformDataService.deleteByProductType(productTypeId);
+
+    cacheApplication.deletePlatformDefinition();
+
+    LOGGER.debug("Exit.");
+  }
+
+  /**
+   * Delete.
+   *
+   * @param id the id
+   * @param productTypeId the product type id
+   */
+  public void delete(String id, String productTypeId) {
+    LOGGER.debug("Enter. id: {}, productType id: {}.", id, productTypeId);
+
+    PlatformDataDefinition dataDefinition = platformDataService.getById(id);
+
+    if (!productTypeId.equals(dataDefinition.getProductTypeId())) {
+      LOGGER.debug("PlatformDataDefinition: {} is not belong to productType: {}.",
+          id, productTypeId);
+      throw new ParametersException(
+          "Can't delete platformDataDefinition not belong to productType");
+    }
+
+    platformDataService.delete(id);
+
+    cacheApplication.deletePlatformDefinition();
+
+    LOGGER.debug("Exit.");
+  }
+
+  /**
+   * Update platform data definition view.
+   *
+   * @param id the id
+   * @param version the version
+   * @param actions the actions
+   * @return the platform data definition view
+   */
+  public PlatformDataDefinitionView update(String id, Integer version, List<UpdateAction> actions) {
+    LOGGER.debug("Enter. id: {}, version: {}, actions: {}.", id, version, actions);
+
+    PlatformDataDefinition definition = platformDataService.getById(id);
+
+    actions.stream().forEach(action -> updaterService.handle(definition, action));
+
+    PlatformDataDefinition updatedDefinition = platformDataService.save(definition);
+
+    cacheApplication.deletePlatformDefinition();
+
+    PlatformDataDefinitionView result = PlatformDataMapper.toView(updatedDefinition);
+
+    LOGGER.trace("Updated DeviceDataDefinition: {}.", result);
+    LOGGER.debug("Exit.");
+
+    return result;
+  }
+
+  /**
    * Get all platform.
    *
    * @return all all
@@ -97,93 +187,6 @@ public class PlatformDataApplication {
     }
 
     List<PlatformDataDefinitionView> result = PlatformDataMapper.toView(cacheDefinitions);
-
-    return result;
-  }
-
-  /**
-   * Create platform data definition view.
-   *
-   * @param draft the draft
-   * @return the platform data definition view
-   */
-  public PlatformDataDefinitionView create(PlatformDataDefinitionDraft draft) {
-    LOGGER.debug("Enter. draft: {}.", draft);
-
-    PlatformDataDefinition dataDefinition = PlatformDataMapper.toModel(draft);
-
-    platformDataService.save(dataDefinition);
-
-    PlatformDataDefinitionView result = PlatformDataMapper.toView(dataDefinition);
-    cacheApplication.deletePlatformDefinition();
-
-    LOGGER.debug("Exit. new platformDataDefinition id: {}.", result.getId());
-    return result;
-  }
-
-
-  /**
-   * Delete by product type.
-   *
-   * @param productTypeId the product type id
-   */
-  public void deleteByProductType(String productTypeId) {
-    LOGGER.debug("Enter. productType id: {}.", productTypeId);
-
-    platformDataService.deleteByProductType(productTypeId);
-
-    cacheApplication.deletePlatformDefinition();
-
-    LOGGER.debug("Exit.");
-  }
-
-  /**
-   * Delete.
-   *
-   * @param id the id
-   * @param productTypeId the product type id
-   */
-  public void delete(String id, String productTypeId) {
-    LOGGER.debug("Enter. id: {}, productType id: {}.", id, productTypeId);
-
-    PlatformDataDefinition dataDefinition = platformDataService.getById(id);
-
-    if (!productTypeId.equals(dataDefinition.getProductTypeId())) {
-      LOGGER.debug("PlatformDataDefinition: {} is not belong to productType: {}.",
-          id, productTypeId);
-      throw new ParametersException("Can't delete platformDataDefinition not belong to productType");
-    }
-
-    platformDataService.delete(id);
-
-    cacheApplication.deletePlatformDefinition();
-
-    LOGGER.debug("Exit.");
-  }
-
-  /**
-   * Update platform data definition view.
-   *
-   * @param id the id
-   * @param version the version
-   * @param actions the actions
-   * @return the platform data definition view
-   */
-  public PlatformDataDefinitionView update(String id, Integer version, List<UpdateAction> actions) {
-    LOGGER.debug("Enter. id: {}, version: {}, actions: {}.", id, version, actions);
-
-    PlatformDataDefinition definition = platformDataService.getById(id);
-
-    actions.stream().forEach(action -> updaterService.handle(definition, action));
-
-    PlatformDataDefinition updatedDefinition = platformDataService.save(definition);
-
-    cacheApplication.deletePlatformDefinition();
-
-    PlatformDataDefinitionView result = PlatformDataMapper.toView(updatedDefinition);
-
-    LOGGER.trace("Updated DeviceDataDefinition: {}.", result);
-    LOGGER.debug("Exit.");
 
     return result;
   }
